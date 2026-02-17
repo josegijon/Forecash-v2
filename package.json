@@ -1,0 +1,8 @@
+{
+    "name": "forecash",
+    "private": true,
+    "workspaces": [
+        "frontend",
+        "core"
+    ]
+}
