@@ -4,5 +4,8 @@
     "workspaces": [
         "frontend",
         "core"
-    ]
+    ],
+    "dependencies": {
+        "recharts": "^3.7.0"
+    }
 }
