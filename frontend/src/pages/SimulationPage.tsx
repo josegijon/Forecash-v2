@@ -84,7 +84,7 @@ export const SimulationPage = () => {
         SCENARIOS.find((s) => s.id === selectedScenario)?.name ?? "Escenario";
 
     return (
-        <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="flex-1 scrollbar-hide">
             <div className="max-w-6xl mx-auto space-y-6">
 
                 {/* ─── Cabecera: Copiar escenario + Selector de escenario + Tiempo ─── */}
@@ -178,8 +178,8 @@ export const SimulationPage = () => {
                     {/* Diferencia */}
                     <div
                         className={`rounded-2xl border p-5 ${isPositive
-                                ? "bg-emerald-50/60 border-emerald-200"
-                                : "bg-red-50/60 border-red-200"
+                            ? "bg-emerald-50/60 border-emerald-200"
+                            : "bg-red-50/60 border-red-200"
                             }`}
                     >
                         <div className="flex items-center gap-2 mb-2">
@@ -207,8 +207,8 @@ export const SimulationPage = () => {
                             </p>
                             <span
                                 className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${isPositive
-                                        ? "bg-emerald-100 text-emerald-700"
-                                        : "bg-red-100 text-red-700"
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : "bg-red-100 text-red-700"
                                     }`}
                             >
                                 {isPositive ? (
@@ -369,8 +369,8 @@ export const SimulationPage = () => {
                                                 <td className="py-3 px-4 text-right">
                                                     <span
                                                         className={`inline-flex items-center gap-1 font-semibold ${pos
-                                                                ? "text-emerald-600"
-                                                                : "text-red-600"
+                                                            ? "text-emerald-600"
+                                                            : "text-red-600"
                                                             }`}
                                                     >
                                                         {pos ? (
