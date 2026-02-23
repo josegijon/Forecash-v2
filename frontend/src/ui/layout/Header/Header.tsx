@@ -1,11 +1,11 @@
-const TITLES: Record<string, string> = {
-    planificacion: 'Planificación Financiera',
-    simulaciones: 'Simulador "What-If"',
-    proyeccion: 'Análisis de Futuro',
-    datos: 'Datos y Ajustes',
-};
 
 export const Header = () => {
+    const TITLES: Record<string, string> = {
+        planificacion: 'Planificación Financiera',
+        simulaciones: 'Simulador "What-If"',
+        proyeccion: 'Análisis de Futuro',
+        datos: 'Datos y Ajustes',
+    };
 
     const getTitle = () => {
         const lastSegment = location.pathname.split('/').filter(Boolean).pop() ?? '';
