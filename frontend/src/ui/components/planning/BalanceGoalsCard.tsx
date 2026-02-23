@@ -7,9 +7,12 @@ interface BalanceGoalsCardProps {
 
 export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     return (
-        <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-6">
-                <h3 className="font-bold">{title}</h3>
+                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                    <span className="text-amber-500 text-sm">🎯</span>
+                </div>
+                <h3 className="font-bold text-slate-900">{title}</h3>
             </div>
 
             <div className="space-y-4">

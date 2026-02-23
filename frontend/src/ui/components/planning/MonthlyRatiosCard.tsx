@@ -7,10 +7,12 @@ interface MonthlyRatiosCardProps {
 
 export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
     return (
-        <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-6">
-                <PercentCircle size={24} className="text-primary" />
-                <h3 className="font-bold capitalize">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <PercentCircle size={18} className="text-primary" />
+                </div>
+                <h3 className="font-bold text-slate-900 capitalize">
                     {title}
                 </h3>
             </div>

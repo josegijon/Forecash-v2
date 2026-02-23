@@ -1,103 +1,68 @@
-import { Pie, PieChart, Sector, Tooltip, type PieSectorDataItem, type TooltipIndex } from "recharts"
-// import { RechartsDevtools } from '@recharts/devtools';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 
-// const renderActiveShape = ({
-//     cx,
-//     cy,
-//     midAngle,
-//     innerRadius,
-//     outerRadius,
-//     startAngle,
-//     endAngle,
-//     fill,
-//     payload,
-//     percent,
-//     value,
-// }: PieSectorDataItem) => {
-//     const RADIAN = Math.PI / 180;
-//     const sin = Math.sin(-RADIAN * (midAngle ?? 1));
-//     const cos = Math.cos(-RADIAN * (midAngle ?? 1));
-//     const sx = (cx ?? 0) + ((outerRadius ?? 0) + 10) * cos;
-//     const sy = (cy ?? 0) + ((outerRadius ?? 0) + 10) * sin;
-//     const mx = (cx ?? 0) + ((outerRadius ?? 0) + 30) * cos;
-//     const my = (cy ?? 0) + ((outerRadius ?? 0) + 30) * sin;
-//     const ex = mx + (cos >= 0 ? 1 : -1) * 22;
-//     const ey = my;
-//     const textAnchor = cos >= 0 ? 'start' : 'end';
+interface CategoryData {
+    name: string
+    value: number
+    fill: string
+}
 
-//     return (
-//         <g>
-//             <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-//                 {payload.name}
-//             </text>
-//             <Sector
-//                 cx={cx}
-//                 cy={cy}
-//                 innerRadius={innerRadius}
-//                 outerRadius={outerRadius}
-//                 startAngle={startAngle}
-//                 endAngle={endAngle}
-//                 fill={fill}
-//             />
-//             <Sector
-//                 cx={cx}
-//                 cy={cy}
-//                 startAngle={startAngle}
-//                 endAngle={endAngle}
-//                 innerRadius={(outerRadius ?? 0) + 6}
-//                 outerRadius={(outerRadius ?? 0) + 10}
-//                 fill={fill}
-//             />
-//             <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
-//             <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-//             <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`PV ${value}`}</text>
-//             <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
-//                 {`(Rate ${((percent ?? 1) * 100).toFixed(2)}%)`}
-//             </text>
-//         </g>
-//     );
-// };
+const MOCK_CATEGORIES: CategoryData[] = [
+    { name: "Hogar", value: 870, fill: "#6366f1" },
+    { name: "Alimentación", value: 350, fill: "#f59e0b" },
+    { name: "Salud", value: 160, fill: "#10b981" },
+    { name: "Transporte", value: 50, fill: "#3b82f6" },
+    { name: "Entretenimiento", value: 25, fill: "#ec4899" },
+]
 
-export const CategoryDonutChart = (
-    //     {
-    //     isAnimationActive = true,
-    //     defaultIndex = undefined,
-    // }: {
-    //     isAnimationActive?: boolean;
-    //     defaultIndex?: TooltipIndex;
-    // }
-) => {
+export const CATEGORY_DATA = MOCK_CATEGORIES
+
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { name: string; value: number; payload: CategoryData }[] }) => {
+    if (!active || !payload?.length) return null
+    const { name, value, payload: cat } = payload[0]
+    const total = MOCK_CATEGORIES.reduce((s, c) => s + c.value, 0)
+    const percent = ((value / total) * 100).toFixed(1)
+
     return (
-        // <PieChart
-        //     style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
-        //     responsive
-        //     margin={{
-        //         top: 50,
-        //         right: 120,
-        //         bottom: 0,
-        //         left: 120,
-        //     }}
-        // >
-        //     <Pie
-        //         activeShape={renderActiveShape}
-        //         data={data}
-        //         cx="50%"
-        //         cy="50%"
-        //         innerRadius="60%"
-        //         outerRadius="80%"
-        //         fill="#8884d8"
-        //         dataKey="value"
-        //         isAnimationActive={isAnimationActive}
-        //     />
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200 px-4 py-3">
+            <div className="flex items-center gap-2 mb-1">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: cat.fill }} />
+                <span className="text-sm font-bold text-slate-800">{name}</span>
+            </div>
+            <p className="text-sm text-slate-600">
+                €{value.toLocaleString("es-ES")} · <span className="font-semibold">{percent}%</span>
+            </p>
+        </div>
+    )
+}
 
-        //     <Tooltip
-        //         content={() => null}
-        //         defaultIndex={defaultIndex}
-        //     />
-        //     {/* <RechartsDevtools /> */}
-        // </PieChart>
-        <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-            <span className="text-gray-400">[Gráfico de dona de categorías]</span>
+export const CategoryDonutChart = () => {
+    const total = MOCK_CATEGORIES.reduce((sum, cat) => sum + cat.value, 0)
+
+    return (
+        <div className="relative w-full h-52">
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                    <Pie
+                        data={MOCK_CATEGORIES}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius="60%"
+                        outerRadius="85%"
+                        paddingAngle={3}
+                        dataKey="value"
+                        strokeWidth={0}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+            </ResponsiveContainer>
+
+            {/* Center label */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Total</span>
+                <span className="text-lg font-extrabold text-slate-800">
+                    €{total.toLocaleString("es-ES")}
+                </span>
+            </div>
         </div>
     )
 }
