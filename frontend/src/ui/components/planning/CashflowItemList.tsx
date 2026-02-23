@@ -1,13 +1,17 @@
 import { PlusCircle } from "lucide-react"
 import { CashflowItem } from "./CashflowItem"
 
-export const CashflowItemList = () => {
+interface CashflowItemListProps {
+    onAddItem?: () => void;
+}
+
+export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     return (
         <div className="flex flex-col gap-6 col-span-12 lg:col-span-7 bg-card-light rounded-2xl border border-slate-200 p-6">
             <div className="flex items-center gap-2.5 justify-between">
                 <h3 className="font-bold text-lg">Entradas de Efectivo y Gastos</h3>
                 <button
-                    // onClick={onAddItem}
+                    onClick={onAddItem}
                     className="flex items-center gap-1 text-xs font-bold text-primary hover:bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20 transition-all cursor-pointer"
                 >
                     <PlusCircle size={18} />
