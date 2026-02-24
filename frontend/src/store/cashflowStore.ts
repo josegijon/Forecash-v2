@@ -1,16 +1,17 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 // ── Tipos ──
 
 export type Frequency =
-    | "once"        // pago único
+    | "once"
     | "daily"
     | "weekly"
-    | "biweekly"    // quincenal
+    | "biweekly"
     | "monthly"
-    | "bimonthly"   // bimestral
-    | "quarterly"   // trimestral
-    | "semiannual"  // semestral
+    | "bimonthly"
+    | "quarterly"
+    | "semiannual"
     | "annual";
 
 export interface CashflowItem {
@@ -18,96 +19,119 @@ export interface CashflowItem {
     scenarioId: string;
     type: "income" | "expense";
     name: string;
-    amount: number;            // siempre positivo, el tipo indica si suma o resta
+    amount: number;
     categoryId: string;
     frequency: Frequency;
-    startDate: string;         // ISO string "2026-03-01"
-    endDate?: string;          // opcional: si no tiene, se repite indefinidamente
+    startDate: string;
+    endDate?: string;
     note?: string;
 }
 
-// Tipo para crear un ítem (sin id, se genera automáticamente)
 export type NewCashflowItem = Omit<CashflowItem, "id">;
 
 interface CashflowState {
-    // Mapa: scenarioId → ítems de ese escenario
     items: Record<string, CashflowItem[]>;
 
     addItem: (item: NewCashflowItem) => void;
-    updateItem: (id: string, scenarioId: string, changes: Partial<CashflowItem>) => void;
+    updateItem: (
+        id: string,
+        scenarioId: string,
+        changes: Partial<CashflowItem>
+    ) => void;
     removeItem: (id: string, scenarioId: string) => void;
     removeAllByScenario: (scenarioId: string) => void;
 }
 
-export const useCashflowStore = create<CashflowState>((set) => ({
-    // ── Estado ──
-    items: {},
+export const useCashflowStore = create<CashflowState>()(
+    persist(
+        (set, get) => ({
+            // ── Estado ──
+            items: {},
 
-    // ── Acciones ──
-    addItem: (item) =>
-        set((state) => {
-            const newItem: CashflowItem = {
-                ...item,
-                id: `cf-${Date.now()}`,
-            };
-            const scenarioItems = state.items[item.scenarioId] ?? [];
+            // ── Acciones ──
+            addItem: (item) =>
+                set((state) => {
+                    const newItem: CashflowItem = {
+                        ...item,
+                        id: crypto.randomUUID(), // 🔥 mejor que Date.now()
+                    };
 
-            return {
-                items: {
-                    ...state.items,
-                    [item.scenarioId]: [...scenarioItems, newItem],
-                },
-            };
+                    const scenarioItems =
+                        state.items[item.scenarioId] ?? [];
+
+                    return {
+                        items: {
+                            ...state.items,
+                            [item.scenarioId]: [
+                                ...scenarioItems,
+                                newItem,
+                            ],
+                        },
+                    };
+                }),
+
+            updateItem: (id, scenarioId, changes) =>
+                set((state) => {
+                    const scenarioItems =
+                        state.items[scenarioId] ?? [];
+
+                    return {
+                        items: {
+                            ...state.items,
+                            [scenarioId]: scenarioItems.map((item) =>
+                                item.id === id
+                                    ? { ...item, ...changes }
+                                    : item
+                            ),
+                        },
+                    };
+                }),
+
+            removeItem: (id, scenarioId) =>
+                set((state) => {
+                    const scenarioItems =
+                        state.items[scenarioId] ?? [];
+
+                    return {
+                        items: {
+                            ...state.items,
+                            [scenarioId]: scenarioItems.filter(
+                                (item) => item.id !== id
+                            ),
+                        },
+                    };
+                }),
+
+            removeAllByScenario: (scenarioId) =>
+                set((state) => {
+                    const { [scenarioId]: _, ...rest } =
+                        state.items;
+                    return { items: rest };
+                }),
         }),
+        {
+            name: "cashflow-storage",
 
-    updateItem: (id, scenarioId, changes) =>
-        set((state) => {
-            const scenarioItems = state.items[scenarioId] ?? [];
+            partialize: (state) => ({
+                items: state.items,
+            }),
 
-            return {
-                items: {
-                    ...state.items,
-                    [scenarioId]: scenarioItems.map((item) =>
-                        item.id === id ? { ...item, ...changes } : item
-                    ),
-                },
-            };
-        }),
+            version: 1,
+        }
+    )
+);
 
-    removeItem: (id, scenarioId) =>
-        set((state) => {
-            const scenarioItems = state.items[scenarioId] ?? [];
-
-            return {
-                items: {
-                    ...state.items,
-                    [scenarioId]: scenarioItems.filter((item) => item.id !== id),
-                },
-            };
-        }),
-
-    // Limpiar todos los ítems de un escenario (útil al eliminar escenario)
-    removeAllByScenario: (scenarioId) =>
-        set((state) => {
-            const { [scenarioId]: _, ...rest } = state.items;
-            return { items: rest };
-        }),
-}));
-
-// ── Selectores auxiliares ──
-// Se usan así: const items = useScenarioItems("scenario-1")
-
-const EMPTY_ITEMS: CashflowItem[] = []; // referencia estable, no se recrea en cada render
+// ── Selectores auxiliares ── 
+// Se usan así: const items = useScenarioItems("scenario-1") 
+const EMPTY_ITEMS: CashflowItem[] = []; // referencia estable, no se recrea en cada render 
 
 export const useScenarioItems = (scenarioId: string) =>
     useCashflowStore((state) => state.items[scenarioId] ?? EMPTY_ITEMS);
 
 export const useScenarioIncomes = (scenarioId: string) =>
     useCashflowStore(
-        (state) => (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "income")
-    );
+        (state) => (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "income"));
 
 export const useScenarioExpenses = (scenarioId: string) =>
-    useCashflowStore(
-        (state) => (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "expense")
-    );
+    useCashflowStore((state) =>
+        (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "expense"));
