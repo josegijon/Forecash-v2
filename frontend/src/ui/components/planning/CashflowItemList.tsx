@@ -1,30 +1,10 @@
 import { PlusCircle, Search } from "lucide-react"
 import { useState } from "react"
 import { CashflowItem } from "./CashflowItem"
+import { useCashflowStore, useCategoryStore, useCurrencySymbol, useScenarioItems, useScenarioStore } from "@/store";
+import type { Frequency } from '../../../store/cashflowStore';
 
 type FilterType = "all" | "income" | "expense"
-
-interface MockItem {
-    id: number
-    type: "income" | "expense"
-    name: string
-    category: string
-    frequency: string
-    amount: number
-}
-
-const MOCK_ITEMS: MockItem[] = [
-    { id: 1, type: "income", name: "Salario", category: "Trabajo", frequency: "Mensual", amount: 2500.00 },
-    { id: 2, type: "income", name: "Freelance", category: "Trabajo", frequency: "Mensual", amount: 700.00 },
-    { id: 3, type: "expense", name: "Alquiler", category: "Hogar", frequency: "Mensual", amount: 750.00 },
-    { id: 4, type: "expense", name: "Supermercado", category: "Alimentación", frequency: "Mensual", amount: 350.00 },
-    { id: 5, type: "expense", name: "Transporte público", category: "Transporte", frequency: "Mensual", amount: 50.00 },
-    { id: 6, type: "expense", name: "Seguro médico", category: "Salud", frequency: "Mensual", amount: 120.00 },
-    { id: 7, type: "expense", name: "Gimnasio", category: "Salud", frequency: "Mensual", amount: 40.00 },
-    { id: 8, type: "expense", name: "Netflix + Spotify", category: "Entretenimiento", frequency: "Mensual", amount: 25.00 },
-    { id: 9, type: "expense", name: "Electricidad", category: "Hogar", frequency: "Mensual", amount: 65.00 },
-    { id: 10, type: "expense", name: "Internet + Móvil", category: "Hogar", frequency: "Mensual", amount: 55.00 },
-]
 
 interface CashflowItemListProps {
     onAddItem?: () => void;
@@ -34,15 +14,39 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     const [filter, setFilter] = useState<FilterType>("all")
     const [searchQuery, setSearchQuery] = useState("")
 
-    const filteredItems = MOCK_ITEMS
-        .filter((item) => filter === "all" || item.type === filter)
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId); // Obtenemos el ID del escenario activo para mostrar solo sus ítems
+    const items = useScenarioItems(activeScenarioId); // Hook personalizado para obtener solo los ítems del escenario activo
+    const categories = useCategoryStore((s) => s.categories); // Obtenemos las categorías para mostrar el nombre en lugar del ID
+    const currencySymbol = useCurrencySymbol(); // Obtenemos el símbolo de moneda actual para mostrar en el resumen
+    const removeItem = useCashflowStore((s) => s.removeItem); // Acción para eliminar ítems
+
+    const getCategoryName = (categoryId: string) => {
+        const category = categories.find((c) => c.id === categoryId);
+        return category ? category.name : "Sin categoría";
+    };
+
+    const frequencyLabels: Record<Frequency, string> = {
+        once: "Una vez",
+        daily: "Diaria",
+        weekly: "Semanal",
+        biweekly: "Quincenal",
+        monthly: "Mensual",
+        bimonthly: "Bimestral",
+        quarterly: "Trimestral",
+        semiannual: "Semestral",
+        annual: "Anual",
+    };
+
+
+    const filteredItems = items
+        .filter((item) => filter === "all" || item.type === filter) // Filtrar por tipo (ingreso/gasto)
         .filter((item) =>
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.category.toLowerCase().includes(searchQuery.toLowerCase())
+            getCategoryName(item.categoryId).toLowerCase().includes(searchQuery.toLowerCase())
         )
 
-    const totalIncome = MOCK_ITEMS.filter((i) => i.type === "income").reduce((s, i) => s + i.amount, 0)
-    const totalExpenses = MOCK_ITEMS.filter((i) => i.type === "expense").reduce((s, i) => s + i.amount, 0)
+    const totalIncome = items.filter((i) => i.type === "income").reduce((s, i) => s + i.amount, 0)
+    const totalExpenses = items.filter((i) => i.type === "expense").reduce((s, i) => s + i.amount, 0)
 
     const filterTabs: { key: FilterType; label: string }[] = [
         { key: "all", label: "Todos" },
@@ -101,9 +105,11 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                             key={item.id}
                             type={item.type}
                             name={item.name}
-                            category={item.category}
+                            category={getCategoryName(item.categoryId)}
                             frequency={item.frequency}
+                            currencySymbol={currencySymbol}
                             amount={item.amount}
+                            onDelete={() => removeItem(item.id, activeScenarioId)}
                         />
                     ))
                 ) : (
@@ -120,20 +126,20 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ingresos</span>
                         <span className="text-sm font-bold text-emerald-600">
-                            €{totalIncome.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                            {currencySymbol}{totalIncome.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gastos</span>
                         <span className="text-sm font-bold text-rose-600">
-                            €{totalExpenses.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                            {currencySymbol}{totalExpenses.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
                 </div>
                 <div className="flex flex-col items-end">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Balance</span>
                     <span className={`text-sm font-extrabold ${totalIncome - totalExpenses >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                        €{(totalIncome - totalExpenses).toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                        {currencySymbol}{(totalIncome - totalExpenses).toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                     </span>
                 </div>
             </div>

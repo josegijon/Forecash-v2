@@ -97,18 +97,17 @@ export const useCashflowStore = create<CashflowState>((set) => ({
 // ── Selectores auxiliares ──
 // Se usan así: const items = useScenarioItems("scenario-1")
 
-// Permiten obtener solo los ítems de un escenario, o solo ingresos/gastos, etc.
-export const useScenarioItems = (scenarioId: string) =>
-    useCashflowStore((state) => state.items[scenarioId] ?? []);
+const EMPTY_ITEMS: CashflowItem[] = []; // referencia estable, no se recrea en cada render
 
-// Obtener solo ingresos de un escenario
+export const useScenarioItems = (scenarioId: string) =>
+    useCashflowStore((state) => state.items[scenarioId] ?? EMPTY_ITEMS);
+
 export const useScenarioIncomes = (scenarioId: string) =>
     useCashflowStore(
-        (state) => (state.items[scenarioId] ?? []).filter((i) => i.type === "income")
+        (state) => (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "income")
     );
 
-// Obtener solo gastos de un escenario
 export const useScenarioExpenses = (scenarioId: string) =>
     useCashflowStore(
-        (state) => (state.items[scenarioId] ?? []).filter((i) => i.type === "expense")
+        (state) => (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "expense")
     );
