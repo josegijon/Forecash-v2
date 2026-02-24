@@ -30,9 +30,9 @@ export const PlanningSummaryStrip = () => {
     const cards: SummaryCardProps[] = [
         {
             label: "Ingresos totales",
-            value: "€3.200,00",
+            value: "€3.200,00", // TODO: calcular dinámicamente sumando los ítems del escenario activo
             icon: <TrendingUp size={22} />,
-            trend: { value: "+5,2%", positive: true },
+            trend: { value: "+5,2%", positive: true }, // TODO: calcular dinámicamente comparando con el mes anterior
             accentClass: "text-emerald-600",
             bgClass: "bg-emerald-50",
         },

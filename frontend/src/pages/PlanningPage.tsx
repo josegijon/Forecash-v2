@@ -7,13 +7,38 @@ import { CategoryExpensesCard } from "@/ui/components/planning/CategoryExpensesC
 import { MonthlyRatiosCard } from "@/ui/components/planning/MonthlyRatiosCard"
 import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummaryStrip"
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator"
+import { useCashflowStore, useScenarioStore } from "@/store"
 
 export const PlanningPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
 
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const addItem = useCashflowStore((s) => s.addItem);
+
     const handleSubmitNewItem = (data: CashflowFormData) => {
-        console.log("Nuevo ítem:", data);
-        // TODO: Persistir en store
+        // Convertir "startsInMonths" en fecha ISO
+        const start = new Date();
+        start.setMonth(start.getMonth() + data.startsInMonths);
+
+        // Convertir "endsInMonths" en fecha ISO, si se proporcionó
+        let endDate: string | undefined = undefined;
+
+        if (data.endsInMonths !== undefined) {
+            const end = new Date();
+            end.setMonth(end.getMonth() + data.endsInMonths);
+            endDate = end.toISOString().slice(0, 10);
+        }
+
+        addItem({
+            scenarioId: activeScenarioId,
+            type: data.type,
+            name: data.concept,
+            amount: data.amount,
+            categoryId: data.categoryId,
+            frequency: data.frequency,
+            startDate: start.toISOString().slice(0, 10),
+            endDate,
+        })
     };
 
     return (
@@ -42,19 +67,11 @@ export const PlanningPage = () => {
 
                     <div className="col-span-12 lg:col-span-5 space-y-6">
                         {/* Ratios mensuales */}
-                        <MonthlyRatiosCard
-                            title="Ratios Mensuales"
-                        />
-
+                        <MonthlyRatiosCard title="Ratios Mensuales" />
                         {/* Saldo y metas */}
-                        <BalanceGoalsCard
-                            title="Saldo y metas"
-                        />
-
+                        <BalanceGoalsCard title="Saldo y metas" />
                         {/* Gastos por categoría */}
-                        <CategoryExpensesCard
-                            title="Gastos por categoría"
-                        />
+                        <CategoryExpensesCard title="Gastos por categoría" />
                     </div>
                 </div>
             </div>

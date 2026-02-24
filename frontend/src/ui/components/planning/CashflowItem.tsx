@@ -6,10 +6,11 @@ interface CashflowItemProps {
     category: string;
     frequency: string;
     amount: number;
-    // onDelete?: () => void;
+    currencySymbol: string;
+    onDelete?: () => void;
 }
 
-export const CashflowItem = ({ type, name, category, frequency, amount }: CashflowItemProps) => {
+export const CashflowItem = ({ type, name, category, frequency, amount, currencySymbol, onDelete }: CashflowItemProps) => {
     const isIncome = type === 'income';
 
     return (
@@ -35,10 +36,10 @@ export const CashflowItem = ({ type, name, category, frequency, amount }: Cashfl
 
             <div className="flex items-center justify-center gap-6 w-full md:w-auto">
                 <span className={`font-bold ${isIncome ? 'text-emerald-600' : 'text-slate-800'}`}>
-                    ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {currencySymbol}{amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 <button
-                    // onClick={onDelete}
+                    onClick={onDelete}
                     className="text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                 >
                     <Trash2 size={18} />

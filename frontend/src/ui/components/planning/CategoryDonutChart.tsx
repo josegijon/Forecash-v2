@@ -1,3 +1,4 @@
+import { useCurrencySymbol } from "@/store"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 
 interface CategoryData {
@@ -22,6 +23,9 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { name
     const total = MOCK_CATEGORIES.reduce((s, c) => s + c.value, 0)
     const percent = ((value / total) * 100).toFixed(1)
 
+    const currencySymbol = useCurrencySymbol();
+
+
     return (
         <div className="bg-white rounded-xl shadow-lg border border-slate-200 px-4 py-3">
             <div className="flex items-center gap-2 mb-1">
@@ -29,7 +33,7 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { name
                 <span className="text-sm font-bold text-slate-800">{name}</span>
             </div>
             <p className="text-sm text-slate-600">
-                €{value.toLocaleString("es-ES")} · <span className="font-semibold">{percent}%</span>
+                {currencySymbol}{value.toLocaleString("es-ES")} · <span className="font-semibold">{percent}%</span>
             </p>
         </div>
     )
@@ -37,6 +41,7 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { name
 
 export const CategoryDonutChart = () => {
     const total = MOCK_CATEGORIES.reduce((sum, cat) => sum + cat.value, 0)
+    const currencySymbol = useCurrencySymbol();
 
     return (
         <div className="relative w-full h-52">
@@ -60,7 +65,7 @@ export const CategoryDonutChart = () => {
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-[10px] font-bold text-slate-400 uppercase">Total</span>
                 <span className="text-lg font-extrabold text-slate-800">
-                    €{total.toLocaleString("es-ES")}
+                    {currencySymbol}{total.toLocaleString("es-ES")}
                 </span>
             </div>
         </div>

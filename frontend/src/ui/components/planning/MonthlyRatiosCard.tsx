@@ -20,7 +20,7 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
             <div className="flex flex-col gap-4">
                 <RatioProgressBar
                     label="Tasa de ahorro"
-                    percentage={25}
+                    percentage={25} // TODO: calcular dinámicamente (ahorro / ingresos)
                     color="#10b981"
                 />
 

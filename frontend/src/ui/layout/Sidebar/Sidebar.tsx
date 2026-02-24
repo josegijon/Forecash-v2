@@ -6,7 +6,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 export const Sidebar = () => {
     return (
-        <aside className="w-64 border-r border-slate-200/80 bg-white flex flex-col sticky top-0 h-screen shadow-sm">
+        <aside className="w-64 border-r border-slate-200/80 bg-white flex flex-col sticky top-0 h-screen shadow-sm z-11">
             {/* Header */}
             <SidebarHeader
                 icon={<Wallet size={24} className="text-white" strokeWidth={2.5} />}

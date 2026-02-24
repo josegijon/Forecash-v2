@@ -1,5 +1,8 @@
+import { useLocation } from "react-router";
 
 export const Header = () => {
+    const location = useLocation();
+
     const TITLES: Record<string, string> = {
         planificacion: 'Planificación Financiera',
         simulaciones: 'Simulador "What-If"',

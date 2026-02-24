@@ -1,4 +1,6 @@
 import { Database, FlaskConical, LayoutDashboard, LineChart } from "lucide-react"
+import { useParams } from "react-router"
+
 import { SidebarNavLink } from "./SidebarNavLink"
 
 const NAV_ITEMS = [
@@ -25,7 +27,7 @@ const NAV_ITEMS = [
 ];
 
 export const SidebarNavigation = () => {
-    const id = 1;
+    const { id } = useParams();
 
     return (
         <>
