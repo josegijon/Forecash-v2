@@ -1,7 +1,10 @@
 import { CATEGORY_DATA } from "./CategoryDonutChart"
+import { useCurrencySymbol } from "@/store"
 
 export const CategoryLegend = () => {
     const total = CATEGORY_DATA.reduce((sum, cat) => sum + cat.value, 0)
+
+    const currencySymbol = useCurrencySymbol();
 
     return (
         <div className="flex flex-col gap-3 mt-4">
@@ -20,7 +23,7 @@ export const CategoryLegend = () => {
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-bold text-slate-800">
-                                €{cat.value.toLocaleString("es-ES")}
+                                {currencySymbol}{cat.value.toLocaleString("es-ES")}
                             </span>
                             <span className="text-xs font-semibold text-slate-400 min-w-10 text-right">
                                 {percent}%

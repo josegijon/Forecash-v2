@@ -1,11 +1,14 @@
 import { CurrencyInputField } from "./CurrencyInputField";
 import { GoalProgressRing } from "./GoalProgressRing";
+import { useCurrencySymbol } from "@/store"
 
 interface BalanceGoalsCardProps {
     title: string;
 }
 
 export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
+    const currencySymbol = useCurrencySymbol();
+
     return (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-6">
@@ -19,7 +22,7 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                 <CurrencyInputField
                     label="Saldo Inicial Actual"
                     value={5000}
-                    currencySymbol="€"
+                    currencySymbol={currencySymbol}
                     // TODO: Implementar onChange para actualizar el estado del saldo inicial
                     onChange={(newValue) => console.log("Nuevo saldo inicial:", newValue)}
                 />
@@ -28,7 +31,7 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                 <CurrencyInputField
                     label="Objetivo de Ahorro Mensual"
                     value={800}
-                    currencySymbol="€"
+                    currencySymbol={currencySymbol}
                     onChange={(newValue) => console.log("Nuevo objetivo de ahorro:", newValue)}
                 />
 
