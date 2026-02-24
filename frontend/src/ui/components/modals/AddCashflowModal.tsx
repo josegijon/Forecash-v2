@@ -15,27 +15,14 @@ export interface CashflowFormData {
     type: CashflowType;
     concept: string;
     amount: number;
-    category: string;
+    categoryId: string;
     frequency: Frequency;
     startsInMonths: number;
     endsInMonths?: number;
 }
 
-const CATEGORIES = useCategoryStore.getState().categories.map((c) => c.name); // Obtenemos solo los nombres de las categorías para el select
-
-const categoryList = (CATEGORIES: string[], type: CashflowType) => {
-    const filteredCategories = CATEGORIES.filter((cat) => {
-        const category = useCategoryStore.getState().categories.find((c) => c.name === cat);
-        return category?.type === type;
-    });
-    return filteredCategories.length > 0 ? filteredCategories : ["Sin categorías disponibles"];
-}
-
 const frequencyLabels: Record<Frequency, string> = {
     once: "Una vez",
-    daily: "Diaria",
-    weekly: "Semanal",
-    biweekly: "Quincenal",
     monthly: "Mensual",
     bimonthly: "Bimestral",
     quarterly: "Trimestral",
@@ -47,21 +34,25 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
     const [type, setType] = useState<CashflowType>("income");
     const [concept, setConcept] = useState("");
     const [amount, setAmount] = useState("");
-    const [category, setCategory] = useState(CATEGORIES[0]);
     const [frequency, setFrequency] = useState<Frequency>("monthly");
     const [startsInMonths, setStartsInMonths] = useState(0);
     const [hasEndDate, setHasEndDate] = useState(false);
     const [endsInMonths, setEndsInMonths] = useState(12);
 
     const currencySymbol = useCurrencySymbol();
+    const categories = useCategoryStore((s) => s.categories);
+
+    const [categoryId, setCategoryId] = useState<string>("");
 
     const isIncome = type === "income";
+
+    const filteredCategories = categories.filter((c) => c.type === type);
 
     const resetForm = () => {
         setType("income");
         setConcept("");
         setAmount("");
-        setCategory(CATEGORIES[0]);
+        setCategoryId(filteredCategories[0]?.id || "");
         setFrequency("monthly");
         setStartsInMonths(0);
         setHasEndDate(false);
@@ -80,7 +71,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
             type,
             concept: concept.trim(),
             amount: parseFloat(amount),
-            category,
+            categoryId,
             frequency,
             startsInMonths,
             ...(hasEndDate && { endsInMonths }),
@@ -186,13 +177,13 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                             Categoría
                         </label>
                         <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
                             className="w-full px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer appearance-none"
                         >
-                            {categoryList(CATEGORIES, type).map((cat) => (
-                                <option key={cat} value={cat}>
-                                    {cat}
+                            {filteredCategories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
                                 </option>
                             ))}
                         </select>

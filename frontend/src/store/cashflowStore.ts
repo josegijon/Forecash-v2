@@ -5,9 +5,6 @@ import { persist } from "zustand/middleware";
 
 export type Frequency =
     | "once"
-    | "daily"
-    | "weekly"
-    | "biweekly"
     | "monthly"
     | "bimonthly"
     | "quarterly"

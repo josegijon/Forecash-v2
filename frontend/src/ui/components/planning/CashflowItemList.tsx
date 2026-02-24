@@ -13,14 +13,15 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     const [filter, setFilter] = useState<FilterType>("all")
     const [searchQuery, setSearchQuery] = useState("")
 
-    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId); // Obtenemos el ID del escenario activo para mostrar solo sus ítems
-    const items = useScenarioItems(activeScenarioId); // Hook personalizado para obtener solo los ítems del escenario activo
-    const categories = useCategoryStore((s) => s.categories); // Obtenemos las categorías para mostrar el nombre en lugar del ID
-    const currencySymbol = useCurrencySymbol(); // Obtenemos el símbolo de moneda actual para mostrar en el resumen
-    const removeItem = useCashflowStore((s) => s.removeItem); // Acción para eliminar ítems
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const items = useScenarioItems(activeScenarioId);
+    const categories = useCategoryStore((s) => s.categories);
+    const currencySymbol = useCurrencySymbol();
+    const removeItem = useCashflowStore((s) => s.removeItem);
 
     const getCategoryName = (categoryId: string) => {
         const category = categories.find((c) => c.id === categoryId);
+
         return category ? category.name : "Sin categoría";
     };
 

@@ -34,7 +34,7 @@ export const PlanningPage = () => {
             type: data.type,
             name: data.concept,
             amount: data.amount,
-            categoryId: data.category, // TODO: mapear al id real cuando conectemos el modal con categoryStore
+            categoryId: data.categoryId,
             frequency: data.frequency,
             startDate: start.toISOString().slice(0, 10),
             endDate,
