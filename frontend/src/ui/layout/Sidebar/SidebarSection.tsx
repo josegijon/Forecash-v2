@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react"
+import { useNavigate, useParams } from "react-router";
 
 import { useScenarioStore } from "@/store";
 import { AddScenarioModal } from "@/ui/components/modals/AddScenarioModal";
@@ -7,13 +8,15 @@ import { AddScenarioModal } from "@/ui/components/modals/AddScenarioModal";
 export const SidebarSection = () => {
     const [showAddScenarioModal, setShowAddScenarioModal] = useState(false);
 
-    const scenarios = useScenarioStore((s) => s.scenarios);
-    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
-    const setActiveScenario = useScenarioStore((s) => s.setActiveScenario);
+    const navigate = useNavigate();
+    const { id: currentRouteId } = useParams();
 
+    const scenarios = useScenarioStore((s) => s.scenarios);
+
+    // Solo navegamos — el ScenarioLayout se encarga de sincronizar el store
     const handleSelectScenario = (scenarioId: string) => {
-        if (scenarioId === activeScenarioId) return;
-        setActiveScenario(scenarioId);
+        if (scenarioId === currentRouteId) return;
+        navigate(`/escenario/${scenarioId}/planificacion`);
     }
 
     return (
@@ -43,7 +46,7 @@ export const SidebarSection = () => {
                         key={scenario.id}
                         onClick={() => handleSelectScenario(scenario.id)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all truncate group cursor-pointer 
-                                ${scenario.id === activeScenarioId
+                                ${scenario.id === currentRouteId
                                 ? 'bg-linear-to-r from-blue-50 to-indigo-50 text-blue-700 shadow-sm border border-blue-100'
                                 : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                             }`
@@ -51,7 +54,7 @@ export const SidebarSection = () => {
                     >
                         <div className="flex items-center gap-2.5">
                             <span className={`w-2 h-2 rounded-full transition-all 
-                                    ${scenario.id === activeScenarioId
+                                    ${scenario.id === currentRouteId
                                     ? 'bg-blue-600 shadow-sm shadow-blue-300'
                                     : 'bg-slate-300 group-hover:bg-slate-400'
                                 }

@@ -1,26 +1,34 @@
+import { useEffect } from "react"
 import { DataPage } from "@/pages/DataPage"
 import { PlanningPage } from "@/pages/PlanningPage"
 import { ProjectionPage } from "@/pages/ProjectionPage"
 import { SimulationPage } from "@/pages/SimulationPage"
 import { MainLayout } from "@/ui/layout/MainLayout"
-import { createBrowserRouter, Navigate, Outlet } from "react-router"
+import { useScenarioStore } from "@/store"
+import { createBrowserRouter, Navigate, Outlet, useParams } from "react-router"
 
 const ScenarioLayout = () => {
+    const { id } = useParams();
+    const setActiveScenario = useScenarioStore((s) => s.setActiveScenario);
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+
+    useEffect(() => {
+        if (id && id !== activeScenarioId) {
+            setActiveScenario(id);
+        }
+    }, [id, activeScenarioId, setActiveScenario]);
+
     return (
-        <>
-            <MainLayout>
-                <Outlet />
-            </MainLayout>
-        </>
-    )
+        <MainLayout>
+            <Outlet />
+        </MainLayout>
+    );
 };
 
 export const router = createBrowserRouter([
     {
-        // Esta ruta muestra la page planificación con el primer escenario de la lista (aun no hay una lista de escenarios, asi que se asume el id 1)
-        // TODO: Hacer cuando haya una lista de escenarios, mostrar la planificación del primer escenario de la lista
         path: "/",
-        element: <Navigate to="/escenario/1/planificacion" replace />
+        element: <Navigate to="/escenario/scenario-1/planificacion" replace />
     },
     {
         path: "/escenario/:id",
@@ -28,7 +36,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Navigate to="planificacion" replace />
+                element: <Navigate to="planificacion" replace />  // ← relativa, respeta el :id
             },
             {
                 path: "planificacion",
@@ -49,8 +57,7 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        // Cualquier ruta que no exista
         path: "*",
-        element: <Navigate to="/escenario/1/planificacion" replace />
+        element: <Navigate to="/escenario/scenario-1/planificacion" replace />
     }
 ])
