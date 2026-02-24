@@ -2,7 +2,6 @@ import { PlusCircle, Search } from "lucide-react"
 import { useState } from "react"
 import { CashflowItem } from "./CashflowItem"
 import { useCashflowStore, useCategoryStore, useCurrencySymbol, useScenarioItems, useScenarioStore } from "@/store";
-import type { Frequency } from '../../../store/cashflowStore';
 
 type FilterType = "all" | "income" | "expense"
 
@@ -24,19 +23,6 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
         const category = categories.find((c) => c.id === categoryId);
         return category ? category.name : "Sin categoría";
     };
-
-    const frequencyLabels: Record<Frequency, string> = {
-        once: "Una vez",
-        daily: "Diaria",
-        weekly: "Semanal",
-        biweekly: "Quincenal",
-        monthly: "Mensual",
-        bimonthly: "Bimestral",
-        quarterly: "Trimestral",
-        semiannual: "Semestral",
-        annual: "Anual",
-    };
-
 
     const filteredItems = items
         .filter((item) => filter === "all" || item.type === filter) // Filtrar por tipo (ingreso/gasto)

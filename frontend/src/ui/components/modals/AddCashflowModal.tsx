@@ -1,9 +1,9 @@
 
 import { useState } from "react";
-import { X, PlusCircle, MinusCircle, DollarSign, Tag, CalendarClock, Clock, TimerOff, Save } from "lucide-react";
+import { X, PlusCircle, MinusCircle, Tag, CalendarClock, Clock, TimerOff, Save } from "lucide-react";
+import { useCategoryStore, useCurrencySymbol, type Frequency } from "@/store";
 
 type CashflowType = "income" | "expense";
-type Frequency = "monthly" | "quarterly" | "annual" | "once";
 
 interface AddCashflowModalProps {
     isOpen: boolean;
@@ -21,24 +21,27 @@ export interface CashflowFormData {
     endsInMonths?: number;
 }
 
-const CATEGORIES = [
-    "Hogar",
-    "Transporte",
-    "Alimentación",
-    "Salud",
-    "Entretenimiento",
-    "Educación",
-    "Trabajo",
-    "Inversiones",
-    "Otros",
-];
+const CATEGORIES = useCategoryStore.getState().categories.map((c) => c.name); // Obtenemos solo los nombres de las categorías para el select
 
-const FREQUENCY_OPTIONS: { value: Frequency; label: string }[] = [
-    { value: "monthly", label: "Mensual" },
-    { value: "quarterly", label: "Trimestral" },
-    { value: "annual", label: "Anual" },
-    { value: "once", label: "Una vez" },
-];
+const categoryList = (CATEGORIES: string[], type: CashflowType) => {
+    const filteredCategories = CATEGORIES.filter((cat) => {
+        const category = useCategoryStore.getState().categories.find((c) => c.name === cat);
+        return category?.type === type;
+    });
+    return filteredCategories.length > 0 ? filteredCategories : ["Sin categorías disponibles"];
+}
+
+const frequencyLabels: Record<Frequency, string> = {
+    once: "Una vez",
+    daily: "Diaria",
+    weekly: "Semanal",
+    biweekly: "Quincenal",
+    monthly: "Mensual",
+    bimonthly: "Bimestral",
+    quarterly: "Trimestral",
+    semiannual: "Semestral",
+    annual: "Anual",
+};
 
 export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalProps) => {
     const [type, setType] = useState<CashflowType>("income");
@@ -49,6 +52,8 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
     const [startsInMonths, setStartsInMonths] = useState(0);
     const [hasEndDate, setHasEndDate] = useState(false);
     const [endsInMonths, setEndsInMonths] = useState(12);
+
+    const currencySymbol = useCurrencySymbol();
 
     const isIncome = type === "income";
 
@@ -160,7 +165,9 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                             Cantidad
                         </label>
                         <div className="relative">
-                            <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                {currencySymbol}
+                            </span>
                             <input
                                 type="number"
                                 min="0"
@@ -183,7 +190,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                             onChange={(e) => setCategory(e.target.value)}
                             className="w-full px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer appearance-none"
                         >
-                            {CATEGORIES.map((cat) => (
+                            {categoryList(CATEGORIES, type).map((cat) => (
                                 <option key={cat} value={cat}>
                                     {cat}
                                 </option>
@@ -198,17 +205,17 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                             Frecuencia
                         </label>
                         <div className="grid grid-cols-4 gap-2">
-                            {FREQUENCY_OPTIONS.map((opt) => (
+                            {Object.entries(frequencyLabels).map(([value, label]) => (
                                 <button
-                                    key={opt.value}
+                                    key={value}
                                     type="button"
-                                    onClick={() => setFrequency(opt.value)}
-                                    className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${frequency === opt.value
+                                    onClick={() => setFrequency(value as Frequency)}
+                                    className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border focus:outline-primary ${frequency === value
                                         ? "bg-primary/10 text-primary border-primary/30 ring-2 ring-primary/20"
                                         : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
                                         }`}
                                 >
-                                    {opt.label}
+                                    {label}
                                 </button>
                             ))}
                         </div>
@@ -235,7 +242,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                                 }}
                                 className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-primary"
                             />
-                            <span className="min-w-[4.5rem] text-center text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                            <span className="min-w-18 text-center text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
                                 {startsInMonths === 0 ? "Ahora" : `${startsInMonths} ${startsInMonths === 1 ? "mes" : "meses"}`}
                             </span>
                         </div>
@@ -272,7 +279,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                                         onChange={(e) => setEndsInMonths(Number(e.target.value))}
                                         className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-primary"
                                     />
-                                    <span className="min-w-[4.5rem] text-center text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                                    <span className="min-w-18 text-center text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
                                         {`${endsInMonths} ${endsInMonths === 1 ? "mes" : "meses"}`}
                                     </span>
                                 </div>
@@ -298,7 +305,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                     <button
                         onClick={handleSave}
                         disabled={!concept.trim() || !amount}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
                     >
                         <Save size={16} />
                         Guardar
