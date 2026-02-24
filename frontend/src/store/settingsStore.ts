@@ -1,9 +1,9 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-// Monedas soportadas
+// ── Monedas soportadas ──
 export type Currency = "EUR" | "USD" | "GBP";
 
-// Mapa de símbolos para mostrar en la UI
 export const currencySymbols: Record<Currency, string> = {
     EUR: "€",
     USD: "$",
@@ -25,33 +25,51 @@ interface SettingsState {
     toggleTheme: () => void;
 }
 
-export const useSettingsStore = create<SettingsState>((set) => ({
-    // ── Estado ──
-    currency: "EUR",
-    initialBalance: 0,
-    savingsGoal: 0,
-    theme: "dark",
+export const useSettingsStore = create<SettingsState>()(
+    persist(
+        (set, get) => ({
+            // ── Estado ──
+            currency: "EUR",
+            initialBalance: 0,
+            savingsGoal: 0,
+            theme: "dark",
 
-    // ── Acciones ──
-    setCurrency: (currency) =>
-        set({ currency }),
+            // ── Acciones ──
+            setCurrency: (currency) =>
+                set({ currency }),
 
-    setInitialBalance: (initialBalance) =>
-        set({ initialBalance }),
+            setInitialBalance: (initialBalance) =>
+                set({ initialBalance }),
 
-    setSavingsGoal: (savingsGoal) =>
-        set({ savingsGoal }),
+            setSavingsGoal: (savingsGoal) =>
+                set({ savingsGoal }),
 
-    setTheme: (theme) =>
-        set({ theme }),
+            setTheme: (theme) =>
+                set({ theme }),
 
-    toggleTheme: () =>
-        set((state) => ({
-            theme: state.theme === "dark" ? "light" : "dark",
-        })),
-}));
+            toggleTheme: () =>
+                set((state) => ({
+                    theme:
+                        state.theme === "dark"
+                            ? "light"
+                            : "dark",
+                })),
+        }),
+        {
+            name: "settings-storage",
+
+            partialize: (state) => ({
+                currency: state.currency,
+                initialBalance: state.initialBalance,
+                savingsGoal: state.savingsGoal,
+                theme: state.theme,
+            }),
+
+            version: 1,
+        }
+    )
+);
 
 // ── Selector auxiliar ──
-// Devuelve el símbolo de la moneda actual (€, $, £)
 export const useCurrencySymbol = () =>
     useSettingsStore((state) => currencySymbols[state.currency]);

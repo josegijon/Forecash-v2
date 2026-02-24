@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Category {
     id: string;
@@ -13,44 +14,86 @@ interface CategoryState {
     renameCategory: (id: string, newName: string) => void;
 }
 
-export const useCategoryStore = create<CategoryState>((set) => ({
-    // ── Estado ──
-    categories: [
-        { id: "cat-1", name: "Salario", type: "income" },
-        { id: "cat-2", name: "Regalo", type: "income" },
-        { id: "cat-3", name: "Alquiler", type: "expense" },
-        { id: "cat-4", name: "Comida", type: "expense" },
-        { id: "cat-5", name: "Transporte", type: "expense" },
-        { id: "cat-6", name: "Deuda", type: "expense" },
-        { id: "cat-7", name: "Suscripciones", type: "expense" },
-    ],
+const DEFAULT_CATEGORIES: Category[] = [
+    { id: "cat-1", name: "Salario", type: "income" },
+    { id: "cat-2", name: "Regalo", type: "income" },
+    { id: "cat-3", name: "Alquiler", type: "expense" },
+    { id: "cat-4", name: "Comida", type: "expense" },
+    { id: "cat-5", name: "Transporte", type: "expense" },
+    { id: "cat-6", name: "Deuda", type: "expense" },
+    { id: "cat-7", name: "Suscripciones", type: "expense" },
+];
 
-    // ── Acciones ──
-    addCategory: (name, type) =>
-        set((state) => {
-            // Evitar duplicados (mismo nombre y tipo)
-            const exists = state.categories.some(
-                (c) => c.name.toLowerCase() === name.toLowerCase() && c.type === type
-            );
-            if (exists) return state;
+export const useCategoryStore = create<CategoryState>()(
+    persist(
+        (set, get) => ({
+            // ── Estado ──
+            categories: DEFAULT_CATEGORIES,
 
-            return {
-                categories: [
-                    ...state.categories,
-                    { id: `cat-${Date.now()}`, name, type },
-                ],
-            };
+            // ── Acciones ──
+            addCategory: (name, type) =>
+                set((state) => {
+                    const trimmed = name.trim();
+
+                    if (!trimmed) return state;
+
+                    const exists = state.categories.some(
+                        (c) =>
+                            c.name.toLowerCase() === trimmed.toLowerCase() &&
+                            c.type === type
+                    );
+
+                    if (exists) return state;
+
+                    return {
+                        categories: [
+                            ...state.categories,
+                            {
+                                id: crypto.randomUUID(),
+                                name: trimmed,
+                                type,
+                            },
+                        ],
+                    };
+                }),
+
+            removeCategory: (id) =>
+                set((state) => ({
+                    categories: state.categories.filter(
+                        (c) => c.id !== id
+                    ),
+                })),
+
+            renameCategory: (id, newName) =>
+                set((state) => {
+                    const trimmed = newName.trim();
+                    if (!trimmed) return state;
+
+                    return {
+                        categories: state.categories.map((c) =>
+                            c.id === id ? { ...c, name: trimmed } : c
+                        ),
+                    };
+                }),
         }),
+        {
+            name: "category-storage",
 
-    removeCategory: (id) =>
-        set((state) => ({
-            categories: state.categories.filter((c) => c.id !== id),
-        })),
+            partialize: (state) => ({
+                categories: state.categories,
+            }),
 
-    renameCategory: (id, newName) =>
-        set((state) => ({
-            categories: state.categories.map((c) =>
-                c.id === id ? { ...c, name: newName } : c
-            ),
-        })),
-}));
+            version: 1,
+        }
+    )
+);
+
+export const useIncomeCategories = () =>
+    useCategoryStore((state) =>
+        state.categories.filter((c) => c.type === "income")
+    );
+
+export const useExpenseCategories = () =>
+    useCategoryStore((state) =>
+        state.categories.filter((c) => c.type === "expense")
+    );

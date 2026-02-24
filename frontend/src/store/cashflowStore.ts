@@ -53,7 +53,7 @@ export const useCashflowStore = create<CashflowState>()(
                 set((state) => {
                     const newItem: CashflowItem = {
                         ...item,
-                        id: crypto.randomUUID(), // 🔥 mejor que Date.now()
+                        id: crypto.randomUUID(),
                     };
 
                     const scenarioItems =
@@ -122,7 +122,6 @@ export const useCashflowStore = create<CashflowState>()(
 );
 
 // ── Selectores auxiliares ── 
-// Se usan así: const items = useScenarioItems("scenario-1") 
 const EMPTY_ITEMS: CashflowItem[] = []; // referencia estable, no se recrea en cada render 
 
 export const useScenarioItems = (scenarioId: string) =>
