@@ -1,6 +1,12 @@
 import { CashflowItem } from "@core/index";
 
-export const isActiveMonth = (item: CashflowItem, year: number, month: number): boolean => {
+interface isActiveMonthProps {
+    item: CashflowItem;
+    year: number;
+    month: number;
+}
+
+export const isActiveMonth = ({ item, year, month }: isActiveMonthProps): boolean => {
     const itemStart = new Date(item.startDate);
     const itemEnd = item.endDate ? new Date(item.endDate) : null;
     const targetDate = new Date(year, month, 1);
