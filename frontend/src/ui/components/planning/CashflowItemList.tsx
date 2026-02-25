@@ -1,7 +1,9 @@
-import { PlusCircle, Search } from "lucide-react"
 import { useState } from "react"
+import { PlusCircle, Search } from "lucide-react"
+
 import { CashflowItem } from "./CashflowItem"
-import { useCashflowStore, useCategoryStore, useCurrencySymbol, useScenarioItems, useScenarioStore } from "@/store";
+import { useCashflowStore, useCategoryStore, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
+import { isActiveMonth } from "@core";
 
 type FilterType = "all" | "income" | "expense"
 
@@ -14,10 +16,16 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     const [searchQuery, setSearchQuery] = useState("")
 
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
-    const items = useScenarioItems(activeScenarioId);
+    const activeMonth = usePlanningStore((s) => s.activeMonth);
+    const activeYear = usePlanningStore((s) => s.activeYear);
+    const allItems = useScenarioItems(activeScenarioId);
+    const removeItem = useCashflowStore((s) => s.removeItem);
     const categories = useCategoryStore((s) => s.categories);
     const currencySymbol = useCurrencySymbol();
-    const removeItem = useCashflowStore((s) => s.removeItem);
+
+    const items = allItems.filter((item) =>
+        isActiveMonth({ item, year: activeYear, month: activeMonth })
+    );
 
     const getCategoryName = (categoryId: string) => {
         const category = categories.find((c) => c.id === categoryId);

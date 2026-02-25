@@ -9,25 +9,31 @@ interface isActiveMonthProps {
 export const isActiveMonth = ({ item, year, month }: isActiveMonthProps): boolean => {
     const itemStart = new Date(item.startDate);
     const itemEnd = item.endDate ? new Date(item.endDate) : null;
-    const targetDate = new Date(year, month, 1);
-    const itemMonth = itemStart.getMonth();
 
-    if (itemStart > targetDate) return false;
-    if (itemEnd && itemEnd < targetDate) return false;
+    const itemStartYear = itemStart.getFullYear();
+    const itemStartMonth = itemStart.getMonth();
+
+    if (itemStartYear > year || (itemStartYear === year && itemStartMonth > month)) return false;
+
+    if (itemEnd) {
+        const itemEndYear = itemEnd.getFullYear();
+        const itemEndMonth = itemEnd.getMonth();
+        if (itemEndYear < year || (itemEndYear === year && itemEndMonth < month)) return false;
+    }
 
     switch (item.frequency) {
         case "once":
-            return itemStart.getFullYear() === year && itemMonth === month;
+            return itemStartYear === year && itemStartMonth === month;
         case "monthly":
             return true;
         case "bimonthly":
-            return (itemMonth % 2) === (month % 2);
+            return (itemStartMonth % 2) === (month % 2);
         case "quarterly":
-            return (itemMonth % 3) === (month % 3);
+            return (itemStartMonth % 3) === (month % 3);
         case "semiannual":
-            return (itemMonth % 6) === (month % 6);
+            return (itemStartMonth % 6) === (month % 6);
         case "annual":
-            return itemMonth === month;
+            return itemStartMonth === month;
         default:
             return false;
     }

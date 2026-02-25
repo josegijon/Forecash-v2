@@ -1,4 +1,7 @@
+import { usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore, useCurrencySymbol } from "@/store"
+import { calculateMonthlySummary } from "@core"
 import { TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react"
+import { useMemo } from "react"
 
 interface SummaryCardProps {
     label: string
@@ -26,35 +29,91 @@ const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: Summar
     </div>
 )
 
+/** Calcula el % de variación entre dos valores. Devuelve null si no hay referencia. */
+const calcTrend = (current: number, previous: number): { value: string; positive: boolean } | undefined => {
+    if (previous === 0 && current === 0) return undefined;
+    if (previous === 0) return { value: "nuevo", positive: current > 0 };
+
+    const pct = ((current - previous) / Math.abs(previous)) * 100;
+
+    return {
+        value: `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`,
+        positive: current <= previous, // para gastos "menos = bueno", se invierte por card
+    };
+};
+
+/** Formatea un número como moneda: €1.050,00 */
+const formatCurrency = (amount: number, symbol: string): string => {
+    const formatted = Math.abs(amount).toLocaleString("es-ES", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+
+    return `${amount < 0 ? "-" : ""}${symbol}${formatted}`;
+};
+
+/** Devuelve el mes anterior dado (year, month 0-indexed) */
+const getPreviousMonth = (year: number, month: number) => {
+    if (month === 0) return { year: year - 1, month: 11 };
+    return { year, month: month - 1 };
+};
+
 export const PlanningSummaryStrip = () => {
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const activeMonth = usePlanningStore((s) => s.activeMonth);
+    const activeYear = usePlanningStore((s) => s.activeYear);
+    const items = useScenarioItems(activeScenarioId);
+    const initialBalance = useSettingsStore((s) => s.initialBalance);
+    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
+    const currencySymbol = useCurrencySymbol();
+
+    const now = new Date();
+    const referenceMonth = now.getMonth();
+    const referenceYear = now.getFullYear();
+
+    const summary = useMemo(() => calculateMonthlySummary({
+        items, year: activeYear, month: activeMonth,
+        initialBalance, savingsGoal, referenceYear, referenceMonth,
+    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
+
+    const prev = getPreviousMonth(activeYear, activeMonth);
+    const prevSummary = useMemo(() => calculateMonthlySummary({
+        items, year: prev.year, month: prev.month,
+        initialBalance, savingsGoal, referenceYear, referenceMonth,
+    }), [items, prev.year, prev.month, initialBalance, savingsGoal, referenceYear, referenceMonth]);
+
+    const incomeTrend = calcTrend(summary.totalIncome, prevSummary.totalIncome);
+    const expenseTrend = calcTrend(summary.totalExpense, prevSummary.totalExpense);
+    const balanceTrend = calcTrend(summary.netBalance, prevSummary.netBalance);
+
     const cards: SummaryCardProps[] = [
         {
             label: "Ingresos totales",
-            value: "€3.200,00", // TODO: calcular dinámicamente sumando los ítems del escenario activo
+            value: formatCurrency(summary.totalIncome, currencySymbol),
             icon: <TrendingUp size={22} />,
-            trend: { value: "+5,2%", positive: true }, // TODO: calcular dinámicamente comparando con el mes anterior
+            trend: incomeTrend ? { ...incomeTrend, positive: summary.totalIncome >= prevSummary.totalIncome } : undefined,
             accentClass: "text-emerald-600",
             bgClass: "bg-emerald-50",
         },
         {
             label: "Gastos totales",
-            value: "€2.150,00",
+            value: formatCurrency(summary.totalExpense, currencySymbol),
             icon: <TrendingDown size={22} />,
-            trend: { value: "+2,1%", positive: false },
+            trend: expenseTrend ? { ...expenseTrend, positive: summary.totalExpense <= prevSummary.totalExpense } : undefined,
             accentClass: "text-rose-600",
             bgClass: "bg-rose-50",
         },
         {
             label: "Balance neto",
-            value: "€1.050,00",
+            value: formatCurrency(summary.netBalance, currencySymbol),
             icon: <Wallet size={22} />,
-            trend: { value: "+12,3%", positive: true },
+            trend: balanceTrend ? { ...balanceTrend, positive: summary.netBalance >= prevSummary.netBalance } : undefined,
             accentClass: "text-blue-600",
             bgClass: "bg-blue-50",
         },
         {
             label: "Ahorro acumulado",
-            value: "€6.300,00",
+            value: formatCurrency(summary.accumulatedSavings, currencySymbol),
             icon: <PiggyBank size={22} />,
             accentClass: "text-violet-600",
             bgClass: "bg-violet-50",
