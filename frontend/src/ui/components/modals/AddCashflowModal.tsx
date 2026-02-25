@@ -42,17 +42,17 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
     const currencySymbol = useCurrencySymbol();
     const categories = useCategoryStore((s) => s.categories);
 
-    const [categoryId, setCategoryId] = useState<string>("");
+    const filteredCategories = categories.filter((c) => c.type === type);
+
+    const [categoryId, setCategoryId] = useState<string>(filteredCategories[0]?.id);
 
     const isIncome = type === "income";
-
-    const filteredCategories = categories.filter((c) => c.type === type);
 
     const resetForm = () => {
         setType("income");
         setConcept("");
         setAmount("");
-        setCategoryId(filteredCategories[0]?.id || "");
+        setCategoryId(filteredCategories[0]?.id);
         setFrequency("monthly");
         setStartsInMonths(0);
         setHasEndDate(false);
