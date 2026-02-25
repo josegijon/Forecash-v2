@@ -48,11 +48,18 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
 
     const isIncome = type === "income";
 
+    const handleTypeChange = (newType: CashflowType) => {
+        setType(newType);
+        const firstCategory = categories.find((c) => c.type === newType);
+        setCategoryId(firstCategory?.id ?? "");
+    };
+
     const resetForm = () => {
         setType("income");
         setConcept("");
         setAmount("");
-        setCategoryId(filteredCategories[0]?.id);
+        const firstIncome = categories.find((c) => c.type === "income");
+        setCategoryId(firstIncome?.id ?? "");
         setFrequency("monthly");
         setStartsInMonths(0);
         setHasEndDate(false);
@@ -110,7 +117,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 type="button"
-                                onClick={() => setType("income")}
+                                onClick={() => handleTypeChange("income")}
                                 className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all cursor-pointer border ${isIncome
                                     ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
                                     : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
@@ -121,7 +128,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setType("expense")}
+                                onClick={() => handleTypeChange("expense")}
                                 className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all cursor-pointer border ${!isIncome
                                     ? "bg-rose-50 text-rose-600 border-rose-200 ring-2 ring-rose-500/20"
                                     : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
