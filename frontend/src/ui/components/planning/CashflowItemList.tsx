@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { PlusCircle, Search } from "lucide-react"
 
 import { CashflowItem } from "./CashflowItem"
-import { useCashflowStore, useCategoryStore, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
-import { isActiveMonth } from "@core";
+import { useCashflowStore, useCategoryStore, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store";
+import { isActiveMonth, calculateMonthlySummary } from "@core";
 
 type FilterType = "all" | "income" | "expense"
 
@@ -22,6 +22,12 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     const removeItem = useCashflowStore((s) => s.removeItem);
     const categories = useCategoryStore((s) => s.categories);
     const currencySymbol = useCurrencySymbol();
+    const initialBalance = useSettingsStore((s) => s.initialBalance);
+    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
+
+    const now = new Date();
+    const referenceMonth = now.getMonth();
+    const referenceYear = now.getFullYear();
 
     const items = allItems.filter((item) =>
         isActiveMonth({ item, year: activeYear, month: activeMonth })
@@ -34,14 +40,16 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     };
 
     const filteredItems = items
-        .filter((item) => filter === "all" || item.type === filter) // Filtrar por tipo (ingreso/gasto)
+        .filter((item) => filter === "all" || item.type === filter)
         .filter((item) =>
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             getCategoryName(item.categoryId).toLowerCase().includes(searchQuery.toLowerCase())
         )
 
-    const totalIncome = items.filter((i) => i.type === "income").reduce((s, i) => s + i.amount, 0)
-    const totalExpenses = items.filter((i) => i.type === "expense").reduce((s, i) => s + i.amount, 0)
+    const summary = useMemo(() => calculateMonthlySummary({
+        items, year: activeYear, month: activeMonth,
+        initialBalance, savingsGoal, referenceYear, referenceMonth,
+    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
 
     const filterTabs: { key: FilterType; label: string }[] = [
         { key: "all", label: "Todos" },
@@ -121,20 +129,29 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ingresos</span>
                         <span className="text-sm font-bold text-emerald-600">
-                            {currencySymbol}{totalIncome.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                            {currencySymbol}{summary.totalIncome.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
+
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gastos</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Gastos
+                        </span>
                         <span className="text-sm font-bold text-rose-600">
-                            {currencySymbol}{totalExpenses.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                            {currencySymbol}{summary.totalExpense.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
                 </div>
+
                 <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Balance</span>
-                    <span className={`text-sm font-extrabold ${totalIncome - totalExpenses >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                        {currencySymbol}{(totalIncome - totalExpenses).toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Balance
+                    </span>
+                    <span className={`text-sm font-extrabold ${summary.netBalance >= 0
+                        ? "text-emerald-600"
+                        : "text-rose-600"}`}
+                    >
+                        {currencySymbol}{summary.netBalance.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                     </span>
                 </div>
             </div>
