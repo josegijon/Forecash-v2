@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
-import { useState } from "react"
+import { usePlanningStore } from "@/store"
 
 const MONTHS = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -7,28 +7,14 @@ const MONTHS = [
 ]
 
 export const MonthNavigator = () => {
-    const [monthIndex, setMonthIndex] = useState(1) // Febrero
-    const [year, setYear] = useState(2026)
+    const activeMonth = usePlanningStore((s) => s.activeMonth);
+    const activeYear = usePlanningStore((s) => s.activeYear);
+    const goBack = usePlanningStore((s) => s.goBack);
+    const goForward = usePlanningStore((s) => s.goForward);
+    const goToToday = usePlanningStore((s) => s.goToToday);
 
-    const goBack = () => {
-        if (monthIndex === 0) {
-            setMonthIndex(11)
-            setYear((y) => y - 1)
-        } else {
-            setMonthIndex((m) => m - 1)
-        }
-    }
-
-    const goForward = () => {
-        if (monthIndex === 11) {
-            setMonthIndex(0)
-            setYear((y) => y + 1)
-        } else {
-            setMonthIndex((m) => m + 1)
-        }
-    }
-
-    const isCurrentMonth = monthIndex === 1 && year === 2026
+    const now = new Date();
+    const isCurrentMonth = activeMonth === now.getMonth() && activeYear === now.getFullYear();
 
     return (
         <div className="flex items-center gap-3">
@@ -43,7 +29,7 @@ export const MonthNavigator = () => {
                 <div className="flex items-center gap-2 px-3 py-1.5 min-w-40 justify-center">
                     <Calendar size={14} className="text-primary" />
                     <span className="font-bold text-slate-800 text-sm">
-                        {MONTHS[monthIndex]} {year}
+                        {MONTHS[activeMonth]} {activeYear}
                     </span>
                 </div>
 
@@ -57,7 +43,7 @@ export const MonthNavigator = () => {
 
             {!isCurrentMonth && (
                 <button
-                    onClick={() => { setMonthIndex(1); setYear(2026) }}
+                    onClick={goToToday}
                     className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
                 >
                     Hoy

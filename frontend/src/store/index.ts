@@ -9,3 +9,5 @@ export type { CashflowItem, NewCashflowItem, Frequency } from "./cashflowStore";
 
 export { useSettingsStore, useCurrencySymbol, currencySymbols } from "./settingsStore";
 export type { Currency, Theme } from "./settingsStore";
+
+export { usePlanningStore } from "./planningStore";
