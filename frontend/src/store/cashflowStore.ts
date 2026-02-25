@@ -1,28 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { CashflowItem, Frequency } from "@core";
 
-// ── Tipos ──
-
-export type Frequency =
-    | "once"
-    | "monthly"
-    | "bimonthly"
-    | "quarterly"
-    | "semiannual"
-    | "annual";
-
-export interface CashflowItem {
-    id: string;
-    scenarioId: string;
-    type: "income" | "expense";
-    name: string;
-    amount: number;
-    categoryId: string;
-    frequency: Frequency;
-    startDate: string;
-    endDate?: string;
-    note?: string;
-}
+export type { Frequency, CashflowItem };
 
 export type NewCashflowItem = Omit<CashflowItem, "id">;
 
