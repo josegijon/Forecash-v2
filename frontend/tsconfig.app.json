@@ -13,9 +13,13 @@
       "vite/client"
     ],
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./src/*"
+        "src/*"
+      ],
+      "@core": [
+        "../core/src/index.ts"
       ]
     },
     /* Bundler mode */
