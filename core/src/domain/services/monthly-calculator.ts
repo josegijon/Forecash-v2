@@ -87,8 +87,8 @@ export const calculateMonthlySummary = ({
         year, month,
     );
 
-    const savingsRate = totalIncome > 0 ? netBalance / totalIncome : 0;
-    const expenseRate = totalIncome > 0 ? totalExpense / totalIncome : 0;
+    const savingsRate = totalIncome > 0 ? (netBalance / totalIncome) * 100 : 0;
+    const expenseRate = totalIncome > 0 ? (totalExpense / totalIncome) * 100 : 0;
     const progressGoal = savingsGoal > 0 ? accumulatedSavings / savingsGoal : 0;
 
     return {
