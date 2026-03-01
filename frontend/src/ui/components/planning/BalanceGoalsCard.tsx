@@ -1,6 +1,10 @@
+import { useMemo } from "react";
+
+import { calculateMonthlySummary, isActiveMonth } from "@core";
+
+import { useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store"
 import { CurrencyInputField } from "./CurrencyInputField";
 import { GoalProgressRing } from "./GoalProgressRing";
-import { useCurrencySymbol } from "@/store"
 
 interface BalanceGoalsCardProps {
     title: string;
@@ -8,6 +12,27 @@ interface BalanceGoalsCardProps {
 
 export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const currencySymbol = useCurrencySymbol();
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const activeMonth = usePlanningStore((s) => s.activeMonth);
+    const activeYear = usePlanningStore((s) => s.activeYear);
+    const allItems = useScenarioItems(activeScenarioId);
+    const initialBalance = useSettingsStore((s) => s.initialBalance);
+    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
+    const setInitialBalance = useSettingsStore((s) => s.setInitialBalance);
+    const setSavingsGoal = useSettingsStore((s) => s.setSavingsGoal);
+
+    const now = new Date();
+    const referenceMonth = now.getMonth();
+    const referenceYear = now.getFullYear();
+
+    const items = allItems.filter((item) =>
+        isActiveMonth({ item, year: activeYear, month: activeMonth })
+    );
+
+    const summary = useMemo(() => calculateMonthlySummary({
+        items, year: activeYear, month: activeMonth,
+        initialBalance, savingsGoal, referenceYear, referenceMonth,
+    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
@@ -21,25 +46,26 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
             <div className="space-y-4">
                 <CurrencyInputField
                     label="Saldo Inicial Actual"
-                    value={5000}
+                    value={initialBalance}
                     currencySymbol={currencySymbol}
-                    // TODO: Implementar onChange para actualizar el estado del saldo inicial
-                    onChange={(newValue) => console.log("Nuevo saldo inicial:", newValue)}
+                    onChange={(newValue) => setInitialBalance(newValue)}
+                    allowNegative={true}
                 />
 
 
                 <CurrencyInputField
                     label="Objetivo de Ahorro Mensual"
-                    value={800}
+                    value={savingsGoal}
                     currencySymbol={currencySymbol}
-                    onChange={(newValue) => console.log("Nuevo objetivo de ahorro:", newValue)}
+                    onChange={(newValue) => setSavingsGoal(newValue)}
+                    allowNegative={false}
                 />
 
                 {/* Progreso Meta */}
                 <GoalProgressRing
-                    progress={60} // TODO: Calcular el progreso real basado en el saldo inicial y el objetivo de ahorro
-                    savedAmount={3000} // TODO: Calcular la cantidad ahorrada real
-                    goalAmount={5000} // TODO: Calcular la cantidad objetivo real basada en el saldo inicial y el objetivo de ahorro mensual
+                    progress={Math.round(summary.progressGoal)}
+                    savedAmount={summary.netBalance}
+                    goalAmount={savingsGoal}
                 />
             </div>
         </div>
