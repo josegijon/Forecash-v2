@@ -7,13 +7,15 @@ import { CategoryExpensesCard } from "@/ui/components/planning/CategoryExpensesC
 import { MonthlyRatiosCard } from "@/ui/components/planning/MonthlyRatiosCard"
 import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummaryStrip"
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator"
-import { useCashflowStore, useScenarioStore } from "@/store"
+import { useCashflowStore, usePlanningStore, useScenarioStore } from "@/store"
 
 export const PlanningPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
 
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
     const addItem = useCashflowStore((s) => s.addItem);
+    const activeYear = usePlanningStore((s) => s.activeYear);
+    const activeMonth = usePlanningStore((s) => s.activeMonth);
 
     const handleSubmitNewItem = (data: CashflowFormData) => {
         // Convertir "startsInMonths" en fecha ISO
@@ -71,7 +73,12 @@ export const PlanningPage = () => {
                         {/* Saldo y metas */}
                         <BalanceGoalsCard title="Saldo y metas" />
                         {/* Gastos por categoría */}
-                        <CategoryExpensesCard title="Gastos por categoría" />
+                        <CategoryExpensesCard
+                            title="Gastos por categoría"
+                            type="expense"
+                            year={activeYear}
+                            month={activeMonth}
+                        />
                     </div>
                 </div>
             </div>

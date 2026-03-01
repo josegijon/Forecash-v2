@@ -1,15 +1,20 @@
-import { CATEGORY_DATA } from "./CategoryDonutChart"
 import { useCurrencySymbol } from "@/store"
+import { type CategoryChartData } from "./CategoryDonutChart"
 
-export const CategoryLegend = () => {
-    const total = CATEGORY_DATA.reduce((sum, cat) => sum + cat.value, 0)
+interface CategoryLegendProps {
+    data: CategoryChartData[]
+}
 
-    const currencySymbol = useCurrencySymbol();
+export const CategoryLegend = ({ data }: CategoryLegendProps) => {
+    const total = data.reduce((sum, cat) => sum + cat.value, 0)
+    const currencySymbol = useCurrencySymbol()
+
+    if (data.length === 0) return null
 
     return (
         <div className="flex flex-col gap-3 mt-4">
-            {CATEGORY_DATA.map((cat) => {
-                const percent = ((cat.value / total) * 100).toFixed(1)
+            {data.map((cat) => {
+                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(1) : "0"
                 return (
                     <div key={cat.name} className="flex items-center justify-between group">
                         <div className="flex items-center gap-3">
