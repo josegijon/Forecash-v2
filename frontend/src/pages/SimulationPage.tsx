@@ -1,70 +1,79 @@
-
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { SimulationHeader } from "@/ui/components/simulation/SimulationHeader";
 import { SimulationMilestonesTable } from "@/ui/components/simulation/SimulationMilestonesTable";
 import { SimulationChart } from "@/ui/components/simulation/SimulationChart";
 import { SimulationSummaryCards } from "@/ui/components/simulation/SimulationSummaryCards";
-import { useCashflowStore, useScenarioStore } from "@/store";
+import { useCashflowStore, useScenarioItems, useScenarioStore } from "@/store";
+import { useSettingsStore } from "@/store";
 
-/* ─── Datos mock ─── */
+import { calculateAccumulatedSavings } from "../../../core/src/domain/services/monthly-calculator";
 
-const SCENARIOS = [
-    { id: "current", name: "Escenario Actual" },
-    { id: "optimista", name: "Escenario Optimista" },
-    { id: "conservador", name: "Escenario Conservador" },
-];
+const MONTH_NAMES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
-const generateMockData = (months: number) => {
-    const data = [];
-    let currentBalance = 5000;
-    let altBalance = 5000;
+/* ─── Hook: genera los puntos del gráfico para un escenario ─── */
 
-    const monthNames = [
-        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
-    ];
+const useScenarioChartData = (
+    scenarioId: string,
+    months: number,
+    initialBalance: number,
+) => {
+    const items = useScenarioItems(scenarioId);
 
-    const startDate = new Date(2026, 1); // Feb 2026
+    return useMemo(() => {
+        const now = new Date();
+        const refYear = now.getFullYear();
+        const refMonth = now.getMonth();
+        const data = [];
 
-    for (let i = 0; i <= months; i++) {
-        const date = new Date(startDate);
-        date.setMonth(startDate.getMonth() + i);
-        const label = `${monthNames[date.getMonth()]} ${date.getFullYear().toString().slice(-2)}`;
+        for (let i = 0; i <= months; i++) {
+            const date = new Date(refYear, refMonth + i);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const label = `${MONTH_NAMES[month]} ${date.getFullYear().toString().slice(-2)}`;
 
-        currentBalance += Math.round(300 + Math.random() * 200 - 80);
-        altBalance += Math.round(450 + Math.random() * 300 - 60);
+            const balance = calculateAccumulatedSavings(
+                items,
+                initialBalance,
+                refYear,
+                refMonth,
+                year,
+                month,
+            );
 
-        data.push({
-            month: label,
-            actual: currentBalance,
-            comparado: altBalance,
-            diferencia: altBalance - currentBalance,
-        });
-    }
+            data.push({ month: label, balance, year, monthLabel: label });
+        }
 
-    return data;
+        return data;
+    }, [items, months, initialBalance, scenarioId]);
 };
+
+/* ─── Componente principal ─── */
 
 export const SimulationPage = () => {
     const [selectedMonths, setSelectedMonths] = useState(12);
-    const [selectedScenario, setSelectedScenario] = useState("optimista");
+    const [selectedScenario, setSelectedScenario] = useState<string>("");
 
-    const data = generateMockData(selectedMonths);
-    const lastPoint = data[data.length - 1];
-
-    const scenarioName =
-        SCENARIOS.find((s) => s.id === selectedScenario)?.name ?? "Escenario";
-
+    const scenarios = useScenarioStore((s) => s.scenarios);
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
     const duplicateScenario = useScenarioStore((s) => s.duplicateScenario);
     const duplicateScenarioItems = useCashflowStore((s) => s.duplicateScenarioItems);
+    const initialBalance = useSettingsStore((s) => s.initialBalance);
 
     //! Temporal para limpieza de escenarios de prueba
     const removeAllScenarios = useScenarioStore((s) => s.removeAllScenarios);
     const handleremoveScenario = useCallback(() => {
         removeAllScenarios();
     }, [removeAllScenarios]);
+    //! ------------------------------------
+
+    // El escenario comparado: si no hay selección, usamos el segundo escenario disponible (si existe)
+    const comparedScenarioId = selectedScenario ||
+        scenarios.find((s) => s.id !== activeScenarioId)?.id ||
+        activeScenarioId;
+
+    const scenarioName =
+        scenarios.find((s) => s.id === comparedScenarioId)?.name ?? "Escenario";
 
     const handleCopyScenario = useCallback(() => {
         const newScenarioId = duplicateScenario(activeScenarioId);
@@ -73,13 +82,58 @@ export const SimulationPage = () => {
         }
     }, [activeScenarioId, duplicateScenario, duplicateScenarioItems]);
 
+    // Datos reales por escenario
+    const actualItems = useScenarioItems(activeScenarioId);
+    const comparedItems = useScenarioItems(comparedScenarioId);
 
+    const chartData = useMemo(() => {
+        const now = new Date();
+        const refYear = now.getFullYear();
+        const refMonth = now.getMonth();
+        const data = [];
+
+        for (let i = 0; i <= selectedMonths; i++) {
+            const date = new Date(refYear, refMonth + i);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const label = `${MONTH_NAMES[month]} ${date.getFullYear().toString().slice(-2)}`;
+
+            const actual = calculateAccumulatedSavings(
+                actualItems,
+                initialBalance,
+                refYear,
+                refMonth,
+                year,
+                month,
+            );
+
+            const comparado = calculateAccumulatedSavings(
+                comparedItems,
+                initialBalance,
+                refYear,
+                refMonth,
+                year,
+                month,
+            );
+
+            data.push({
+                month: label,
+                actual,
+                comparado,
+                diferencia: comparado - actual,
+            });
+        }
+
+        return data;
+    }, [actualItems, comparedItems, selectedMonths, initialBalance]);
+
+    const lastPoint = chartData[chartData.length - 1];
 
     return (
         <div className="flex-1 scrollbar-hide">
             <div className="max-w-6xl mx-auto space-y-6">
                 <SimulationHeader
-                    selectedScenario={selectedScenario}
+                    selectedScenario={comparedScenarioId}
                     selectedMonths={selectedMonths}
                     onScenarioChange={setSelectedScenario}
                     onMonthsChange={setSelectedMonths}
@@ -95,13 +149,13 @@ export const SimulationPage = () => {
                 />
 
                 <SimulationChart
-                    data={data}
+                    data={chartData}
                     scenarioName={scenarioName}
                     selectedMonths={selectedMonths}
                 />
 
                 <SimulationMilestonesTable
-                    data={data}
+                    data={chartData}
                     scenarioName={scenarioName}
                     selectedMonths={selectedMonths}
                 />

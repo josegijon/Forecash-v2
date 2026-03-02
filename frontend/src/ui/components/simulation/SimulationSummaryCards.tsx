@@ -7,12 +7,7 @@ interface Props {
     selectedMonths: number;
 }
 
-export const SimulationSummaryCards = ({
-    actualBalance,
-    comparedBalance,
-    scenarioName,
-    selectedMonths,
-}: Props) => {
+export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenarioName, selectedMonths }: Props) => {
     const diff = comparedBalance - actualBalance;
     const diffPercent = ((diff / actualBalance) * 100).toFixed(1);
     const isPositive = diff >= 0;
@@ -26,8 +21,12 @@ export const SimulationSummaryCards = ({
                     </div>
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Escenario Actual</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-900">{actualBalance.toLocaleString("es-ES")} €</p>
-                <p className="text-xs text-slate-500 mt-1">Saldo proyectado a {selectedMonths} meses</p>
+                <p className="text-2xl font-bold text-slate-900">
+                    {actualBalance.toLocaleString("es-ES")} €
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                    Saldo proyectado a {selectedMonths} meses
+                </p>
             </div>
 
             <div className="bg-card-light rounded-2xl border border-slate-200 p-5">
@@ -35,10 +34,16 @@ export const SimulationSummaryCards = ({
                     <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
                         <GitCompareArrows size={16} className="text-indigo-600" />
                     </div>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{scenarioName}</span>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        {scenarioName}
+                    </span>
                 </div>
-                <p className="text-2xl font-bold text-slate-900">{comparedBalance.toLocaleString("es-ES")} €</p>
-                <p className="text-xs text-slate-500 mt-1">Saldo proyectado a {selectedMonths} meses</p>
+                <p className="text-2xl font-bold text-slate-900">
+                    {comparedBalance.toLocaleString("es-ES")} €
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                    Saldo proyectado a {selectedMonths} meses
+                </p>
             </div>
 
             <div className={`rounded-2xl border p-5 ${isPositive ? "bg-emerald-50/60 border-emerald-200" : "bg-red-50/60 border-red-200"}`}>
@@ -46,7 +51,8 @@ export const SimulationSummaryCards = ({
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isPositive ? "bg-emerald-100" : "bg-red-100"}`}>
                         {isPositive
                             ? <TrendingUp size={16} className="text-emerald-600" />
-                            : <TrendingDown size={16} className="text-red-600" />}
+                            : <TrendingDown size={16} className="text-red-600" />
+                        }
                     </div>
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Diferencia</span>
                 </div>
