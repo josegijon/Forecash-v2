@@ -60,13 +60,6 @@ export const SimulationPage = () => {
     const duplicateScenarioItems = useCashflowStore((s) => s.duplicateScenarioItems);
     const initialBalance = useSettingsStore((s) => s.initialBalance);
 
-    //! Temporal para limpieza de escenarios de prueba
-    const removeAllScenarios = useScenarioStore((s) => s.removeAllScenarios);
-    const handleremoveScenario = useCallback(() => {
-        removeAllScenarios();
-    }, [removeAllScenarios]);
-    //! ------------------------------------
-
     // El escenario comparado: si no hay selección, usamos el segundo escenario disponible (si existe)
     const comparedScenarioId = selectedScenario ||
         scenarios.find((s) => s.id !== activeScenarioId)?.id ||
@@ -138,7 +131,6 @@ export const SimulationPage = () => {
                     onScenarioChange={setSelectedScenario}
                     onMonthsChange={setSelectedMonths}
                     onCopyScenario={handleCopyScenario}
-                // onCopyScenario={handleremoveScenario} //! Temporal para limpieza de escenarios de prueba
                 />
 
                 <SimulationSummaryCards
