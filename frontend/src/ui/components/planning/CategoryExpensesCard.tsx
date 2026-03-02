@@ -1,5 +1,6 @@
-import { CategoryDonutChart, useCategoryChartData } from "./CategoryDonutChart";
+import { CategoryDonutChart } from "./CategoryDonutChart";
 import { CategoryLegend } from "./CategoryLegend";
+import { useCategoryChartData } from "./useCategoryChartData";
 
 interface CategoryExpensesCardProps {
     title: string;
@@ -22,15 +23,9 @@ export const CategoryExpensesCard = ({ title, type, year, month }: CategoryExpen
                 </div>
             </div>
 
-            <CategoryDonutChart
-                type={type}
-                year={year}
-                month={month}
-            />
+            <CategoryDonutChart data={data} />
 
-            <CategoryLegend
-                data={data}
-            />
+            <CategoryLegend data={data} />
         </div>
     )
 }

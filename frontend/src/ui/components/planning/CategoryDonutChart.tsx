@@ -3,12 +3,9 @@ import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts"
 import { useCurrencySymbol } from "@/store"
 
 import type { CategoryChartData } from "./buildCategoryChartData"
-import { useCategoryChartData } from "./useCategoryChartData"
 
 interface CategoryDonutChartProps {
-    type: "expense" | "income"
-    year: number
-    month: number
+    data: CategoryChartData[]
 }
 
 // Componente de gráfico de dona para mostrar la distribución de gastos o ingresos por categoría, con tooltip personalizado y total en el centro
@@ -48,8 +45,7 @@ const CustomTooltip = ({ active, payload, total }: {
 }
 
 // Componente de gráfico de dona para mostrar la distribución de gastos o ingresos por categoría, con tooltip personalizado y total en el centro
-export const CategoryDonutChart = ({ type, year, month }: CategoryDonutChartProps) => {
-    const data = useCategoryChartData(type, year, month);
+export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
     const total = data.reduce((sum, cat) => sum + cat.value, 0);
     const currencySymbol = useCurrencySymbol();
 
