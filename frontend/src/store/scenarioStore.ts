@@ -12,6 +12,7 @@ interface ScenarioState {
     activeScenarioId: string;
     addScenario: (name: string) => string;
     removeScenario: (id: string) => string | null;
+    removeAllScenarios: () => void;
     renameScenario: (id: string, newName: string) => void;
     duplicateScenario: (id: string) => string | null;
     setActiveScenario: (id: string) => void;
@@ -58,6 +59,14 @@ export const useScenarioStore = create<ScenarioState>()(
                 return needsRedirect ? filtered[0].id : null;
             },
 
+            // eliminar todos los escenarios menos el primero (para limpieza rápida durante desarrollo)
+            removeAllScenarios: () => {
+                set((state) => ({
+                    scenarios: [state.scenarios[0]],
+                    activeScenarioId: state.scenarios[0].id,
+                }));
+            },
+
             renameScenario: (id, newName) =>
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
@@ -70,9 +79,18 @@ export const useScenarioStore = create<ScenarioState>()(
                 const original = state.scenarios.find((s) => s.id === id);
                 if (!original) return null;
 
+                const baseName = `${original.name} (copia)`;
+                const existingNames = state.scenarios.map((s) => s.name);
+                let finalName = baseName;
+                let counter = 2;
+                while (existingNames.includes(finalName)) {
+                    finalName = `${baseName} ${counter}`;
+                    counter++;
+                }
+
                 const duplicate: Scenario = {
                     id: `scenario-${Date.now()}`,
-                    name: `${original.name} (copia)`,
+                    name: finalName,
                 };
 
                 set({

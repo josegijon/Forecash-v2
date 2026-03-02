@@ -1,10 +1,11 @@
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { SimulationHeader } from "@/ui/components/simulation/SimulationHeader";
 import { SimulationMilestonesTable } from "@/ui/components/simulation/SimulationMilestonesTable";
 import { SimulationChart } from "@/ui/components/simulation/SimulationChart";
 import { SimulationSummaryCards } from "@/ui/components/simulation/SimulationSummaryCards";
+import { useScenarioStore } from "@/store";
 
 /* ─── Datos mock ─── */
 
@@ -55,6 +56,21 @@ export const SimulationPage = () => {
     const scenarioName =
         SCENARIOS.find((s) => s.id === selectedScenario)?.name ?? "Escenario";
 
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const duplicateScenario = useScenarioStore((s) => s.duplicateScenario);
+
+    //! Temporal para limpieza de escenarios de prueba
+    const removeAllScenarios = useScenarioStore((s) => s.removeAllScenarios);
+    const handleremoveScenario = useCallback(() => {
+        removeAllScenarios();
+    }, [removeAllScenarios]);
+
+    const handleCopyScenario = useCallback(() => {
+        duplicateScenario(activeScenarioId);
+    }, [activeScenarioId, duplicateScenario]);
+
+
+
     return (
         <div className="flex-1 scrollbar-hide">
             <div className="max-w-6xl mx-auto space-y-6">
@@ -63,7 +79,8 @@ export const SimulationPage = () => {
                     selectedMonths={selectedMonths}
                     onScenarioChange={setSelectedScenario}
                     onMonthsChange={setSelectedMonths}
-                    onCopyScenario={() => alert("TODO: Crear copia del escenario actual")}
+                    onCopyScenario={handleCopyScenario}
+                // onCopyScenario={handleremoveScenario} //! Temporal para limpieza de escenarios de prueba
                 />
 
                 <SimulationSummaryCards

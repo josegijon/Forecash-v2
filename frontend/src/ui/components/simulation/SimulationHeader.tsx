@@ -20,13 +20,7 @@ interface Props {
     onCopyScenario: () => void;
 }
 
-export const SimulationHeader = ({
-    selectedScenario,
-    selectedMonths,
-    onScenarioChange,
-    onMonthsChange,
-    onCopyScenario,
-}: Props) => (
+export const SimulationHeader = ({ selectedScenario, selectedMonths, onScenarioChange, onMonthsChange, onCopyScenario }: Props) => (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <button
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all hover:-translate-y-0.5 cursor-pointer"
