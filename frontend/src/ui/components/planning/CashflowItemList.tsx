@@ -1,61 +1,25 @@
-import { useMemo, useState } from "react"
-import { PlusCircle, Search } from "lucide-react"
+import { PlusCircle, Search } from "lucide-react";
 
-import { CashflowItem } from "./CashflowItem"
-import { useCashflowStore, useCategoryStore, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store";
-import { isActiveMonth, calculateMonthlySummary } from "@core";
-
-type FilterType = "all" | "income" | "expense"
+import { CashflowItem } from "./CashflowItem";
+import { useCashflowItemListModel } from "./useCashflowItemListModel";
 
 interface CashflowItemListProps {
     onAddItem?: () => void;
 }
 
 export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
-    const [filter, setFilter] = useState<FilterType>("all")
-    const [searchQuery, setSearchQuery] = useState("")
-
-    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
-    const activeMonth = usePlanningStore((s) => s.activeMonth);
-    const activeYear = usePlanningStore((s) => s.activeYear);
-    const allItems = useScenarioItems(activeScenarioId);
-    const removeItem = useCashflowStore((s) => s.removeItem);
-    const categories = useCategoryStore((s) => s.categories);
-    const currencySymbol = useCurrencySymbol();
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
-    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
-
-    const now = new Date();
-    const referenceMonth = now.getMonth();
-    const referenceYear = now.getFullYear();
-
-    const items = allItems.filter((item) =>
-        isActiveMonth({ item, year: activeYear, month: activeMonth })
-    );
-
-    const getCategoryName = (categoryId: string) => {
-        const category = categories.find((c) => c.id === categoryId);
-
-        return category ? category.name : "Sin categoría";
-    };
-
-    const filteredItems = items
-        .filter((item) => filter === "all" || item.type === filter)
-        .filter((item) =>
-            item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            getCategoryName(item.categoryId).toLowerCase().includes(searchQuery.toLowerCase())
-        )
-
-    const summary = useMemo(() => calculateMonthlySummary({
-        items, year: activeYear, month: activeMonth,
-        initialBalance, savingsGoal, referenceYear, referenceMonth,
-    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
-
-    const filterTabs: { key: FilterType; label: string }[] = [
-        { key: "all", label: "Todos" },
-        { key: "income", label: "Ingresos" },
-        { key: "expense", label: "Gastos" },
-    ]
+    const {
+        filter,
+        setFilter,
+        searchQuery,
+        setSearchQuery,
+        filteredItems,
+        summary,
+        currencySymbol,
+        filterTabs,
+        getCategoryName,
+        onDeleteItem,
+    } = useCashflowItemListModel();
 
     return (
         <div className="flex flex-col gap-5 col-span-12 lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
@@ -78,9 +42,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                         <button
                             key={key}
                             onClick={() => setFilter(key)}
-                            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${filter === key
-                                ? "bg-white text-slate-800 shadow-sm"
-                                : "text-slate-500 hover:text-slate-700"
+                            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${filter === key ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
                                 }`}
                         >
                             {label}
@@ -112,7 +74,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                             frequency={item.frequency}
                             currencySymbol={currencySymbol}
                             amount={item.amount}
-                            onDelete={() => removeItem(item.id, activeScenarioId)}
+                            onDelete={() => onDeleteItem(item.id)}
                         />
                     ))
                 ) : (
@@ -129,32 +91,28 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ingresos</span>
                         <span className="text-sm font-bold text-emerald-600">
-                            {currencySymbol}{summary.totalIncome.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                            {currencySymbol}
+                            {summary.totalIncome.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
 
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                            Gastos
-                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gastos</span>
                         <span className="text-sm font-bold text-rose-600">
-                            {currencySymbol}{summary.totalExpense.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                            {currencySymbol}
+                            {summary.totalExpense.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
                 </div>
 
                 <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        Balance
-                    </span>
-                    <span className={`text-sm font-extrabold ${summary.netBalance >= 0
-                        ? "text-emerald-600"
-                        : "text-rose-600"}`}
-                    >
-                        {currencySymbol}{summary.netBalance.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Balance</span>
+                    <span className={`text-sm font-extrabold ${summary.netBalance >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                        {currencySymbol}
+                        {summary.netBalance.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                     </span>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
