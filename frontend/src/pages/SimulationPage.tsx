@@ -5,7 +5,7 @@ import { SimulationHeader } from "@/ui/components/simulation/SimulationHeader";
 import { SimulationMilestonesTable } from "@/ui/components/simulation/SimulationMilestonesTable";
 import { SimulationChart } from "@/ui/components/simulation/SimulationChart";
 import { SimulationSummaryCards } from "@/ui/components/simulation/SimulationSummaryCards";
-import { useScenarioStore } from "@/store";
+import { useCashflowStore, useScenarioStore } from "@/store";
 
 /* ─── Datos mock ─── */
 
@@ -58,6 +58,7 @@ export const SimulationPage = () => {
 
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
     const duplicateScenario = useScenarioStore((s) => s.duplicateScenario);
+    const duplicateScenarioItems = useCashflowStore((s) => s.duplicateScenarioItems);
 
     //! Temporal para limpieza de escenarios de prueba
     const removeAllScenarios = useScenarioStore((s) => s.removeAllScenarios);
@@ -66,8 +67,11 @@ export const SimulationPage = () => {
     }, [removeAllScenarios]);
 
     const handleCopyScenario = useCallback(() => {
-        duplicateScenario(activeScenarioId);
-    }, [activeScenarioId, duplicateScenario]);
+        const newScenarioId = duplicateScenario(activeScenarioId);
+        if (newScenarioId) {
+            duplicateScenarioItems(activeScenarioId, newScenarioId);
+        }
+    }, [activeScenarioId, duplicateScenario, duplicateScenarioItems]);
 
 
 

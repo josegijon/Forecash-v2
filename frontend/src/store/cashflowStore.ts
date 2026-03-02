@@ -17,6 +17,7 @@ interface CashflowState {
     ) => void;
     removeItem: (id: string, scenarioId: string) => void;
     removeAllByScenario: (scenarioId: string) => void;
+    duplicateScenarioItems: (sourceId: string, targetId: string) => void;
 }
 
 export const useCashflowStore = create<CashflowState>()(
@@ -85,6 +86,21 @@ export const useCashflowStore = create<CashflowState>()(
                         state.items;
                     return { items: rest };
                 }),
+
+            duplicateScenarioItems: (sourceId, targetId) => {
+                const sourceItems = get().items[sourceId] ?? [];
+                const duplicated = sourceItems.map((item) => ({
+                    ...item,
+                    id: crypto.randomUUID(),
+                    scenarioId: targetId,
+                }));
+                set((state) => ({
+                    items: {
+                        ...state.items,
+                        [targetId]: duplicated,
+                    },
+                }));
+            },
         }),
         {
             name: "cashflow-storage",
