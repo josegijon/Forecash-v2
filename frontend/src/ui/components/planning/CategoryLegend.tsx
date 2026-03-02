@@ -1,5 +1,5 @@
 import { useCurrencySymbol } from "@/store"
-import { type CategoryChartData } from "./CategoryDonutChart"
+import type { CategoryChartData } from "./buildCategoryChartData"
 
 interface CategoryLegendProps {
     data: CategoryChartData[]
