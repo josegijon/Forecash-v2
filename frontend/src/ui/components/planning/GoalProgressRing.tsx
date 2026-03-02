@@ -1,9 +1,15 @@
-
 interface GoalProgressRingProps {
     progress: number; // Progreso en porcentaje (0-100)
     savedAmount: number; // Cantidad ahorrada
     goalAmount: number; // Cantidad objetivo
 }
+
+const CIRCLE_RADIUS = 28;
+const CIRCLE_CENTER = 32;
+const CIRCLE_CIRCUMFERENCE = 175.9;
+
+const getDashOffset = (progress: number) =>
+    CIRCLE_CIRCUMFERENCE - (CIRCLE_CIRCUMFERENCE * progress / 100);
 
 export const GoalProgressRing = ({ progress, savedAmount, goalAmount }: GoalProgressRingProps) => {
     return (
@@ -12,18 +18,25 @@ export const GoalProgressRing = ({ progress, savedAmount, goalAmount }: GoalProg
                 <svg className="w-full h-full transform -rotate-90">
                     <circle
                         className="text-slate-100"
-                        cx="32" cy="32" fill="transparent" r="28"
+                        cx={CIRCLE_CENTER}
+                        cy={CIRCLE_CENTER}
+                        fill="transparent"
+                        r={CIRCLE_RADIUS}
                         stroke="currentColor"
-                        strokeWidth="4">
-                    </circle>
+                        strokeWidth="4"
+                    />
 
                     <circle
-                        className="text-primary" cx="32" cy="32" fill="transparent" r="28"
+                        className="text-primary"
+                        cx={CIRCLE_CENTER}
+                        cy={CIRCLE_CENTER}
+                        fill="transparent"
+                        r={CIRCLE_RADIUS}
                         stroke="currentColor"
-                        strokeDasharray="175.9"
-                        strokeDashoffset={175.9 - (175.9 * progress / 100)}
-                        strokeWidth="4">
-                    </circle>
+                        strokeDasharray={CIRCLE_CIRCUMFERENCE}
+                        strokeDashoffset={getDashOffset(progress)}
+                        strokeWidth="4"
+                    />
                 </svg>
 
                 <span className="absolute text-[11px] font-bold">
