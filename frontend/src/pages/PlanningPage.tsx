@@ -1,4 +1,8 @@
 import { useState } from "react"
+
+import { createPlannedCashflowItem } from "@core"
+
+import { useCashflowStore, usePlanningStore, useScenarioStore } from "@/store"
 import { AddCashflowModal } from "@/ui/components/modals/AddCashflowModal"
 import type { CashflowFormData } from "@/ui/components/modals/AddCashflowModal"
 import { BalanceGoalsCard } from "@/ui/components/planning/BalanceGoalsCard"
@@ -7,7 +11,6 @@ import { CategoryExpensesCard } from "@/ui/components/planning/CategoryExpensesC
 import { MonthlyRatiosCard } from "@/ui/components/planning/MonthlyRatiosCard"
 import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummaryStrip"
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator"
-import { useCashflowStore, usePlanningStore, useScenarioStore } from "@/store"
 
 export const PlanningPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
@@ -18,29 +21,18 @@ export const PlanningPage = () => {
     const activeMonth = usePlanningStore((s) => s.activeMonth);
 
     const handleSubmitNewItem = (data: CashflowFormData) => {
-        // Convertir "startsInMonths" en fecha ISO
-        const start = new Date();
-        start.setMonth(start.getMonth() + data.startsInMonths);
-
-        // Convertir "endsInMonths" en fecha ISO, si se proporcionó
-        let endDate: string | undefined = undefined;
-
-        if (data.endsInMonths !== undefined) {
-            const end = new Date();
-            end.setMonth(end.getMonth() + data.endsInMonths);
-            endDate = end.toISOString().slice(0, 10);
-        }
-
-        addItem({
+        const newItem = createPlannedCashflowItem({
             scenarioId: activeScenarioId,
             type: data.type,
             name: data.concept,
             amount: data.amount,
             categoryId: data.categoryId,
             frequency: data.frequency,
-            startDate: start.toISOString().slice(0, 10),
-            endDate,
-        })
+            startsInMonths: data.startsInMonths,
+            endsInMonths: data.endsInMonths
+        });
+
+        addItem(newItem);
     };
 
     return (

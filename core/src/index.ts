@@ -4,3 +4,6 @@ export { calculateMonthlySummary } from "./domain/services/monthly-calculator";
 
 export { frequencyMonthsMap } from "./shared/constants/frequency-months-map";
 export { monthDiff } from "./shared/utils/date-utils";
+
+export { createPlannedCashflowItem } from "./application/use-cases/create-planned-cashflow-item";
+export type { CreatePlannedCashflowItemInput, NewPlannedCashflowItem } from "./application/use-cases/create-planned-cashflow-item";
