@@ -1,34 +1,14 @@
 import { PercentCircle } from "lucide-react"
+
 import { RatioProgressBar } from "./RatioProgressBar";
-import { useMemo } from "react";
-import { calculateMonthlySummary, isActiveMonth } from "@core";
-import { usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store";
+import { useMonthlyRatiosSummary } from "./useMonthlyRatiosSummary";
 
 interface MonthlyRatiosCardProps {
     title: string;
 }
 
 export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
-    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
-    const activeMonth = usePlanningStore((s) => s.activeMonth);
-    const activeYear = usePlanningStore((s) => s.activeYear);
-    const allItems = useScenarioItems(activeScenarioId);
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
-    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
-
-    const now = new Date();
-    const referenceMonth = now.getMonth();
-    const referenceYear = now.getFullYear();
-
-    const items = allItems.filter((item) =>
-        isActiveMonth({ item, year: activeYear, month: activeMonth })
-    );
-
-    const summary = useMemo(() => calculateMonthlySummary({
-        items, year: activeYear, month: activeMonth,
-        initialBalance, savingsGoal, referenceYear, referenceMonth,
-    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
-
+    const summary = useMonthlyRatiosSummary();
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
