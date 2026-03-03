@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { calculateMonthlySummary, isActiveMonth } from "@core";
 
-import { useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store"
+import { useActiveScenario, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store"
 import { CurrencyInputField } from "./CurrencyInputField";
 import { GoalProgressRing } from "./GoalProgressRing";
 
@@ -16,12 +16,15 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const activeMonth = usePlanningStore((s) => s.activeMonth);
     const activeYear = usePlanningStore((s) => s.activeYear);
     const allItems = useScenarioItems(activeScenarioId);
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
-    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
-    const setInitialBalance = useSettingsStore((s) => s.setInitialBalance);
-    const setSavingsGoal = useSettingsStore((s) => s.setSavingsGoal);
-    const cushionBalance = useSettingsStore((s) => s.cushionBalance);
-    const setCushionBalance = useSettingsStore((s) => s.setCushionBalance);
+    const activeScenario = useActiveScenario();
+
+    const setInitialBalance = useScenarioStore((s) => s.setInitialBalance);
+    const setSavingsGoal = useScenarioStore((s) => s.setSavingsGoal);
+    const setCushionBalance = useScenarioStore((s) => s.setCushionBalance);
+
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+    const savingsGoal = activeScenario?.savingsGoal ?? 0;
+    const cushionBalance = activeScenario?.cushionBalance ?? 0;
 
     const now = new Date();
     const referenceMonth = now.getMonth();
@@ -50,16 +53,15 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                     label="Saldo Inicial Actual"
                     value={initialBalance}
                     currencySymbol={currencySymbol}
-                    onChange={(newValue) => setInitialBalance(newValue)}
+                    onChange={(newValue) => setInitialBalance(activeScenarioId, newValue)}
                     allowNegative={true}
                 />
-
 
                 <CurrencyInputField
                     label="Objetivo de Ahorro Mensual"
                     value={savingsGoal}
                     currencySymbol={currencySymbol}
-                    onChange={(newValue) => setSavingsGoal(newValue)}
+                    onChange={(newValue) => setSavingsGoal(activeScenarioId, newValue)}
                     allowNegative={false}
                 />
 
@@ -67,7 +69,7 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                     label="Colchón mínimo (opcional)"
                     value={cushionBalance}
                     currencySymbol={currencySymbol}
-                    onChange={(newValue) => setCushionBalance(newValue)}
+                    onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
                     allowNegative={false}
                 />
 

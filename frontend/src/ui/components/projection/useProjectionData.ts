@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { MONTH_NAMES, type MonthData, type ProjectionAlert } from "./projectionTypes";
-import { useScenarioItems, useScenarioStore } from "@/store";
-import { useSettingsStore } from "@/store";
+import { useActiveScenario, useScenarioItems } from "@/store";
 import { calculateAccumulatedSavings } from "../../../../../core/src/domain/services/monthly-calculator";
 
 export interface UseProjectionDataReturn {
@@ -18,9 +17,13 @@ export interface UseProjectionDataReturn {
 }
 
 export function useProjectionData(selectedMonths: number): UseProjectionDataReturn {
-    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
-    const items = useScenarioItems(activeScenarioId);
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
+    const activeScenario = useActiveScenario();
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+    const items = useScenarioItems(activeScenario?.id ?? "");
+
+    // const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    // const items = useScenarioItems(activeScenarioId);
+    // const initialBalance = useSettingsStore((s) => s.initialBalance);
 
     const data = useMemo((): MonthData[] => {
         const now = new Date();

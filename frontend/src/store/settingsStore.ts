@@ -14,41 +14,23 @@ export type Theme = "light" | "dark";
 
 interface SettingsState {
     currency: Currency;
-    initialBalance: number;
-    savingsGoal: number;
-    cushionBalance: number;
     theme: Theme;
 
     setCurrency: (currency: Currency) => void;
-    setInitialBalance: (balance: number) => void;
-    setSavingsGoal: (goal: number) => void;
-    setCushionBalance: (cushion: number) => void;
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             // ── Estado ──
             currency: "EUR",
-            initialBalance: 0,
-            savingsGoal: 0,
-            cushionBalance: 0,
             theme: "dark",
 
             // ── Acciones ──
             setCurrency: (currency) =>
                 set({ currency }),
-
-            setInitialBalance: (initialBalance) =>
-                set({ initialBalance }),
-
-            setSavingsGoal: (savingsGoal) =>
-                set({ savingsGoal }),
-
-            setCushionBalance: (cushionBalance) =>
-                set({ cushionBalance }),
 
             setTheme: (theme) =>
                 set({ theme }),
@@ -66,9 +48,6 @@ export const useSettingsStore = create<SettingsState>()(
 
             partialize: (state) => ({
                 currency: state.currency,
-                initialBalance: state.initialBalance,
-                savingsGoal: state.savingsGoal,
-                cushionBalance: state.cushionBalance,
                 theme: state.theme,
             }),
 

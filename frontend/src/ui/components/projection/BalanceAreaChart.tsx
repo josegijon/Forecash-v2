@@ -5,7 +5,7 @@ import {
 } from "recharts";
 
 import type { MonthData } from "./projectionTypes";
-import { useSettingsStore } from "@/store";
+import { useActiveScenario } from "@/store";
 
 interface BalanceAreaChartProps {
     data: MonthData[];
@@ -22,7 +22,8 @@ const tooltipContentStyle = {
 };
 
 export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps) => {
-    const cushionBalance = useSettingsStore((s) => s.cushionBalance);
+    const activeScenario = useActiveScenario();
+    const cushionBalance = activeScenario?.cushionBalance ?? 0;
 
     return (
         <div className="bg-card-light rounded-2xl border border-slate-200 p-6">

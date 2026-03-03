@@ -2,15 +2,16 @@ import { useMemo } from "react";
 
 import { calculateMonthlySummary, isActiveMonth } from "@core";
 
-import { usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store";
+import { useActiveScenario, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 
 export const useMonthlyRatiosSummary = () => {
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const activeScenario = useActiveScenario();
     const activeMonth = usePlanningStore((s) => s.activeMonth);
     const activeYear = usePlanningStore((s) => s.activeYear);
     const allItems = useScenarioItems(activeScenarioId);
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
-    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+    const savingsGoal = activeScenario?.savingsGoal ?? 0;
 
     const now = new Date();
     const referenceMonth = now.getMonth();

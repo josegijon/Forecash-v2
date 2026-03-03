@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import { calculateMonthlySummary, isActiveMonth } from "@core";
 
-import { useCashflowStore, useCategoryStore, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store";
+import { useActiveScenario, useCashflowStore, useCategoryStore, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 
 type FilterType = "all" | "income" | "expense";
 
@@ -11,14 +11,15 @@ export const useCashflowItemListModel = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const activeScenario = useActiveScenario();
     const activeMonth = usePlanningStore((s) => s.activeMonth);
     const activeYear = usePlanningStore((s) => s.activeYear);
     const allItems = useScenarioItems(activeScenarioId);
     const removeItem = useCashflowStore((s) => s.removeItem);
     const categories = useCategoryStore((s) => s.categories);
     const currencySymbol = useCurrencySymbol();
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
-    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+    const savingsGoal = activeScenario?.savingsGoal ?? 0;
 
     const now = new Date();
     const referenceMonth = now.getMonth();

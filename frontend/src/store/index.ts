@@ -1,4 +1,4 @@
-export { useScenarioStore } from "./scenarioStore";
+export { useScenarioStore, useActiveScenario } from "./scenarioStore";
 export type { Scenario } from "./scenarioStore";
 
 export { useCategoryStore } from "./categoryStore";

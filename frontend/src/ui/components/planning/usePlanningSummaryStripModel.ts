@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { calculateMonthlySummary } from "@core";
 
-import { useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore, useSettingsStore } from "@/store";
+import { useActiveScenario, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 
 export interface TrendValue {
     value: string;
@@ -50,11 +50,12 @@ const getPreviousMonth = (year: number, month: number) => {
 
 export const usePlanningSummaryStripModel = (): PlanningSummaryStripModel => {
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const activeScenario = useActiveScenario();
     const activeMonth = usePlanningStore((s) => s.activeMonth);
     const activeYear = usePlanningStore((s) => s.activeYear);
     const items = useScenarioItems(activeScenarioId);
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
-    const savingsGoal = useSettingsStore((s) => s.savingsGoal);
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+    const savingsGoal = activeScenario?.savingsGoal ?? 0;
     const currencySymbol = useCurrencySymbol();
 
     const now = new Date();

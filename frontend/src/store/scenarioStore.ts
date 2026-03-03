@@ -5,6 +5,9 @@ import { persist } from "zustand/middleware";
 export interface Scenario {
     id: string;
     name: string;
+    initialBalance: number;
+    savingsGoal: number;
+    cushionBalance: number;
 }
 
 interface ScenarioState {
@@ -16,6 +19,9 @@ interface ScenarioState {
     renameScenario: (id: string, newName: string) => void;
     duplicateScenario: (id: string) => string | null;
     setActiveScenario: (id: string) => void;
+    setInitialBalance: (id: string, balance: number) => void;
+    setSavingsGoal: (id: string, goal: number) => void;
+    setCushionBalance: (id: string, cushion: number) => void;
 }
 
 const DEFAULT_ID = "scenario-1";
@@ -28,15 +34,21 @@ export const useScenarioStore = create<ScenarioState>()(
                 {
                     id: DEFAULT_ID,
                     name: "Escenario principal",
+                    initialBalance: 0,
+                    savingsGoal: 0,
+                    cushionBalance: 0,
                 },
             ],
             activeScenarioId: DEFAULT_ID,
 
-            // ── Acciones ──
+            // ── Acciones existentes ──
             addScenario: (name) => {
                 const newScenario: Scenario = {
                     id: `scenario-${Date.now()}`,
                     name,
+                    initialBalance: 0,
+                    savingsGoal: 0,
+                    cushionBalance: 0,
                 };
                 set((state) => ({
                     scenarios: [...state.scenarios, newScenario],
@@ -47,64 +59,82 @@ export const useScenarioStore = create<ScenarioState>()(
             removeScenario: (id) => {
                 const state = get();
                 if (state.scenarios.length <= 1) return null;
-
-                const filtered = state.scenarios.filter((s) => s.id !== id);
-                const needsRedirect = state.activeScenarioId === id;
-
-                set({
-                    scenarios: filtered,
-                    ...(needsRedirect ? { activeScenarioId: filtered[0].id } : {}),
-                });
-
-                return needsRedirect ? filtered[0].id : null;
+                const remaining = state.scenarios.filter((s) => s.id !== id);
+                const newActiveId =
+                    state.activeScenarioId === id ? remaining[0].id : state.activeScenarioId;
+                set({ scenarios: remaining, activeScenarioId: newActiveId });
+                return newActiveId;
             },
 
-            // eliminar todos los escenarios menos el primero (para limpieza rápida durante desarrollo)
             removeAllScenarios: () => {
-                set((state) => ({
-                    scenarios: [state.scenarios[0]],
-                    activeScenarioId: state.scenarios[0].id,
-                }));
+                const defaultScenario: Scenario = {
+                    id: DEFAULT_ID,
+                    name: "Escenario principal",
+                    initialBalance: 0,
+                    savingsGoal: 0,
+                    cushionBalance: 0,
+                };
+                set({ scenarios: [defaultScenario], activeScenarioId: DEFAULT_ID });
             },
 
-            renameScenario: (id, newName) =>
+            renameScenario: (id, newName) => {
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
                         s.id === id ? { ...s, name: newName } : s
                     ),
-                })),
+                }));
+            },
 
             duplicateScenario: (id) => {
                 const state = get();
-                const original = state.scenarios.find((s) => s.id === id);
-                if (!original) return null;
-
-                const baseName = `${original.name} (copia)`;
-                const existingNames = state.scenarios.map((s) => s.name);
-                let finalName = baseName;
-                let counter = 2;
-                while (existingNames.includes(finalName)) {
-                    finalName = `${baseName} ${counter}`;
-                    counter++;
-                }
-
-                const duplicate: Scenario = {
+                const source = state.scenarios.find((s) => s.id === id);
+                if (!source) return null;
+                const newScenario: Scenario = {
+                    ...source,
                     id: `scenario-${Date.now()}`,
-                    name: finalName,
+                    name: `${source.name} (copia)`,
                 };
-
-                set({
-                    scenarios: [...state.scenarios, duplicate],
-                });
-
-                return duplicate.id;
+                set((state) => ({
+                    scenarios: [...state.scenarios, newScenario],
+                }));
+                return newScenario.id;
             },
 
-            setActiveScenario: (id) =>
-                set({ activeScenarioId: id }),
+            setActiveScenario: (id) => {
+                set({ activeScenarioId: id });
+            },
+
+            setInitialBalance: (id, balance) => {
+                set((state) => ({
+                    scenarios: state.scenarios.map((s) =>
+                        s.id === id ? { ...s, initialBalance: balance } : s
+                    ),
+                }));
+            },
+
+            setSavingsGoal: (id, goal) => {
+                set((state) => ({
+                    scenarios: state.scenarios.map((s) =>
+                        s.id === id ? { ...s, savingsGoal: goal } : s
+                    ),
+                }));
+            },
+
+            setCushionBalance: (id, cushion) => {
+                set((state) => ({
+                    scenarios: state.scenarios.map((s) =>
+                        s.id === id ? { ...s, cushionBalance: cushion } : s
+                    ),
+                }));
+            },
         }),
         {
             name: "scenario-storage",
+            version: 2,
         }
     )
 );
+
+// ── Selector auxiliar: obtiene el escenario activo ──
+export const useActiveScenario = () =>
+    useScenarioStore((s) => s.scenarios.find((sc) => sc.id === s.activeScenarioId));
