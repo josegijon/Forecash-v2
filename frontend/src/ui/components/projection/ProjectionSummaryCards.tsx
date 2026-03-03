@@ -1,5 +1,6 @@
-import { AlertTriangle, PiggyBank, TrendingDown, TrendingUp, Wallet, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { PiggyBank, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { KpiCard } from "../kpi/KpiCard";
+import type { MonthData } from "./projectionTypes";
 
 interface ProjectionSummaryCardsProps {
     currentBalance: number;
@@ -9,6 +10,8 @@ interface ProjectionSummaryCardsProps {
     avgCashflow: number;
     negativeMonths: number;
     selectedMonths: number;
+    minBalance: number;
+    worstMonth: MonthData | undefined;
 }
 
 export const ProjectionSummaryCards = ({
@@ -19,6 +22,8 @@ export const ProjectionSummaryCards = ({
     avgCashflow,
     negativeMonths,
     selectedMonths,
+    minBalance,
+    worstMonth,
 }: ProjectionSummaryCardsProps) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Balance actual */}
@@ -49,49 +54,17 @@ export const ProjectionSummaryCards = ({
         {/* Peor mes */}
         <KpiCard
             title="Peor mes"
-            value={"-820 €"}
+            value={worstMonth ? `${minBalance.toLocaleString("es-ES")} €` : "—"}
             icon={<Wallet size={16} className="text-blue-600" />}
-            description="Mes con mayor déficit: Marzo 2026"
+            description={worstMonth ? `Balance mínimo: ${worstMonth.month}` : "Sin meses negativos"}
         />
 
         {/* Ratio de meses negativos */}
         <KpiCard
             title="Meses negativos"
-            value={"16%"}
+            value={selectedMonths > 0 ? `${Math.round((negativeMonths / selectedMonths) * 100)}%` : "0%"}
             icon={<PiggyBank size={16} className="text-blue-600" />}
-            description={`4 de ${selectedMonths} meses con cashflow negativo`}
+            description={`${negativeMonths} de ${selectedMonths} meses con cashflow negativo`}
         />
-
-        {/* Mes de ruptura */}
-        {/* Hacerlo como banner en el caso de que si haya */}
-        {/* <div className="bg-card-light rounded-2xl border border-slate-200 p-5">
-            <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <Wallet size={16} className="text-blue-600" />
-                </div>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Mes de ruptura
-                </span>
-            </div>
-            <p className="text-2xl font-bold text-slate-900">
-                Marzo 2026
-            </p>
-        </div> */}
-
-        {/* Meses en riesgo */}
-        {/* <div className={`rounded-2xl border p-5 ${negativeMonths > 0 ? "bg-amber-50/60 border-amber-200" : "bg-card-light border-slate-200"}`}>
-            <div className="flex items-center gap-2 mb-2">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${negativeMonths > 0 ? "bg-amber-100" : "bg-slate-100"}`}>
-                    <AlertTriangle size={16} className={negativeMonths > 0 ? "text-amber-600" : "text-slate-400"} />
-                </div>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Meses en Riesgo
-                </span>
-            </div>
-            <p className={`text-2xl font-bold ${negativeMonths > 0 ? "text-amber-700" : "text-slate-900"}`}>
-                {negativeMonths}
-            </p>
-            <p className="text-xs text-slate-500 mt-1">Con cashflow negativo</p>
-        </div> */}
     </div>
 );

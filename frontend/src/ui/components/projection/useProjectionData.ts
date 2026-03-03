@@ -1,51 +1,8 @@
 import { useMemo } from "react";
 import { MONTH_NAMES, type MonthData, type ProjectionAlert } from "./projectionTypes";
-
-const generateProjectionData = (months: number): MonthData[] => {
-    const data: MonthData[] = [];
-    let balance = 5000;
-
-    const startDate = new Date(2026, 1); // Feb 2026
-    const baseIncome = 2800;
-    const baseExpenses = 2200;
-
-    for (let i = 0; i <= months; i++) {
-        const date = new Date(startDate);
-        date.setMonth(startDate.getMonth() + i);
-        const monthIndex = date.getMonth();
-        const label = `${MONTH_NAMES[monthIndex]} ${date.getFullYear().toString().slice(-2)}`;
-
-        const seasonalExpense =
-            monthIndex === 11 ? 900 :
-                monthIndex === 7 ? 700 :
-                    monthIndex === 0 ? 400 :
-                        monthIndex === 8 ? 350 :
-                            0;
-
-        const extraIncome =
-            monthIndex === 5 ? 2800 :
-                monthIndex === 11 ? 2800 :
-                    Math.random() > 0.85 ? Math.round(200 + Math.random() * 300) : 0;
-
-        const ingresos = baseIncome + extraIncome + Math.round((Math.random() - 0.5) * 100);
-        const gastos = baseExpenses + seasonalExpense + Math.round((Math.random() - 0.5) * 200);
-        const cashflow = ingresos - gastos;
-        balance += cashflow;
-
-        data.push({
-            month: label,
-            ingresos,
-            gastos,
-            cashflow,
-            balance,
-            isNegativeBalance: balance < 0,
-            isNegativeCashflow: cashflow < 0,
-            isPeakExpense: gastos > baseExpenses * 1.3,
-        });
-    }
-
-    return data;
-}
+import { useScenarioItems, useScenarioStore } from "@/store";
+import { useSettingsStore } from "@/store";
+import { calculateAccumulatedSavings } from "../../../../../core/src/domain/services/monthly-calculator";
 
 export interface UseProjectionDataReturn {
     data: MonthData[];
@@ -61,7 +18,116 @@ export interface UseProjectionDataReturn {
 }
 
 export function useProjectionData(selectedMonths: number): UseProjectionDataReturn {
-    const data = useMemo(() => generateProjectionData(selectedMonths), [selectedMonths]);
+    const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
+    const items = useScenarioItems(activeScenarioId);
+    const initialBalance = useSettingsStore((s) => s.initialBalance);
+
+    const data = useMemo((): MonthData[] => {
+        const now = new Date();
+        const refYear = now.getFullYear();
+        const refMonth = now.getMonth();
+
+        // Calcular ingresos/gastos por separado usando items filtrados por mes
+        const getMonthlyBreakdown = (year: number, month: number) => {
+            const incomeItems = items.filter((item) => item.type === "income");
+            const expenseItems = items.filter((item) => item.type === "expense");
+
+            const ingresoBalance = calculateAccumulatedSavings(
+                incomeItems,
+                0,
+                refYear,
+                refMonth,
+                year,
+                month,
+            ) - calculateAccumulatedSavings(
+                incomeItems,
+                0,
+                refYear,
+                refMonth,
+                ...(month === 0
+                    ? [year - 1, 11] as [number, number]
+                    : [year, month - 1] as [number, number]
+                ),
+            );
+
+            const gastoBalance = calculateAccumulatedSavings(
+                expenseItems,
+                0,
+                refYear,
+                refMonth,
+                year,
+                month,
+            ) - calculateAccumulatedSavings(
+                expenseItems,
+                0,
+                refYear,
+                refMonth,
+                ...(month === 0
+                    ? [year - 1, 11] as [number, number]
+                    : [year, month - 1] as [number, number]
+                ),
+            );
+
+            return {
+                ingresos: Math.max(0, ingresoBalance),
+                gastos: Math.abs(Math.min(0, gastoBalance)),
+            };
+        };
+
+        const result: MonthData[] = [];
+
+        for (let i = 0; i <= selectedMonths; i++) {
+            const date = new Date(refYear, refMonth + i);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const label = `${MONTH_NAMES[month]} ${date.getFullYear().toString().slice(-2)}`;
+
+            const balance = calculateAccumulatedSavings(
+                items,
+                initialBalance,
+                refYear,
+                refMonth,
+                year,
+                month,
+            );
+
+            const prevDate = new Date(refYear, refMonth + i - 1);
+            const prevBalance = i === 0
+                ? initialBalance
+                : calculateAccumulatedSavings(
+                    items,
+                    initialBalance,
+                    refYear,
+                    refMonth,
+                    prevDate.getFullYear(),
+                    prevDate.getMonth(),
+                );
+
+            const cashflow = i === 0 ? 0 : balance - prevBalance;
+
+            const { ingresos, gastos } = i === 0
+                ? { ingresos: 0, gastos: 0 }
+                : getMonthlyBreakdown(year, month);
+
+            result.push({
+                month: label,
+                ingresos,
+                gastos,
+                cashflow,
+                balance,
+                isNegativeBalance: balance < 0,
+                isNegativeCashflow: cashflow < 0,
+                isPeakExpense: false,
+            });
+        }
+
+        // Calcular isPeakExpense sobre los datos reales
+        const avgGastos = result.reduce((sum, d) => sum + d.gastos, 0) / result.length;
+        return result.map((d) => ({
+            ...d,
+            isPeakExpense: d.gastos > 0 && d.gastos > avgGastos * 1.3,
+        }));
+    }, [items, initialBalance, selectedMonths]);
 
     return useMemo(() => {
         const lastPoint = data[data.length - 1];
@@ -94,7 +160,7 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
         if (peakExpenseMonths > 0) {
             alerts.push({
                 type: "warning",
-                message: `${peakExpenseMonths} ${peakExpenseMonths === 1 ? "mes" : "meses"} con picos de gasto superiores al 130% del gasto base.`,
+                message: `${peakExpenseMonths} ${peakExpenseMonths === 1 ? "mes" : "meses"} con picos de gasto superiores al 130% de la media.`,
             });
         }
         if (avgCashflow > 0 && negativeMonths === 0) {

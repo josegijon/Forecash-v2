@@ -20,7 +20,10 @@ export const ProjectionPage = () => {
         negativeMonths,
         avgCashflow,
         alerts,
+        minBalance,
     } = useProjectionData(selectedMonths);
+
+    const worstMonth = data.find((d) => d.balance === minBalance);
 
     return (
         <div className="flex-1 scrollbar-hide">
@@ -41,6 +44,8 @@ export const ProjectionPage = () => {
                     avgCashflow={avgCashflow}
                     negativeMonths={negativeMonths}
                     selectedMonths={selectedMonths}
+                    minBalance={minBalance}
+                    worstMonth={worstMonth}
                 />
 
                 <CashflowBarChart data={data} selectedMonths={selectedMonths} />
