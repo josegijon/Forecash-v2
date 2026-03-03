@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 
 export interface Category {
     id: string;
@@ -12,6 +13,7 @@ interface CategoryState {
     addCategory: (name: string, type: "income" | "expense") => void;
     removeCategory: (id: string) => void;
     renameCategory: (id: string, newName: string) => void;
+    resetCategories: () => void;
 }
 
 const DEFAULT_CATEGORIES: Category[] = [
@@ -75,7 +77,11 @@ export const useCategoryStore = create<CategoryState>()(
                         ),
                     };
                 }),
+
+            resetCategories: () =>
+                set({ categories: DEFAULT_CATEGORIES }),
         }),
+
         {
             name: "category-storage",
 
@@ -88,12 +94,12 @@ export const useCategoryStore = create<CategoryState>()(
     )
 );
 
-export const useIncomeCategories = () =>
-    useCategoryStore((state) =>
-        state.categories.filter((c) => c.type === "income")
-    );
+export const useIncomeCategories = () => {
+    const categories = useCategoryStore((state) => state.categories);
+    return categories.filter((c) => c.type === "income");
+};
 
-export const useExpenseCategories = () =>
-    useCategoryStore((state) =>
-        state.categories.filter((c) => c.type === "expense")
-    );
+export const useExpenseCategories = () => {
+    const categories = useCategoryStore((state) => state.categories);
+    return categories.filter((c) => c.type === "expense");
+};
