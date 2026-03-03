@@ -105,9 +105,7 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
 
             const cashflow = i === 0 ? 0 : balance - prevBalance;
 
-            const { ingresos, gastos } = i === 0
-                ? { ingresos: 0, gastos: 0 }
-                : getMonthlyBreakdown(year, month);
+            const { ingresos, gastos } = getMonthlyBreakdown(year, month);
 
             result.push({
                 month: label,

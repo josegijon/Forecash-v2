@@ -41,7 +41,7 @@ export const ProjectionAlerts = ({ alerts }: ProjectionAlertsProps) => {
                 return (
                     <div
                         key={i}
-                        className={`flex items-start gap-3 rounded-2xl border p-4 ${styles.container}`}
+                        className={`flex items-center gap-3 rounded-2xl border p-4 ${styles.container}`}
                     >
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${styles.icon}`}>
                             <IconComponent size={16} className={styles.iconColor} />

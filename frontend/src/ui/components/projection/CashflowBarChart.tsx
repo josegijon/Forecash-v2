@@ -1,7 +1,7 @@
 import { BarChart3 } from "lucide-react";
 import {
-    XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-    ResponsiveContainer, Bar, BarChart, Cell,
+    XAxis, YAxis, CartesianGrid, Tooltip,
+    ResponsiveContainer, Bar, BarChart, type BarProps,
 } from "recharts";
 import type { MonthData } from "./projectionTypes";
 
@@ -10,6 +10,10 @@ interface CashflowBarChartProps {
     selectedMonths: number;
 }
 
+const COLOR_INCOME = "#6366f1";         // indigo
+const COLOR_EXPENSE_NORMAL = "#94a3b8"; // slate
+const COLOR_EXPENSE_PEAK = "#f43f5e";   // rose
+
 const tickFormatter = (v: number) => `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k`;
 
 const tooltipContentStyle = {
@@ -17,6 +21,20 @@ const tooltipContentStyle = {
     border: "1px solid #e2e8f0",
     boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
     fontSize: "13px",
+};
+
+// Custom shape para gastos: colorea según isPeakExpense sin usar Cell (deprecated)
+const GastosBar = (props: BarProps) => {
+    const { x, y, width, height, payload } = props as BarProps & { payload: MonthData };
+    if (!height || height <= 0) return null;
+    const fill = payload?.isPeakExpense ? COLOR_EXPENSE_PEAK : COLOR_EXPENSE_NORMAL;
+    const nx = Number(x), ny = Number(y), nw = Number(width), nh = Number(height), r = 4;
+    return (
+        <path
+            d={`M${nx},${ny + nh} L${nx},${ny + r} Q${nx},${ny} ${nx + r},${ny} L${nx + nw - r},${ny} Q${nx + nw},${ny} ${nx + nw},${ny + r} L${nx + nw},${ny + nh} Z`}
+            fill={fill}
+        />
+    );
 };
 
 export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps) => (
@@ -50,39 +68,35 @@ export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps
                     ]}
                     labelStyle={{ fontWeight: 600, color: "#1e293b" }}
                 />
-                <Legend
-                    formatter={(value: string) => value === "ingresos" ? "Ingresos" : "Gastos"}
-                    wrapperStyle={{ fontSize: "13px", paddingTop: "12px" }}
-                />
                 <Bar
                     dataKey="ingresos"
-                    fill="#3b82f6"
+                    fill={COLOR_INCOME}
                     radius={[4, 4, 0, 0]}
                     maxBarSize={selectedMonths <= 12 ? 24 : 14}
+                    name="ingresos"
                 />
                 <Bar
                     dataKey="gastos"
-                    radius={[4, 4, 0, 0]}
+                    shape={<GastosBar />}
                     maxBarSize={selectedMonths <= 12 ? 24 : 14}
-                >
-                    {data.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={entry.isPeakExpense ? "#ef4444" : "#f59e0b"}
-                        />
-                    ))}
-                </Bar>
+                    name="gastos"
+                />
             </BarChart>
         </ResponsiveContainer>
 
-        <div className="flex items-center gap-6 mt-4 pt-4 border-t border-slate-100">
+        {/* Leyenda manual — más fiable que Legend de Recharts con shapes personalizados */}
+        <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-slate-100">
             <div className="flex items-center gap-2 text-xs text-slate-500">
-                <div className="w-3 h-3 rounded-sm bg-amber-500" />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: COLOR_INCOME }} />
+                Ingresos
+            </div>
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: COLOR_EXPENSE_NORMAL }} />
                 Gasto normal
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-500">
-                <div className="w-3 h-3 rounded-sm bg-red-500" />
-                Pico de gasto (&gt;130%)
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: COLOR_EXPENSE_PEAK }} />
+                Pico de gasto (&gt;130% media)
             </div>
         </div>
     </div>
