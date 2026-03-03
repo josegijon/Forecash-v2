@@ -20,6 +20,8 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const savingsGoal = useSettingsStore((s) => s.savingsGoal);
     const setInitialBalance = useSettingsStore((s) => s.setInitialBalance);
     const setSavingsGoal = useSettingsStore((s) => s.setSavingsGoal);
+    const cushionBalance = useSettingsStore((s) => s.cushionBalance);
+    const setCushionBalance = useSettingsStore((s) => s.setCushionBalance);
 
     const now = new Date();
     const referenceMonth = now.getMonth();
@@ -58,6 +60,14 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                     value={savingsGoal}
                     currencySymbol={currencySymbol}
                     onChange={(newValue) => setSavingsGoal(newValue)}
+                    allowNegative={false}
+                />
+
+                <CurrencyInputField
+                    label="Colchón mínimo (opcional)"
+                    value={cushionBalance}
+                    currencySymbol={currencySymbol}
+                    onChange={(newValue) => setCushionBalance(newValue)}
                     allowNegative={false}
                 />
 

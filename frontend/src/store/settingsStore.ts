@@ -16,11 +16,13 @@ interface SettingsState {
     currency: Currency;
     initialBalance: number;
     savingsGoal: number;
+    cushionBalance: number;
     theme: Theme;
 
     setCurrency: (currency: Currency) => void;
     setInitialBalance: (balance: number) => void;
     setSavingsGoal: (goal: number) => void;
+    setCushionBalance: (cushion: number) => void;
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
 }
@@ -32,6 +34,7 @@ export const useSettingsStore = create<SettingsState>()(
             currency: "EUR",
             initialBalance: 0,
             savingsGoal: 0,
+            cushionBalance: 0,
             theme: "dark",
 
             // ── Acciones ──
@@ -43,6 +46,9 @@ export const useSettingsStore = create<SettingsState>()(
 
             setSavingsGoal: (savingsGoal) =>
                 set({ savingsGoal }),
+
+            setCushionBalance: (cushionBalance) =>
+                set({ cushionBalance }),
 
             setTheme: (theme) =>
                 set({ theme }),
@@ -62,6 +68,7 @@ export const useSettingsStore = create<SettingsState>()(
                 currency: state.currency,
                 initialBalance: state.initialBalance,
                 savingsGoal: state.savingsGoal,
+                cushionBalance: state.cushionBalance,
                 theme: state.theme,
             }),
 
