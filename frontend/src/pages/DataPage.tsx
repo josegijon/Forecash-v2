@@ -17,8 +17,8 @@ export const DataPage = () => {
 
     const { currency, setCurrency } = useSettingsStore();
 
-    const { scenarios, addScenario, renameScenario, removeScenario, removeAllScenarios } = useScenarioStore();
-    const { items, removeAllByScenario } = useCashflowStore();
+    const { scenarios, addScenario, renameScenario, removeScenario } = useScenarioStore();
+    const { items } = useCashflowStore();
 
     // ── Export JSON ──
     const handleExportJson = () => {
@@ -54,32 +54,31 @@ export const DataPage = () => {
         const categoryStore = useCategoryStore.getState();
         const settingsStore = useSettingsStore.getState();
 
-        // Limpiar datos actuales
-        scenarioStore.scenarios.forEach((s) => cashflowStore.removeAllByScenario(s.id));
-        scenarioStore.removeAllScenarios();
+        snapshot.scenarios.forEach((oldScenario) => {
+            // 1. Crear nuevo escenario con nombre del importado
+            const newId = scenarioStore.addScenario(oldScenario.name);
 
-        // Importar escenarios
-        snapshot.scenarios.forEach((s) => {
-            scenarioStore.addScenario(s.name);
-        });
+            // 2. Copiar campos financieros del escenario original
+            scenarioStore.setInitialBalance(newId, oldScenario.initialBalance);
+            scenarioStore.setSavingsGoal(newId, oldScenario.savingsGoal);
+            scenarioStore.setCushionBalance(newId, oldScenario.cushionBalance);
 
-        // Importar items (re-mapeados a los nuevos IDs de escenario)
-        const newScenarios = useScenarioStore.getState().scenarios;
-        snapshot.scenarios.forEach((oldScenario, i) => {
-            const newId = newScenarios[i]?.id;
-            if (!newId) return;
+            // 3. Importar sus items con el nuevo ID
             const scenarioItems = snapshot.items[oldScenario.id] ?? [];
             scenarioItems.forEach((item) => {
                 cashflowStore.addItem({ ...item, scenarioId: newId });
             });
         });
 
-        // Importar categorías
+        // 4. Importar categorías (solo las que no existan ya)
+        const existingNames = categoryStore.categories.map((c) => c.name);
         snapshot.categories.forEach((c) => {
-            categoryStore.addCategory(c.name, c.type);
+            if (!existingNames.includes(c.name)) {
+                categoryStore.addCategory(c.name, c.type);
+            }
         });
 
-        // Importar moneda
+        // 5. Moneda
         if (snapshot.currency) {
             settingsStore.setCurrency(snapshot.currency);
         }
