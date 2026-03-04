@@ -46,13 +46,19 @@ export const SimulationMilestonesTable = ({ data, scenarioName, selectedMonths }
                         const pos = d >= 0;
                         return (
                             <tr key={m} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                                <td className="py-3 px-4 font-medium text-slate-700">{milestoneLabel(m)}</td>
-                                <td className="py-3 px-4 text-right text-slate-700 font-medium">{point.actual.toLocaleString("es-ES")} €</td>
-                                <td className="py-3 px-4 text-right text-slate-700 font-medium">{point.comparado.toLocaleString("es-ES")} €</td>
+                                <td className="py-3 px-4 font-medium text-slate-700">
+                                    {milestoneLabel(m)}
+                                </td>
+                                <td className="py-3 px-4 text-right text-slate-700 font-medium">
+                                    {point.actual.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                                </td>
+                                <td className="py-3 px-4 text-right text-slate-700 font-medium">
+                                    {point.comparado.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                                </td>
                                 <td className="py-3 px-4 text-right">
                                     <span className={`inline-flex items-center gap-1 font-semibold ${pos ? "text-emerald-600" : "text-red-600"}`}>
                                         {pos ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                                        {pos ? "+" : ""}{d.toLocaleString("es-ES")} €
+                                        {pos ? "+" : ""}{d.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                                     </span>
                                 </td>
                             </tr>

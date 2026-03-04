@@ -22,7 +22,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Escenario Actual</span>
                 </div>
                 <p className="text-2xl font-bold text-slate-900">
-                    {actualBalance.toLocaleString("es-ES")} €
+                    {actualBalance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
                     Saldo proyectado a {selectedMonths} meses
@@ -39,7 +39,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                     </span>
                 </div>
                 <p className="text-2xl font-bold text-slate-900">
-                    {comparedBalance.toLocaleString("es-ES")} €
+                    {comparedBalance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
                     Saldo proyectado a {selectedMonths} meses
@@ -58,7 +58,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                 </div>
                 <div className="flex items-end gap-2">
                     <p className={`text-2xl font-bold ${isPositive ? "text-emerald-700" : "text-red-700"}`}>
-                        {isPositive ? "+" : ""}{diff.toLocaleString("es-ES")} €
+                        {isPositive ? "+" : ""}{diff.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                     </p>
                     <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${isPositive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
                         {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
