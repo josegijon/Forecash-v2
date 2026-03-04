@@ -21,10 +21,11 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const setInitialBalance = useScenarioStore((s) => s.setInitialBalance);
     const setSavingsGoal = useScenarioStore((s) => s.setSavingsGoal);
     const setCushionBalance = useScenarioStore((s) => s.setCushionBalance);
-
+    const setCapitalGoal = useScenarioStore((s) => s.setCapitalGoal);
     const initialBalance = activeScenario?.initialBalance ?? 0;
     const savingsGoal = activeScenario?.savingsGoal ?? 0;
     const cushionBalance = activeScenario?.cushionBalance ?? 0;
+    const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
     const now = new Date();
     const referenceMonth = now.getMonth();
@@ -70,6 +71,14 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                     value={cushionBalance}
                     currencySymbol={currencySymbol}
                     onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
+                    allowNegative={false}
+                />
+
+                <CurrencyInputField
+                    label="Objetivo de capital (opcional)"
+                    value={capitalGoal}
+                    currencySymbol={currencySymbol}
+                    onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
                     allowNegative={false}
                 />
 
