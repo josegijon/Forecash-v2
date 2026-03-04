@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { AlertTriangle, RotateCcw, Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import { ConfirmResetModal } from "@/ui/components/modals/ConfirmResetModal";
 
 interface Props {
-    onResetCategories: () => void;
     onClearAllData: () => void;
 }
 
-export const DangerZoneCard = ({ onResetCategories, onClearAllData }: Props) => {
+export const DangerZoneCard = ({ onClearAllData }: Props) => {
     const [modalOpen, setModalOpen] = useState(false);
 
     return (
@@ -23,13 +22,6 @@ export const DangerZoneCard = ({ onResetCategories, onClearAllData }: Props) => 
                 </p>
 
                 <div className="flex flex-wrap gap-3">
-                    <button
-                        onClick={onResetCategories}
-                        className="flex items-center gap-2 text-sm font-semibold text-rose-600 bg-white hover:bg-rose-50 px-4 py-2.5 rounded-xl border border-rose-200 hover:border-rose-300 transition-all cursor-pointer"
-                    >
-                        <RotateCcw size={16} />
-                        Restablecer categorías
-                    </button>
                     <button
                         onClick={() => setModalOpen(true)}
                         className="flex items-center gap-2 text-sm font-semibold text-rose-600 bg-white hover:bg-rose-50 px-4 py-2.5 rounded-xl border border-rose-200 hover:border-rose-300 transition-all cursor-pointer"

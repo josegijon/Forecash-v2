@@ -146,7 +146,6 @@ export const DataPage = () => {
 
                 {/* Fila 4 — Zona peligrosa */}
                 <DangerZoneCard
-                    onResetCategories={resetCategories}
                     onClearAllData={handleClearAllData}
                 />
 

@@ -61,7 +61,7 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
                         key={scenario.id}
                         className="relative flex flex-col gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all group"
                     >
-                        <div className="flex items-start justify-between">
+                        <div className="flex gap-1">
                             <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                 <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0 shadow-sm shadow-primary/30" />
                                 {editingId === scenario.id ? (
