@@ -4,7 +4,7 @@ import { SimulationHeader } from "@/ui/components/simulation/SimulationHeader";
 import { SimulationMilestonesTable } from "@/ui/components/simulation/SimulationMilestonesTable";
 import { SimulationChart } from "@/ui/components/simulation/SimulationChart";
 import { SimulationSummaryCards } from "@/ui/components/simulation/SimulationSummaryCards";
-import { useCashflowStore, useScenarioItems, useScenarioStore } from "@/store";
+import { useActiveScenario, useCashflowStore, useScenarioItems, useScenarioStore } from "@/store";
 import { useSettingsStore } from "@/store";
 
 import { calculateAccumulatedSavings } from "../../../core/src/domain/services/monthly-calculator";
@@ -58,7 +58,9 @@ export const SimulationPage = () => {
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
     const duplicateScenario = useScenarioStore((s) => s.duplicateScenario);
     const duplicateScenarioItems = useCashflowStore((s) => s.duplicateScenarioItems);
-    const initialBalance = useSettingsStore((s) => s.initialBalance);
+    const activeScenario = useActiveScenario();
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+
 
     // El escenario comparado: si no hay selección, usamos el segundo escenario disponible (si existe)
     const comparedScenarioId = selectedScenario ||
