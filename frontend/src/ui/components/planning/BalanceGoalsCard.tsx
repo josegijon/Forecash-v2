@@ -4,7 +4,6 @@ import { calculateMonthlySummary, isActiveMonth } from "@core";
 
 import { useActiveScenario, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store"
 import { CurrencyInputField } from "./CurrencyInputField";
-import { GoalProgressRing } from "./GoalProgressRing";
 
 interface BalanceGoalsCardProps {
     title: string;
@@ -39,6 +38,8 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
         items, year: activeYear, month: activeMonth,
         initialBalance, savingsGoal, referenceYear, referenceMonth,
     }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
+
+    void summary;
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
@@ -80,13 +81,6 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                     currencySymbol={currencySymbol}
                     onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
                     allowNegative={false}
-                />
-
-                {/* Progreso Meta */}
-                <GoalProgressRing
-                    progress={Math.round(summary.progressGoal)}
-                    savedAmount={summary.netBalance}
-                    goalAmount={savingsGoal}
                 />
             </div>
         </div>

@@ -11,6 +11,7 @@ import { CategoryExpensesCard } from "@/ui/components/planning/CategoryExpensesC
 import { MonthlyRatiosCard } from "@/ui/components/planning/MonthlyRatiosCard"
 import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummaryStrip"
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator"
+import { GoalsProgressCard } from "@/ui/components/planning/GoalsProgressCard"
 
 export const PlanningPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
@@ -64,6 +65,8 @@ export const PlanningPage = () => {
                         <MonthlyRatiosCard title="Ratios Mensuales" />
                         {/* Saldo y metas */}
                         <BalanceGoalsCard title="Saldo y metas" />
+                        {/* Progreso de objetivos */}
+                        <GoalsProgressCard title="Progreso de objetivos" />
                         {/* Gastos por categoría */}
                         <CategoryExpensesCard
                             title="Gastos por categoría"
