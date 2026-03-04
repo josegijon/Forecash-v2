@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+
 import { TIME_OPTIONS } from "../projection/projectionTypes";
 
 interface ProjectionHorizonSelectProps {
@@ -21,7 +22,11 @@ export const ProjectionHorizonSelect = ({ selectedMonths, onMonthsChange }: Proj
                 ))}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-600 transition-colors">
-                <ChevronDown size={16} strokeWidth={2.5} />
+                <ChevronDown
+                    size={16}
+                    strokeWidth={2.5}
+                    className="transition-transform group-focus-within:rotate-180"
+                />
             </div>
         </div>
     )
