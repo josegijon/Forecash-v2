@@ -1,11 +1,14 @@
 import { useCategoryStore, useExpenseCategories, useIncomeCategories } from "@/store/categoryStore";
 import { useSettingsStore, type Currency } from "@/store/settingsStore";
 import { useScenarioStore } from "@/store/scenarioStore";
+import { useCashflowStore } from "@/store/cashflowStore";
 import { CategoryManagerCard } from "@/ui/components/settingsPage/CategoryManagerCard";
 import { CurrencySelector } from "@/ui/components/settingsPage/CurrencySelector";
 import { ImportExportCard } from "@/ui/components/settingsPage/ImportExportCard";
 import { ScenarioManagerCard } from "@/ui/components/settingsPage/ScenarioManagerCard";
 import { DangerZoneCard } from "@/ui/components/settingsPage/DangerZoneCard";
+import { exportToCsv, exportToJson, importFromJson, type AppSnapshot } from "@/infrastructure/export-import";
+import { useFileInput } from "@/ui/components/settingsPage/useFileInput";
 
 export const DataPage = () => {
     const { addCategory, removeCategory, renameCategory, resetCategories } = useCategoryStore();
@@ -14,12 +17,90 @@ export const DataPage = () => {
 
     const { currency, setCurrency } = useSettingsStore();
 
-    const { scenarios, addScenario, renameScenario, removeScenario } = useScenarioStore();
+    const { scenarios, addScenario, renameScenario, removeScenario, removeAllScenarios } = useScenarioStore();
+    const { items, removeAllByScenario } = useCashflowStore();
 
-    const handleExportJson = () => { /* TODO */ };
-    const handleExportCsv = () => { /* TODO */ };
-    const handleImport = () => { /* TODO */ };
-    const handleClearAllData = () => { /* TODO */ };
+    // ── Export JSON ──
+    const handleExportJson = () => {
+        const snapshot: AppSnapshot = {
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            scenarios,
+            items,
+            categories: useCategoryStore.getState().categories,
+            currency,
+        };
+        exportToJson(snapshot);
+    };
+
+    // ── Export CSV ──
+    const handleExportCsv = () => {
+        exportToCsv(scenarios, items);
+    };
+
+    // ── Import JSON ──
+    const handleImportFile = async (file: File) => {
+        try {
+            const snapshot = await importFromJson(file);
+            applySnapshot(snapshot);
+        } catch (err) {
+            alert((err as Error).message);
+        }
+    };
+
+    const applySnapshot = (snapshot: AppSnapshot) => {
+        const cashflowStore = useCashflowStore.getState();
+        const scenarioStore = useScenarioStore.getState();
+        const categoryStore = useCategoryStore.getState();
+        const settingsStore = useSettingsStore.getState();
+
+        // Limpiar datos actuales
+        scenarioStore.scenarios.forEach((s) => cashflowStore.removeAllByScenario(s.id));
+        scenarioStore.removeAllScenarios();
+
+        // Importar escenarios
+        snapshot.scenarios.forEach((s) => {
+            scenarioStore.addScenario(s.name);
+        });
+
+        // Importar items (re-mapeados a los nuevos IDs de escenario)
+        const newScenarios = useScenarioStore.getState().scenarios;
+        snapshot.scenarios.forEach((oldScenario, i) => {
+            const newId = newScenarios[i]?.id;
+            if (!newId) return;
+            const scenarioItems = snapshot.items[oldScenario.id] ?? [];
+            scenarioItems.forEach((item) => {
+                cashflowStore.addItem({ ...item, scenarioId: newId });
+            });
+        });
+
+        // Importar categorías
+        snapshot.categories.forEach((c) => {
+            categoryStore.addCategory(c.name, c.type);
+        });
+
+        // Importar moneda
+        if (snapshot.currency) {
+            settingsStore.setCurrency(snapshot.currency);
+        }
+    };
+
+    const handleImport = useFileInput(".json", handleImportFile);
+
+    // ── Clear all data ──
+    const handleClearAllData = () => {
+        // Limpiar todos los stores de Zustand
+        const cashflowStore = useCashflowStore.getState();
+        const scenarioStore = useScenarioStore.getState();
+
+        scenarioStore.scenarios.forEach((s) => cashflowStore.removeAllByScenario(s.id));
+        scenarioStore.removeAllScenarios();
+        resetCategories();
+
+        // Limpiar localStorage por completo y recargar
+        localStorage.clear();
+        window.location.reload();
+    };
 
     return (
         <div className="flex-1 overflow-y-auto scrollbar-hide">
