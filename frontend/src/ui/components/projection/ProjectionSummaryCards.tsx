@@ -29,7 +29,7 @@ export const ProjectionSummaryCards = ({
         {/* Balance actual */}
         <KpiCard
             title="Balance Actual"
-            value={currentBalance.toLocaleString("es-ES") + " €"}
+            value={currentBalance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"}
             icon={<Wallet size={16} className="text-blue-600" />}
             description="Punto de partida"
         />
@@ -37,7 +37,7 @@ export const ProjectionSummaryCards = ({
         {/* Balance proyectado */}
         <KpiCard
             title="Balance Final"
-            value={finalBalance.toLocaleString("es-ES") + " €"}
+            value={finalBalance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"}
             icon={isPositive
                 ? <TrendingUp size={16} className="text-emerald-600" />
                 : <TrendingDown size={16} className="text-red-600" />
@@ -45,7 +45,7 @@ export const ProjectionSummaryCards = ({
             description={`En ${selectedMonths} meses`}
             variant="success"
             delta={{
-                value: `${isPositive ? "+" : ""}${balanceDiff.toLocaleString("es-ES")} €`,
+                value: `${isPositive ? "+" : ""}${balanceDiff.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
                 direction: isPositive ? "up" : "down",
                 variant: isPositive ? "success" : "danger"
             }}
@@ -54,7 +54,7 @@ export const ProjectionSummaryCards = ({
         {/* Peor mes */}
         <KpiCard
             title="Peor mes"
-            value={worstMonth ? `${minBalance.toLocaleString("es-ES")} €` : "—"}
+            value={worstMonth ? `${minBalance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : "—"}
             icon={<Wallet size={16} className="text-blue-600" />}
             description={worstMonth ? `Balance mínimo: ${worstMonth.month}` : "Sin meses negativos"}
         />

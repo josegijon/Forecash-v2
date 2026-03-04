@@ -77,19 +77,19 @@ export const ProjectionDetailTable = ({ data }: ProjectionDetailTableProps) => (
                             >
                                 <td className="py-3 px-4 font-medium text-slate-700">{row.month}</td>
                                 <td className="py-3 px-4 text-right text-slate-700">
-                                    {row.ingresos.toLocaleString("es-ES")} €
+                                    {row.ingresos.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                                 </td>
                                 <td className="py-3 px-4 text-right text-slate-700">
-                                    {row.gastos.toLocaleString("es-ES")} €
+                                    {row.gastos.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                                 </td>
                                 <td className="py-3 px-4 text-right">
                                     <span className={`inline-flex items-center gap-1 font-semibold ${cfPositive ? "text-emerald-600" : "text-red-600"}`}>
                                         {cfPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                                        {cfPositive ? "+" : ""}{row.cashflow.toLocaleString("es-ES")} €
+                                        {cfPositive ? "+" : ""}{row.cashflow.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                                     </span>
                                 </td>
                                 <td className={`py-3 px-4 text-right font-medium ${row.isNegativeBalance ? "text-red-700" : "text-slate-700"}`}>
-                                    {row.balance.toLocaleString("es-ES")} €
+                                    {row.balance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                                 </td>
                                 <td className="py-3 px-4 text-center">
                                     <StatusBadge row={row} />
