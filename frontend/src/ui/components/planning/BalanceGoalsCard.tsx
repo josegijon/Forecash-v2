@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Calculator } from "lucide-react";
 
 import { calculateMonthlySummary, isActiveMonth } from "@core";
 
-import { useActiveScenario, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store"
+import { useActiveScenario, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 import { CurrencyInputField } from "./CurrencyInputField";
+import { CushionCalculatorModal } from "../modals/CushionCalculatorModal";
 
 interface BalanceGoalsCardProps {
     title: string;
@@ -26,6 +28,8 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const cushionBalance = activeScenario?.cushionBalance ?? 0;
     const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
+    const [showCalculator, setShowCalculator] = useState(false);
+
     const now = new Date();
     const referenceMonth = now.getMonth();
     const referenceYear = now.getFullYear();
@@ -42,47 +46,67 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     void summary;
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                    <span className="text-amber-500 text-sm">🎯</span>
+        <>
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-6">
+                    <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <span className="text-amber-500 text-sm">🎯</span>
+                    </div>
+                    <h3 className="font-bold text-slate-900">{title}</h3>
                 </div>
-                <h3 className="font-bold text-slate-900">{title}</h3>
+
+                <div className="space-y-4">
+                    <CurrencyInputField
+                        label="Saldo Inicial Actual"
+                        value={initialBalance}
+                        currencySymbol={currencySymbol}
+                        onChange={(newValue) => setInitialBalance(activeScenarioId, newValue)}
+                        allowNegative={true}
+                    />
+
+                    <CurrencyInputField
+                        label="Objetivo de Ahorro Mensual"
+                        value={savingsGoal}
+                        currencySymbol={currencySymbol}
+                        onChange={(newValue) => setSavingsGoal(activeScenarioId, newValue)}
+                        allowNegative={false}
+                    />
+
+                    {/* Colchón mínimo + botón calcular */}
+                    <div className="space-y-1.5">
+                        <CurrencyInputField
+                            label="Colchón mínimo (opcional)"
+                            value={cushionBalance}
+                            currencySymbol={currencySymbol}
+                            onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
+                            allowNegative={false}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowCalculator(true)}
+                            className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-medium px-1 py-0.5 rounded transition-colors hover:underline cursor-pointer"
+                        >
+                            <Calculator className="w-3 h-3" />
+                            Calcular automáticamente
+                        </button>
+                    </div>
+
+                    <CurrencyInputField
+                        label="Objetivo de capital (opcional)"
+                        value={capitalGoal}
+                        currencySymbol={currencySymbol}
+                        onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
+                        allowNegative={false}
+                    />
+                </div>
             </div>
 
-            <div className="space-y-4">
-                <CurrencyInputField
-                    label="Saldo Inicial Actual"
-                    value={initialBalance}
-                    currencySymbol={currencySymbol}
-                    onChange={(newValue) => setInitialBalance(activeScenarioId, newValue)}
-                    allowNegative={true}
+            {showCalculator && (
+                <CushionCalculatorModal
+                    onClose={() => setShowCalculator(false)}
+                    onApply={(value) => setCushionBalance(activeScenarioId, value)}
                 />
-
-                <CurrencyInputField
-                    label="Objetivo de Ahorro Mensual"
-                    value={savingsGoal}
-                    currencySymbol={currencySymbol}
-                    onChange={(newValue) => setSavingsGoal(activeScenarioId, newValue)}
-                    allowNegative={false}
-                />
-
-                <CurrencyInputField
-                    label="Colchón mínimo (opcional)"
-                    value={cushionBalance}
-                    currencySymbol={currencySymbol}
-                    onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
-                    allowNegative={false}
-                />
-
-                <CurrencyInputField
-                    label="Objetivo de capital (opcional)"
-                    value={capitalGoal}
-                    currencySymbol={currencySymbol}
-                    onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
-                    allowNegative={false}
-                />
-            </div>
-        </div>
-    )
-}
+            )}
+        </>
+    );
+};
