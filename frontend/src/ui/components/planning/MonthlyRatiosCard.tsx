@@ -54,12 +54,12 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
                 <div className="flex flex-col gap-4">
                     <RatioProgressBar
                         label="Tasa de ahorro"
-                        percentage={summary.savingsRate}
+                        percentage={summary.savingsRate * 100}
                         color={getSavingsRateColor(summary.savingsRate)}
                     />
                     <RatioProgressBar
                         label="Tasa de gasto"
-                        percentage={summary.expenseRate}
+                        percentage={summary.expenseRate * 100}
                         color={getExpenseRateColor(summary.expenseRate)}
                     />
                 </div>

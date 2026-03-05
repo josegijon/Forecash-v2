@@ -20,11 +20,9 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
     const savingsGoal = activeScenario?.savingsGoal ?? 0;
     const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
-    // ✅ referenceMonth/Year dentro del memo — no se recalcula en cada render
     const summary = useMemo(() => {
         const now = new Date();
         return calculateMonthlySummary({
-            // ✅ allItems — el servicio filtra internamente por mes activo
             items: allItems,
             year: activeYear,
             month: activeMonth,
@@ -52,7 +50,7 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
         : 0;
 
     const isDeficitSavings = summary.netBalance < 0;
-    const savingsProgress = isDeficitSavings ? 0 : Math.round(summary.progressGoal);
+    const savingsProgress = isDeficitSavings ? 0 : Math.round(summary.progressGoal * 100);
 
     const hasSavingsGoal = savingsGoal > 0;
     const hasCapitalGoal = capitalGoal > 0;
