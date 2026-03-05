@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router";
 
 import { prepareSnapshotImport } from "@core";
-import type { AppSnapshotV1 } from "@core";
 
 import { useCategoryStore, useExpenseCategories, useIncomeCategories } from "@/store/categoryStore";
 import { useSettingsStore, type Currency } from "@/store/settingsStore";
@@ -12,9 +11,9 @@ import { CurrencySelector } from "@/ui/components/settingsPage/CurrencySelector"
 import { ImportExportCard } from "@/ui/components/settingsPage/ImportExportCard";
 import { ScenarioManagerCard } from "@/ui/components/settingsPage/ScenarioManagerCard";
 import { DangerZoneCard } from "@/ui/components/settingsPage/DangerZoneCard";
-import { exportToCsv, exportToJson } from "@/infrastructure/export-import";
-import { importFromJson } from "@/infrastructure/export-import";
 import { useFileInput } from "@/ui/components/settingsPage/useFileInput";
+import type { ValidatedSnapshot } from "@/schemas/snapshot.schema";
+import { exportToCsv, exportToJson, ImportError, importFromJson } from "@/infrastructure/export-import";
 
 export const DataPage = () => {
     const { addCategory, removeCategory, renameCategory, resetCategories } = useCategoryStore();
@@ -37,14 +36,14 @@ export const DataPage = () => {
 
     // ── Export JSON ──
     const handleExportJson = () => {
-        const snapshot: AppSnapshotV1 = {
-            version: 1,
+        const snapshot = {
+            version: 1 as const,
             exportedAt: new Date().toISOString(),
             scenarios,
             items,
             categories: useCategoryStore.getState().categories,
             currency,
-        };
+        } satisfies ValidatedSnapshot;
         exportToJson(snapshot);
     };
 
@@ -59,12 +58,18 @@ export const DataPage = () => {
             const snapshot = await importFromJson(file);
             applySnapshot(snapshot);
         } catch (err) {
-            alert((err as Error).message);
+            if (err instanceof ImportError) {
+                // Permite diferenciar el tipo de error en UI si se desea
+                const detail = err.details ? `\n\nDetalle: ${err.details}` : "";
+                alert(`${err.message}${detail}`);
+            } else {
+                alert("Error inesperado al importar.");
+            }
         }
     };
 
     // ── applySnapshot: orquesta stores a partir del resultado puro del core ──
-    const applySnapshot = (snapshot: AppSnapshotV1) => {
+    const applySnapshot = (snapshot: ValidatedSnapshot) => {
         const existingCategories = useCategoryStore.getState().categories;
 
         // El core calcula qué importar sin tocar stores
