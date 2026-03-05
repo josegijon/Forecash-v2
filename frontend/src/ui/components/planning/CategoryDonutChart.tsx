@@ -85,7 +85,7 @@ export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
                 </span>
 
                 <span className="text-lg font-extrabold text-slate-800">
-                    {currencySymbol}{total.toLocaleString("es-ES")}
+                    {currencySymbol}{total.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
             </div>
         </div>

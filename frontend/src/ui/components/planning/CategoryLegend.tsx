@@ -28,7 +28,7 @@ export const CategoryLegend = ({ data }: CategoryLegendProps) => {
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-bold text-slate-800">
-                                {currencySymbol}{cat.value.toLocaleString("es-ES")}
+                                {currencySymbol}{cat.value.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </span>
                             <span className="text-xs font-semibold text-slate-400 min-w-10 text-right">
                                 {percent}%
