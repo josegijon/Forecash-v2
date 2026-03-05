@@ -21,11 +21,6 @@ export const useCashflowItemListModel = () => {
     const initialBalance = activeScenario?.initialBalance ?? 0;
     const savingsGoal = activeScenario?.savingsGoal ?? 0;
 
-    const now = new Date();
-    const referenceMonth = now.getMonth();
-    const referenceYear = now.getFullYear();
-
-    // Map de categorías para acceso rápido
     const categoryNameById = useMemo(() => {
         const map = new Map<string, string>();
         categories.forEach((c) => map.set(c.id, c.name));
@@ -34,16 +29,14 @@ export const useCashflowItemListModel = () => {
 
     const getCategoryName = (categoryId: string) => categoryNameById.get(categoryId) ?? "Sin categoría";
 
-    // Filtrar solo los ítems activos en el mes actual
-    const items = useMemo(
+    const activeItems = useMemo(
         () => allItems.filter((item) => isActiveMonth({ item, year: activeYear, month: activeMonth })),
         [allItems, activeYear, activeMonth]
     );
 
-    // Aplicar filtros de tipo y búsqueda
     const filteredItems = useMemo(
         () =>
-            items
+            activeItems
                 .filter((item) => filter === "all" || item.type === filter)
                 .filter((item) => {
                     const query = searchQuery.toLowerCase();
@@ -52,25 +45,22 @@ export const useCashflowItemListModel = () => {
                         getCategoryName(item.categoryId).toLowerCase().includes(query)
                     );
                 }),
-        [items, filter, searchQuery, categoryNameById]
+        [activeItems, filter, searchQuery, categoryNameById]
     );
 
-    // Resumen mensual
-    const summary = useMemo(
-        () =>
-            calculateMonthlySummary({
-                items,
-                year: activeYear,
-                month: activeMonth,
-                initialBalance,
-                savingsGoal,
-                referenceYear,
-                referenceMonth,
-            }),
-        [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]
-    );
+    const summary = useMemo(() => {
+        const now = new Date();
+        return calculateMonthlySummary({
+            items: allItems,
+            year: activeYear,
+            month: activeMonth,
+            initialBalance,
+            savingsGoal,
+            referenceYear: now.getFullYear(),
+            referenceMonth: now.getMonth(),
+        });
+    }, [allItems, activeYear, activeMonth, initialBalance, savingsGoal]);
 
-    // Opciones de filtro para la UI
     const filterTabs: { key: FilterType; label: string }[] = [
         { key: "all", label: "Todos" },
         { key: "income", label: "Ingresos" },
@@ -91,4 +81,4 @@ export const useCashflowItemListModel = () => {
         getCategoryName,
         onDeleteItem,
     };
-}
+};
