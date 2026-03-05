@@ -26,3 +26,23 @@ export const RANGED_FREQUENCIES: ReadonlySet<Frequency> = new Set([
     "semiannual",
     "annual",
 ]);
+
+/**
+ * Intervalo en meses entre ocurrencias para frecuencias cíclicas.
+ * `"once"` devuelve `null` porque no tiene intervalo de repetición:
+ * usarlo en lógica modular es un error de categoría.
+ *
+ * Esta es una regla de dominio pura — la fuente de verdad del intervalo
+ * de cada frecuencia. `frequencyMonthsMap` en shared/ es un alias de presentación
+ * que debe derivar de aquí.
+ */
+export const getFrequencyInterval = (frequency: Frequency): number | null => {
+    switch (frequency) {
+        case "once": return null;
+        case "monthly": return 1;
+        case "bimonthly": return 2;
+        case "quarterly": return 3;
+        case "semiannual": return 6;
+        case "annual": return 12;
+    }
+};

@@ -1,4 +1,6 @@
-import { Frequency } from "@core/index";
+import { Frequency, ISODateString, toISODateString } from "@core/index";
+import { assertCashflowItemValid } from "@core/domain/rules/cashflow-invariants";
+import { addMonths, toISOFirstOfMonth } from "../../shared/utils/date-utils";
 
 export interface CreatePlannedCashflowItemInput {
     scenarioId: string;
@@ -7,8 +9,18 @@ export interface CreatePlannedCashflowItemInput {
     amount: number;
     categoryId: string;
     frequency: Frequency;
+    /**
+     * Offset en meses desde `now` para el inicio del ítem.
+     * 0 = mes actual. Debe ser >= 0.
+     */
     startsInMonths: number;
+    /**
+     * Offset en meses desde `now` para el fin del ítem.
+     * Debe ser > startsInMonths si se proporciona.
+     * No debe existir si frequency === "once".
+     */
     endsInMonths?: number;
+    /** Fecha de referencia. Por defecto = Date.now(). Inyectable para tests. */
     now?: Date;
 }
 
@@ -19,33 +31,54 @@ export interface NewPlannedCashflowItem {
     amount: number;
     categoryId: string;
     frequency: Frequency;
-    startDate: string;
-    endDate?: string;
+    startDate: ISODateString;
+    endDate?: ISODateString;
 }
 
-const toISODate = (date: Date) => date.toISOString().slice(0, 10);
+/**
+ * Convierte un offset de meses desde una fecha base al primer día
+ * del mes resultante en formato ISODateString.
+ * Usa addMonths para evitar overflows de fin de mes.
+ */
+const offsetToISODate = (base: Date, offsetMonths: number): ISODateString => {
+    const ym = { year: base.getFullYear(), month: base.getMonth() };
+    return toISODateString(toISOFirstOfMonth(addMonths(ym, offsetMonths)));
+};
 
-export const createPlannedCashflowItem = (input: CreatePlannedCashflowItemInput): NewPlannedCashflowItem => {
-    const start = new Date(input.now ?? new Date());
-    start.setMonth(start.getMonth() + input.startsInMonths);
-
-    let endDate: string | undefined = undefined;
-
-    // Si se proporcionó "endsInMonths", calcular la fecha de finalización
-    if (input.endsInMonths !== undefined) {
-        const end = new Date(input.now ?? new Date());
-        end.setMonth(end.getMonth() + input.endsInMonths);
-        endDate = toISODate(end);
+export const createPlannedCashflowItem = (
+    input: CreatePlannedCashflowItemInput
+): NewPlannedCashflowItem => {
+    if (input.startsInMonths < 0) {
+        throw new Error(`startsInMonths debe ser >= 0. Recibido: ${input.startsInMonths}`);
     }
 
-    return {
+    if (input.endsInMonths !== undefined && input.endsInMonths <= input.startsInMonths) {
+        throw new Error(
+            `endsInMonths (${input.endsInMonths}) debe ser mayor que startsInMonths (${input.startsInMonths}).`
+        );
+    }
+
+    if (input.frequency === "once" && input.endsInMonths !== undefined) {
+        throw new Error(`Un ítem con frecuencia "once" no puede tener endsInMonths.`);
+    }
+
+    const now = input.now ?? new Date();
+    const startDate = offsetToISODate(now, input.startsInMonths);
+    const endDate = input.endsInMonths !== undefined
+        ? offsetToISODate(now, input.endsInMonths)
+        : undefined;
+
+    const candidate = {
         scenarioId: input.scenarioId,
         type: input.type,
         name: input.name,
         amount: input.amount,
         categoryId: input.categoryId,
         frequency: input.frequency,
-        startDate: toISODate(start),
+        startDate,
         endDate,
     };
+
+    assertCashflowItemValid(candidate);
+    return candidate;
 };
