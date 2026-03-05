@@ -1,13 +1,9 @@
-
-// Convierte el texto del usuario a un número válido.
+// Formatea un número como texto localizado (es-ES)
 export const formatDisplay = (num: number): string =>
-    num.toLocaleString(
-        "es-ES",
-        {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }
-    );
+    num.toLocaleString("es-ES", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 
 // Convierte el texto del usuario a un número válido.
 export const parseInput = (raw: string, allowNegative: boolean): number => {
