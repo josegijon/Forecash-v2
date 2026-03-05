@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layers, Plus, MoreVertical, Pencil, Trash2, Check, X } from "lucide-react";
 import type { Scenario } from "@/store/scenarioStore";
 
@@ -14,6 +14,20 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
     const [editingName, setEditingName] = useState("");
     const [menuId, setMenuId] = useState<string | null>(null);
     const [newName, setNewName] = useState("");
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!menuId) return;
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setMenuId(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [menuId]);
 
     const startEditing = (s: Scenario) => {
         setEditingId(s.id);
@@ -90,7 +104,7 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
                                     </button>
                                 </div>
                             ) : (
-                                <div className="relative">
+                                <div className="relative" ref={menuId === scenario.id ? menuRef : null}>
                                     <button
                                         onClick={() => setMenuId(menuId === scenario.id ? null : scenario.id)}
                                         className="p-1.5 rounded-lg text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-600 transition-all cursor-pointer"
