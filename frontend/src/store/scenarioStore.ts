@@ -1,18 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Scenario } from "@core";
 
-// ─────────────────────────────────────────────────────────────
-// Modelo de dominio
-// ─────────────────────────────────────────────────────────────
-
-export interface Scenario {
-    id: string;
-    name: string;
-    initialBalance: number;
-    savingsGoal: number;
-    cushionBalance: number;
-    capitalGoal?: number;
-}
+export type { Scenario };
 
 interface ScenarioState {
     scenarios: Scenario[];
@@ -46,26 +36,21 @@ const createDefaultScenario = (): Scenario => ({
 export const useScenarioStore = create<ScenarioState>()(
     persist(
         (set, get) => ({
-            // ── Estado ───────────────────────────────────────
             scenarios: [createDefaultScenario()],
             activeScenarioId: DEFAULT_ID,
 
-            // ── Escenarios ───────────────────────────────────
-
             addScenario: (name) => {
                 const newScenario: Scenario = {
-                    id: `scenario-${Date.now()}`,
+                    id: crypto.randomUUID(),
                     name,
                     initialBalance: 0,
                     savingsGoal: 0,
                     cushionBalance: 0,
                     capitalGoal: undefined,
                 };
-
                 set((state) => ({
                     scenarios: [...state.scenarios, newScenario],
                 }));
-
                 return newScenario.id;
             },
 
@@ -74,17 +59,12 @@ export const useScenarioStore = create<ScenarioState>()(
                 if (state.scenarios.length <= 1) return null;
 
                 const remaining = state.scenarios.filter((s) => s.id !== id);
-
                 const newActiveId =
                     state.activeScenarioId === id
                         ? remaining[0].id
                         : state.activeScenarioId;
 
-                set({
-                    scenarios: remaining,
-                    activeScenarioId: newActiveId,
-                });
-
+                set({ scenarios: remaining, activeScenarioId: newActiveId });
                 return newActiveId;
             },
 
@@ -110,14 +90,12 @@ export const useScenarioStore = create<ScenarioState>()(
 
                 const newScenario: Scenario = {
                     ...source,
-                    id: `scenario-${Date.now()}`,
+                    id: crypto.randomUUID(),
                     name: `${source.name} (copia)`,
                 };
-
                 set((state) => ({
                     scenarios: [...state.scenarios, newScenario],
                 }));
-
                 return newScenario.id;
             },
 
@@ -126,8 +104,6 @@ export const useScenarioStore = create<ScenarioState>()(
                 if (!exists) return;
                 set({ activeScenarioId: id });
             },
-
-            // ── Setters financieros ───────────────────────────
 
             setInitialBalance: (id, balance) => {
                 set((state) => ({
@@ -167,10 +143,6 @@ export const useScenarioStore = create<ScenarioState>()(
         }
     )
 );
-
-// ─────────────────────────────────────────────────────────────
-// Selector auxiliar
-// ─────────────────────────────────────────────────────────────
 
 export const useActiveScenario = () =>
     useScenarioStore((s) =>

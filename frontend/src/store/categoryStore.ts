@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { useShallow } from "zustand/react/shallow";
 
 export interface Category {
     id: string;
@@ -26,17 +25,21 @@ const DEFAULT_CATEGORIES: Category[] = [
     { id: "cat-7", name: "Suscripciones", type: "expense" },
 ];
 
+// ── Selectores estables (definidos fuera para referencia constante) ──
+const selectIncomeCategories = (state: CategoryState) =>
+    state.categories.filter((c) => c.type === "income");
+
+const selectExpenseCategories = (state: CategoryState) =>
+    state.categories.filter((c) => c.type === "expense");
+
 export const useCategoryStore = create<CategoryState>()(
     persist(
-        (set, get) => ({
-            // ── Estado ──
+        (set) => ({
             categories: DEFAULT_CATEGORIES,
 
-            // ── Acciones ──
             addCategory: (name, type) =>
                 set((state) => {
                     const trimmed = name.trim();
-
                     if (!trimmed) return state;
 
                     const exists = state.categories.some(
@@ -44,33 +47,25 @@ export const useCategoryStore = create<CategoryState>()(
                             c.name.toLowerCase() === trimmed.toLowerCase() &&
                             c.type === type
                     );
-
                     if (exists) return state;
 
                     return {
                         categories: [
                             ...state.categories,
-                            {
-                                id: crypto.randomUUID(),
-                                name: trimmed,
-                                type,
-                            },
+                            { id: crypto.randomUUID(), name: trimmed, type },
                         ],
                     };
                 }),
 
             removeCategory: (id) =>
                 set((state) => ({
-                    categories: state.categories.filter(
-                        (c) => c.id !== id
-                    ),
+                    categories: state.categories.filter((c) => c.id !== id),
                 })),
 
             renameCategory: (id, newName) =>
                 set((state) => {
                     const trimmed = newName.trim();
                     if (!trimmed) return state;
-
                     return {
                         categories: state.categories.map((c) =>
                             c.id === id ? { ...c, name: trimmed } : c
@@ -78,28 +73,20 @@ export const useCategoryStore = create<CategoryState>()(
                     };
                 }),
 
-            resetCategories: () =>
-                set({ categories: DEFAULT_CATEGORIES }),
+            resetCategories: () => set({ categories: DEFAULT_CATEGORIES }),
         }),
-
         {
             name: "category-storage",
-
-            partialize: (state) => ({
-                categories: state.categories,
-            }),
-
+            partialize: (state) => ({ categories: state.categories }),
             version: 1,
         }
     )
 );
 
-export const useIncomeCategories = () => {
-    const categories = useCategoryStore((state) => state.categories);
-    return categories.filter((c) => c.type === "income");
-};
+// ✅ Selector estable: Zustand compara por referencia el array filtrado
+// solo si `categories` cambió — evita nuevo array en cada render
+export const useIncomeCategories = () =>
+    useCategoryStore(selectIncomeCategories);
 
-export const useExpenseCategories = () => {
-    const categories = useCategoryStore((state) => state.categories);
-    return categories.filter((c) => c.type === "expense");
-};
+export const useExpenseCategories = () =>
+    useCategoryStore(selectExpenseCategories);

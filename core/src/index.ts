@@ -1,4 +1,4 @@
-export type { Frequency, CashflowItem, MonthlySummary, ISODateString } from "./domain/models";
+export type { Frequency, CashflowItem, MonthlySummary, ISODateString, Scenario } from "./domain/models";
 export { RANGED_FREQUENCIES, toISODateString, getFrequencyInterval } from "./domain/models";
 
 export { isActiveMonth } from "./domain/rules/occurrence";
