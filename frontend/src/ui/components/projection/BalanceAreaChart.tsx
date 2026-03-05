@@ -1,9 +1,13 @@
+import { useMemo } from "react";
 import { Target, Shield, TrendingUp, TrendingDown } from "lucide-react";
 import {
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Area, AreaChart, ReferenceLine,
 } from "recharts";
 import type { DotProps } from "recharts";
+
+import { detectBalanceCrosses } from "@core";
+import type { CrossType } from "@core";
 
 import type { MonthData } from "./projectionTypes";
 import { useActiveScenario } from "@/store";
@@ -127,8 +131,6 @@ const CrossingDot = (props: CrossingDotProps) => {
 };
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
-
-type CrossType = "gained" | "lost";
 
 type EnrichedMonthData = MonthData & {
     _crossCapital?: CrossType;
@@ -329,58 +331,49 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
     const cushionBalance = activeScenario?.cushionBalance ?? 0;
     const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
-    // ── Detectar cruces ──────────────────────────────────────────────────────
-    // - allCrosses: TODOS los cruces de cada umbral → se usan para los dots
-    // - lastCross:  solo el ÚLTIMO cruce de cada umbral → se usa para los badges
+    const balances = useMemo(() => data.map((d) => d.balance), [data]);
 
-    interface CrossEvent {
-        index: number;
-        type: CrossType;
-    }
+    const capitalCrosses = useMemo(
+        () => detectBalanceCrosses({ balances, threshold: capitalGoal }),
+        [balances, capitalGoal]
+    );
 
-    const detectCrosses = (threshold: number): CrossEvent[] => {
-        if (threshold < 0) return [];
-        const events: CrossEvent[] = [];
-        for (let i = 1; i < data.length; i++) {
-            const prev = data[i - 1].balance;
-            const curr = data[i].balance;
-            if (prev < threshold && curr >= threshold) {
-                events.push({ index: i, type: "gained" });
-            } else if (prev >= threshold && curr < threshold) {
-                events.push({ index: i, type: "lost" });
-            }
-        }
-        return events;
-    };
+    const cushionCrosses = useMemo(
+        () => detectBalanceCrosses({ balances, threshold: cushionBalance }),
+        [balances, cushionBalance]
+    );
 
-    const capitalCrosses = detectCrosses(capitalGoal);
-    const cushionCrosses = detectCrosses(cushionBalance);
-    // threshold=0 siempre es válido para zona de riesgo
-    const riskCrosses = detectCrosses(0);
+    // threshold=0: zona de riesgo (balance cruza el cero)
+    const riskCrosses = useMemo(
+        () => detectBalanceCrosses({ balances, threshold: 0 }),
+        [balances]
+    );
 
     const lastCapitalCross = capitalCrosses.at(-1) ?? null;
     const lastCushionCross = cushionCrosses.at(-1) ?? null;
-    // Badge zona de riesgo: solo si el ÚLTIMO cruce es "lost" (terminamos en negativo)
     const lastRiskCross = riskCrosses.at(-1) ?? null;
     const showRiskBadge = lastRiskCross?.type === "lost";
 
-    // Índices de todos los cruces para pintar dots
     const capitalCrossSet = new Map(capitalCrosses.map((e) => [e.index, e.type]));
     const cushionCrossSet = new Map(cushionCrosses.map((e) => [e.index, e.type]));
     const riskCrossSet = new Map(riskCrosses.map((e) => [e.index, e.type]));
 
-    const enrichedData = data.map((d, i) => ({
-        ...d,
-        _crossCapital: capitalCrossSet.get(i),
-        _crossCushion: cushionCrossSet.get(i),
-        _crossRisk: riskCrossSet.get(i),
-    }));
+    const enrichedData = useMemo(
+        () =>
+            data.map((d, i) => ({
+                ...d,
+                _crossCapital: capitalCrossSet.get(i),
+                _crossCushion: cushionCrossSet.get(i),
+                _crossRisk: riskCrossSet.get(i),
+            })),
+        // Los Maps se recrean cuando sus cruces cambian — incluirlos como deps
+        // sería inestable; usamos los arrays originales como fuente de verdad
+        [data, capitalCrosses, cushionCrosses, riskCrosses]
+    );
 
-    // ── ¿Hay meses negativos? Para gradiente dinámico ────────────────────────
     const hasNegative = data.some((d) => d.isNegativeBalance);
     const gradientStopColor = hasNegative ? "#ef4444" : "#6366f1";
 
-    // ── Líneas de referencia activas ─────────────────────────────────────────
     const activeRefs: { value: number; color: string; label: string }[] = [];
     if (cushionBalance > 0)
         activeRefs.push({ value: cushionBalance, color: "#f59e0b", label: `Colchón: ${euroFormatter(cushionBalance)}` });

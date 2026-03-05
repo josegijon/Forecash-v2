@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import { Target } from "lucide-react";
 
-
 import { useActiveScenario, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 import { GoalProgressRing } from "./GoalProgressRing";
-import { calculateMonthlySummary, isActiveMonth } from "@core";
-import { calculateAccumulatedSavings } from "../../../../../core/src/domain/services/monthly-calculator";
+import { calculateMonthlySummary, calculateAccumulatedSavings } from "@core";
 
 interface GoalsProgressCardProps {
     title: string;
@@ -22,31 +20,32 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
     const savingsGoal = activeScenario?.savingsGoal ?? 0;
     const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
-    const now = new Date();
-    const referenceMonth = now.getMonth();
-    const referenceYear = now.getFullYear();
+    // ✅ referenceMonth/Year dentro del memo — no se recalcula en cada render
+    const summary = useMemo(() => {
+        const now = new Date();
+        return calculateMonthlySummary({
+            // ✅ allItems — el servicio filtra internamente por mes activo
+            items: allItems,
+            year: activeYear,
+            month: activeMonth,
+            initialBalance,
+            savingsGoal,
+            referenceYear: now.getFullYear(),
+            referenceMonth: now.getMonth(),
+        });
+    }, [allItems, activeYear, activeMonth, initialBalance, savingsGoal]);
 
-    const items = allItems.filter((item) =>
-        isActiveMonth({ item, year: activeYear, month: activeMonth })
-    );
-
-    const summary = useMemo(() => calculateMonthlySummary({
-        items, year: activeYear, month: activeMonth,
-        initialBalance, savingsGoal, referenceYear, referenceMonth,
-    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
-
-    // Progreso hacia objetivo de capital
-    const accumulatedSavings = useMemo(() =>
-        calculateAccumulatedSavings(
+    const accumulatedSavings = useMemo(() => {
+        const now = new Date();
+        return calculateAccumulatedSavings(
             allItems,
             initialBalance,
-            referenceYear,
-            referenceMonth,
+            now.getFullYear(),
+            now.getMonth(),
             activeYear,
             activeMonth,
-        ),
-        [allItems, initialBalance, referenceYear, referenceMonth, activeYear, activeMonth]
-    );
+        );
+    }, [allItems, initialBalance, activeYear, activeMonth]);
 
     const capitalProgress = capitalGoal > 0
         ? Math.round(Math.min((accumulatedSavings / capitalGoal) * 100, 100))

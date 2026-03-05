@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { X, ChevronRight, Calculator, Check } from "lucide-react";
 
 import { useCurrencySymbol, useScenarioItems, useScenarioStore } from "@/store";
-import { isActiveMonth } from "@core";
+import { isActiveMonth, addMonths } from "@core";
 
 import {
     calculateCushion,
@@ -34,9 +34,7 @@ export const CushionCalculatorModal = ({ onClose, onApply }: CushionCalculatorMo
         let total = 0;
 
         for (let i = 0; i < MONTHS; i++) {
-            const date = new Date(refYear, refMonth + i);
-            const year = date.getFullYear();
-            const month = date.getMonth();
+            const { year, month } = addMonths({ year: refYear, month: refMonth }, i);
 
             const monthExpenses = allItems
                 .filter((item) =>
@@ -52,17 +50,17 @@ export const CushionCalculatorModal = ({ onClose, onApply }: CushionCalculatorMo
         return Math.round(total / MONTHS);
     }, [allItems]);
 
-    // Form state
     const [step, setStep] = useState<Step>("questions");
     const [laborProfile, setLaborProfile] = useState<LaborProfile>("empleado");
     const [hasDependants, setHasDependants] = useState(false);
     const [hasFixedDebt, setHasFixedDebt] = useState(false);
     const [riskProfile, setRiskProfile] = useState<RiskProfile>("equilibrado");
 
-    const inputs: CushionInputs = { laborProfile, hasDependants, hasFixedDebt, riskProfile };
     const result = useMemo(
-        () => calculateCushion(inputs, fixedExpenses),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        () => {
+            const inputs: CushionInputs = { laborProfile, hasDependants, hasFixedDebt, riskProfile };
+            return calculateCushion(inputs, fixedExpenses);
+        },
         [laborProfile, hasDependants, hasFixedDebt, riskProfile, fixedExpenses]
     );
 

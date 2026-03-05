@@ -62,7 +62,7 @@ export const ProjectionSummaryCards = ({
         {/* Ratio de meses negativos */}
         <KpiCard
             title="Meses negativos"
-            value={selectedMonths > 0 ? `${Math.round((negativeMonths / selectedMonths) * 100)}%` : "0%"}
+            value={`${Math.round((negativeMonths / selectedMonths) * 100)}%`}
             icon={<PiggyBank size={16} className="text-blue-600" />}
             description={`${negativeMonths} de ${selectedMonths} meses con cashflow negativo`}
         />

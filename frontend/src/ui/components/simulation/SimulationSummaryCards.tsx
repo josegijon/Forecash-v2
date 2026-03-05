@@ -9,7 +9,9 @@ interface Props {
 
 export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenarioName, selectedMonths }: Props) => {
     const diff = comparedBalance - actualBalance;
-    const diffPercent = ((diff / actualBalance) * 100).toFixed(1);
+    const diffPercent = actualBalance !== 0
+        ? ((diff / actualBalance) * 100).toFixed(1)
+        : null;
     const isPositive = diff >= 0;
 
     return (
@@ -60,10 +62,12 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                     <p className={`text-2xl font-bold ${isPositive ? "text-emerald-700" : "text-red-700"}`}>
                         {isPositive ? "+" : ""}{diff.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                     </p>
-                    <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${isPositive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
-                        {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                        {diffPercent}%
-                    </span>
+                    {diffPercent !== null && (
+                        <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${isPositive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
+                            {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                            {diffPercent}%
+                        </span>
+                    )}
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
                     El {scenarioName.toLowerCase()} {isPositive ? "supera" : "queda por debajo de"} tu escenario actual

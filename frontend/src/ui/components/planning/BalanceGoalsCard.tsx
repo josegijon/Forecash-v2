@@ -1,9 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Calculator } from "lucide-react";
 
-import { calculateMonthlySummary, isActiveMonth } from "@core";
-
-import { useActiveScenario, useCurrencySymbol, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
+import { useActiveScenario, useCurrencySymbol, useScenarioStore } from "@/store";
 import { CurrencyInputField } from "./CurrencyInputField";
 import { CushionCalculatorModal } from "../modals/CushionCalculatorModal";
 
@@ -14,9 +12,6 @@ interface BalanceGoalsCardProps {
 export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const currencySymbol = useCurrencySymbol();
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
-    const activeMonth = usePlanningStore((s) => s.activeMonth);
-    const activeYear = usePlanningStore((s) => s.activeYear);
-    const allItems = useScenarioItems(activeScenarioId);
     const activeScenario = useActiveScenario();
 
     const setInitialBalance = useScenarioStore((s) => s.setInitialBalance);
@@ -29,21 +24,6 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
     const [showCalculator, setShowCalculator] = useState(false);
-
-    const now = new Date();
-    const referenceMonth = now.getMonth();
-    const referenceYear = now.getFullYear();
-
-    const items = allItems.filter((item) =>
-        isActiveMonth({ item, year: activeYear, month: activeMonth })
-    );
-
-    const summary = useMemo(() => calculateMonthlySummary({
-        items, year: activeYear, month: activeMonth,
-        initialBalance, savingsGoal, referenceYear, referenceMonth,
-    }), [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]);
-
-    void summary;
 
     return (
         <>
@@ -72,7 +52,6 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                         allowNegative={false}
                     />
 
-                    {/* Colchón mínimo + botón calcular */}
                     <div className="space-y-1.5">
                         <CurrencyInputField
                             label="Colchón mínimo (opcional)"

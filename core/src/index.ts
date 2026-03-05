@@ -27,6 +27,8 @@ export { prepareSnapshotImport } from "./application/use-cases/import-snapshot";
 export type { AppSnapshotV1, ImportSnapshotResult, ImportedScenario } from "./application/use-cases/import-snapshot";
 export type { Category as SnapshotCategory } from "./application/use-cases/import-snapshot.types";
 
-// ✅ Regla de dominio de colchón de emergencia
 export { calculateCushion } from "./domain/rules/cushion";
 export type { CushionInputs, CushionResult, CushionBreakdownStep, LaborProfile, RiskProfile } from "./domain/rules/cushion";
+
+export { detectBalanceCrosses } from "./application/use-cases/detect-balance-crosses";
+export type { DetectBalanceCrossesInput, CrossEvent, CrossType } from "./application/use-cases/detect-balance-crosses";

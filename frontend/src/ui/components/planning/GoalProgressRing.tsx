@@ -1,3 +1,5 @@
+import { useCurrencySymbol } from "@/store";
+
 interface GoalProgressRingProps {
     progress: number;
     savedAmount: number;
@@ -31,7 +33,7 @@ export const GoalProgressRing = ({
     isDeficit = false,
 }: GoalProgressRingProps) => {
     const ringColor = isDeficit ? COLOR_MAP.red : COLOR_MAP[color];
-    const currencySymbol = "€";
+    const currencySymbol = useCurrencySymbol();
 
     return (
         <div className="flex items-center gap-4 pt-2">
