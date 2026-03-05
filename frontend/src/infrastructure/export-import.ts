@@ -1,31 +1,22 @@
 import type { Scenario } from "@/store/scenarioStore";
 import type { CashflowItem } from "@/store/cashflowStore";
-import type { Category } from "@/store/categoryStore";
-import type { Currency } from "@/store/settingsStore";
 
-export interface AppSnapshot {
-    version: number;
-    exportedAt: string;
-    scenarios: Scenario[];
-    items: Record<string, CashflowItem[]>;
-    categories: Category[];
-    currency: Currency;
-}
+import type { AppSnapshotV1 } from "@core";
 
 /* ── JSON ── */
-export const exportToJson = (snapshot: AppSnapshot): void => {
+export const exportToJson = (snapshot: AppSnapshotV1): void => {
     const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
         type: "application/json",
     });
     triggerDownload(blob, `forecash-export-${dateTag()}.json`);
 };
 
-export const importFromJson = (file: File): Promise<AppSnapshot> =>
+export const importFromJson = (file: File): Promise<AppSnapshotV1> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
-                const data = JSON.parse(e.target?.result as string) as AppSnapshot;
+                const data = JSON.parse(e.target?.result as string) as AppSnapshotV1;
                 resolve(data);
             } catch {
                 reject(new Error("El archivo no es un JSON válido."));
