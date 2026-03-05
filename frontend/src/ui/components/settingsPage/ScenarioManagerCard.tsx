@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef } from "react";
-import { Layers, Plus, MoreVertical, Pencil, Trash2, Check, X } from "lucide-react";
+import { Layers, Plus } from "lucide-react";
 import type { Scenario } from "@/store/scenarioStore";
 import { ConfirmDeleteScenarioModal } from "@/ui/components/modals/ConfirmDeleteScenarioModal";
+import { ScenarioCard } from "./ScenarioCard";
 
-interface Props {
+interface ScenarioManagerCardProps {
     scenarios: Scenario[];
     onAdd: (name: string) => void;
     onRename: (id: string, name: string) => void;
     onDelete: (id: string) => void;
 }
 
-export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Props) => {
+// ── Componente principal ──────────────────────────────────────────────────────
+
+export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: ScenarioManagerCardProps) => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingName, setEditingName] = useState("");
     const [menuId, setMenuId] = useState<string | null>(null);
@@ -20,13 +23,11 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
 
     useEffect(() => {
         if (!menuId) return;
-
         const handleClickOutside = (e: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
                 setMenuId(null);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [menuId]);
@@ -46,20 +47,13 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
 
     const cancelEdit = () => setEditingId(null);
 
-    // Opens the confirmation modal instead of deleting immediately
     const handleDeleteRequest = (id: string) => {
         setPendingDeleteId(id);
         setMenuId(null);
     };
 
     const handleDeleteConfirm = () => {
-        if (pendingDeleteId) {
-            onDelete(pendingDeleteId);
-        }
-        setPendingDeleteId(null);
-    };
-
-    const handleDeleteCancel = () => {
+        if (pendingDeleteId) onDelete(pendingDeleteId);
         setPendingDeleteId(null);
     };
 
@@ -75,11 +69,9 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
     return (
         <>
             <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
-                <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2">
-                        <Layers size={20} className="text-primary" />
-                        <h3 className="font-bold text-slate-900">Escenarios</h3>
-                    </div>
+                <div className="flex items-center gap-2 mb-5">
+                    <Layers size={20} className="text-primary" />
+                    <h3 className="font-bold text-slate-900">Escenarios</h3>
                 </div>
 
                 <p className="text-sm text-slate-500 mb-5">
@@ -88,75 +80,24 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                     {scenarios.map((scenario) => (
-                        <div
+                        <ScenarioCard
                             key={scenario.id}
-                            className="relative flex flex-col gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all group"
-                        >
-                            <div className="flex gap-1">
-                                <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0 shadow-sm shadow-primary/30" />
-                                    {editingId === scenario.id ? (
-                                        <input
-                                            autoFocus
-                                            value={editingName}
-                                            onChange={(e) => setEditingName(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") confirmEdit();
-                                                if (e.key === "Escape") cancelEdit();
-                                            }}
-                                            className="flex-1 text-sm font-semibold bg-white px-2 py-1 rounded-lg border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                        />
-                                    ) : (
-                                        <span className="text-sm font-semibold text-slate-800 truncate">{scenario.name}</span>
-                                    )}
-                                </div>
-
-                                {editingId === scenario.id ? (
-                                    <div className="flex items-center gap-1">
-                                        <button onClick={confirmEdit} className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 transition-colors cursor-pointer">
-                                            <Check size={14} />
-                                        </button>
-                                        <button onClick={cancelEdit} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors cursor-pointer">
-                                            <X size={14} />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="relative" ref={menuId === scenario.id ? menuRef : null}>
-                                        <button
-                                            onClick={() => setMenuId(menuId === scenario.id ? null : scenario.id)}
-                                            className="p-1.5 rounded-lg text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-600 transition-all cursor-pointer"
-                                        >
-                                            <MoreVertical size={16} />
-                                        </button>
-
-                                        {menuId === scenario.id && (
-                                            <div className="absolute right-0 top-8 z-10 bg-white border border-slate-200 rounded-xl shadow-lg py-1 w-40">
-                                                <button
-                                                    onClick={() => startEditing(scenario)}
-                                                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-                                                >
-                                                    <Pencil size={14} />
-                                                    Renombrar
-                                                </button>
-                                                <button
-                                                    onClick={() => scenarios.length > 1 && handleDeleteRequest(scenario.id)}
-                                                    disabled={scenarios.length <= 1}
-                                                    title={scenarios.length <= 1 ? "No puedes eliminar el único escenario" : undefined}
-                                                    className="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-rose-600 hover:bg-rose-50 disabled:hover:bg-transparent"
-                                                >
-                                                    <Trash2 size={14} />
-                                                    Eliminar
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                            scenario={scenario}
+                            isEditing={editingId === scenario.id}
+                            editingName={editingName}
+                            menuOpen={menuId === scenario.id}
+                            canDelete={scenarios.length > 1}
+                            menuRef={menuId === scenario.id ? menuRef : { current: null }}
+                            onEditingNameChange={setEditingName}
+                            onConfirmEdit={confirmEdit}
+                            onCancelEdit={cancelEdit}
+                            onMenuToggle={() => setMenuId(menuId === scenario.id ? null : scenario.id)}
+                            onStartEdit={() => startEditing(scenario)}
+                            onDeleteRequest={() => handleDeleteRequest(scenario.id)}
+                        />
                     ))}
                 </div>
 
-                {/* Añadir nuevo escenario */}
                 <div className="flex items-center gap-2">
                     <input
                         value={newName}
@@ -175,12 +116,11 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
                 </div>
             </div>
 
-            {/* Confirmation modal — rendered outside the card but inside the fragment */}
             {pendingDeleteId && pendingDeleteScenario && (
                 <ConfirmDeleteScenarioModal
                     scenarioName={pendingDeleteScenario.name}
                     onConfirm={handleDeleteConfirm}
-                    onCancel={handleDeleteCancel}
+                    onCancel={() => setPendingDeleteId(null)}
                 />
             )}
         </>

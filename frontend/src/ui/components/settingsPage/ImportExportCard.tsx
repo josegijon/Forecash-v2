@@ -1,4 +1,5 @@
 import { Download, Upload, FileJson, FileSpreadsheet } from "lucide-react";
+import { ActionButton } from "./ActionButton";
 
 interface Props {
     onExportJson: () => void;
@@ -18,47 +19,36 @@ export const ImportExportCard = ({ onExportJson, onExportCsv, onImport }: Props)
         </p>
 
         <div className="space-y-3">
-            <button
+            <ActionButton
                 onClick={onExportJson}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all cursor-pointer group"
-            >
-                <span className="w-9 h-9 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
-                    <FileJson size={18} className="text-blue-500" />
-                </span>
-                <div className="text-left flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Exportar como JSON</p>
-                    <p className="text-xs text-slate-500">Todos los escenarios y configuración</p>
-                </div>
-                <Download size={16} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
-            </button>
+                iconBg="bg-blue-50"
+                iconBorder="border-blue-100"
+                icon={<FileJson size={18} className="text-blue-500" />}
+                label="Exportar como JSON"
+                sublabel="Todos los escenarios y configuración"
+                actionIcon={<Download size={16} className="text-slate-400 group-hover:text-blue-500 transition-colors" />}
+            />
 
-            <button
+            <ActionButton
                 onClick={onExportCsv}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all cursor-pointer group"
-            >
-                <span className="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                    <FileSpreadsheet size={18} className="text-emerald-500" />
-                </span>
-                <div className="text-left flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Exportar como CSV</p>
-                    <p className="text-xs text-slate-500">Compatible con hojas de cálculo</p>
-                </div>
-                <Download size={16} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
-            </button>
+                iconBg="bg-emerald-50"
+                iconBorder="border-emerald-100"
+                icon={<FileSpreadsheet size={18} className="text-emerald-500" />}
+                label="Exportar como CSV"
+                sublabel="Compatible con hojas de cálculo"
+                actionIcon={<Download size={16} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />}
+            />
 
-            <button
+            <ActionButton
                 onClick={onImport}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-dashed border-slate-200 hover:border-primary/30 hover:bg-primary/5 transition-all cursor-pointer group"
-            >
-                <span className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center">
-                    <Upload size={18} className="text-indigo-500" />
-                </span>
-                <div className="text-left flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Importar datos</p>
-                    <p className="text-xs text-slate-500">Arrastra o selecciona un archivo JSON</p>
-                </div>
-                <Upload size={16} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
-            </button>
+                iconBg="bg-indigo-50"
+                iconBorder="border-indigo-100"
+                icon={<Upload size={18} className="text-indigo-500" />}
+                label="Importar datos"
+                sublabel="Arrastra o selecciona un archivo JSON"
+                actionIcon={<Upload size={16} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />}
+                variant="dashed"
+            />
         </div>
     </div>
 );
