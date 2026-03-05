@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 
 export interface Category {
     id: string;
@@ -24,13 +25,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     { id: "cat-6", name: "Deuda", type: "expense" },
     { id: "cat-7", name: "Suscripciones", type: "expense" },
 ];
-
-// ── Selectores estables (definidos fuera para referencia constante) ──
-const selectIncomeCategories = (state: CategoryState) =>
-    state.categories.filter((c) => c.type === "income");
-
-const selectExpenseCategories = (state: CategoryState) =>
-    state.categories.filter((c) => c.type === "expense");
 
 export const useCategoryStore = create<CategoryState>()(
     persist(
@@ -83,10 +77,8 @@ export const useCategoryStore = create<CategoryState>()(
     )
 );
 
-// ✅ Selector estable: Zustand compara por referencia el array filtrado
-// solo si `categories` cambió — evita nuevo array en cada render
 export const useIncomeCategories = () =>
-    useCategoryStore(selectIncomeCategories);
+    useCategoryStore(useShallow((s) => s.categories.filter((c) => c.type === "income")));
 
 export const useExpenseCategories = () =>
-    useCategoryStore(selectExpenseCategories);
+    useCategoryStore(useShallow((s) => s.categories.filter((c) => c.type === "expense")));
