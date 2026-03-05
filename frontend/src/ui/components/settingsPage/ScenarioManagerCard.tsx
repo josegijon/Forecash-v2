@@ -139,8 +139,10 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Pr
                                                     Renombrar
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteRequest(scenario.id)}
-                                                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                                    onClick={() => scenarios.length > 1 && handleDeleteRequest(scenario.id)}
+                                                    disabled={scenarios.length <= 1}
+                                                    title={scenarios.length <= 1 ? "No puedes eliminar el único escenario" : undefined}
+                                                    className="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-rose-600 hover:bg-rose-50 disabled:hover:bg-transparent"
                                                 >
                                                     <Trash2 size={14} />
                                                     Eliminar
