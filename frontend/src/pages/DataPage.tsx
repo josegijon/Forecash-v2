@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+
 import { useCategoryStore, useExpenseCategories, useIncomeCategories } from "@/store/categoryStore";
 import { useSettingsStore, type Currency } from "@/store/settingsStore";
 import { useScenarioStore } from "@/store/scenarioStore";
@@ -17,7 +19,18 @@ export const DataPage = () => {
 
     const { currency, setCurrency } = useSettingsStore();
 
-    const { scenarios, addScenario, renameScenario, removeScenario } = useScenarioStore();
+    const navigate = useNavigate();
+
+    const { scenarios, addScenario, renameScenario, removeScenario, setActiveScenario } = useScenarioStore();
+
+    const handleDeleteScenario = (id: string) => {
+        const newActiveId = removeScenario(id);
+        if (newActiveId) {
+            setActiveScenario(newActiveId);
+            navigate(`/escenario/${newActiveId}/planificacion`); // ← añadir
+        }
+    };
+
     const { items } = useCashflowStore();
 
     // ── Export JSON ──
@@ -141,7 +154,7 @@ export const DataPage = () => {
                     scenarios={scenarios}
                     onAdd={addScenario}
                     onRename={renameScenario}
-                    onDelete={removeScenario}
+                    onDelete={handleDeleteScenario}
                 />
 
                 {/* Fila 4 — Zona peligrosa */}
