@@ -1,11 +1,17 @@
 import { CategoryDonutChart } from "./CategoryDonutChart";
 import { CategoryLegend } from "./CategoryLegend";
+import { useCategoryChartData } from "./useCategoryChartData";
 
 interface CategoryExpensesCardProps {
     title: string;
+    type: "expense" | "income";
+    year: number;
+    month: number;
 }
 
-export const CategoryExpensesCard = ({ title }: CategoryExpensesCardProps) => {
+export const CategoryExpensesCard = ({ title, type, year, month }: CategoryExpensesCardProps) => {
+    const data = useCategoryChartData(type, year, month);
+
     return (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
@@ -17,8 +23,9 @@ export const CategoryExpensesCard = ({ title }: CategoryExpensesCardProps) => {
                 </div>
             </div>
 
-            <CategoryDonutChart />
-            <CategoryLegend />
+            <CategoryDonutChart data={data} />
+
+            <CategoryLegend data={data} />
         </div>
     )
 }

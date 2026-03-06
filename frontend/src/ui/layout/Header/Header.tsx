@@ -1,7 +1,9 @@
+import { useActiveScenario } from "@/store";
 import { useLocation } from "react-router";
 
 export const Header = () => {
     const location = useLocation();
+    const activeScenario = useActiveScenario();
 
     const TITLES: Record<string, string> = {
         planificacion: 'Planificación Financiera',
@@ -23,8 +25,8 @@ export const Header = () => {
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{getTitle()}</h1>
                     <div className="flex items-center gap-2 text-sm">
                         <span className="text-slate-500 font-medium">Escenario:</span>
-                        <span className="px-2.5 py-1 bg-linear-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg font-semibold text-xs border border-blue-100">
-                            Escenario 1
+                        <span className="px-2.5 py-1 bg-linear-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg font-semibold text-xs border border-blue-100 capitalize">
+                            {activeScenario?.name || 'Escenario 1'}
                         </span>
                     </div>
                 </div>

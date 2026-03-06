@@ -1,28 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { CashflowItem, Frequency } from "@core";
 
-// ── Tipos ──
-
-export type Frequency =
-    | "once"
-    | "monthly"
-    | "bimonthly"
-    | "quarterly"
-    | "semiannual"
-    | "annual";
-
-export interface CashflowItem {
-    id: string;
-    scenarioId: string;
-    type: "income" | "expense";
-    name: string;
-    amount: number;
-    categoryId: string;
-    frequency: Frequency;
-    startDate: string;
-    endDate?: string;
-    note?: string;
-}
+export type { Frequency, CashflowItem };
 
 export type NewCashflowItem = Omit<CashflowItem, "id">;
 
@@ -37,6 +17,7 @@ interface CashflowState {
     ) => void;
     removeItem: (id: string, scenarioId: string) => void;
     removeAllByScenario: (scenarioId: string) => void;
+    duplicateScenarioItems: (sourceId: string, targetId: string) => void;
 }
 
 export const useCashflowStore = create<CashflowState>()(
@@ -105,6 +86,21 @@ export const useCashflowStore = create<CashflowState>()(
                         state.items;
                     return { items: rest };
                 }),
+
+            duplicateScenarioItems: (sourceId, targetId) => {
+                const sourceItems = get().items[sourceId] ?? [];
+                const duplicated = sourceItems.map((item) => ({
+                    ...item,
+                    id: crypto.randomUUID(),
+                    scenarioId: targetId,
+                }));
+                set((state) => ({
+                    items: {
+                        ...state.items,
+                        [targetId]: duplicated,
+                    },
+                }));
+            },
         }),
         {
             name: "cashflow-storage",

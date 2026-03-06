@@ -1,5 +1,7 @@
 import { TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react"
 
+import { usePlanningSummaryStripModel } from "./usePlanningSummaryStripModel"
+
 interface SummaryCardProps {
     label: string
     value: string
@@ -24,37 +26,40 @@ const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: Summar
             )}
         </div>
     </div>
-)
+);
 
 export const PlanningSummaryStrip = () => {
+
+    const model = usePlanningSummaryStripModel();
+
     const cards: SummaryCardProps[] = [
         {
             label: "Ingresos totales",
-            value: "€3.200,00", // TODO: calcular dinámicamente sumando los ítems del escenario activo
+            value: model.totalIncome,
             icon: <TrendingUp size={22} />,
-            trend: { value: "+5,2%", positive: true }, // TODO: calcular dinámicamente comparando con el mes anterior
+            trend: model.incomeTrend,
             accentClass: "text-emerald-600",
             bgClass: "bg-emerald-50",
         },
         {
             label: "Gastos totales",
-            value: "€2.150,00",
+            value: model.totalExpense,
             icon: <TrendingDown size={22} />,
-            trend: { value: "+2,1%", positive: false },
+            trend: model.expenseTrend,
             accentClass: "text-rose-600",
             bgClass: "bg-rose-50",
         },
         {
             label: "Balance neto",
-            value: "€1.050,00",
+            value: model.netBalance,
             icon: <Wallet size={22} />,
-            trend: { value: "+12,3%", positive: true },
+            trend: model.balanceTrend,
             accentClass: "text-blue-600",
             bgClass: "bg-blue-50",
         },
         {
             label: "Ahorro acumulado",
-            value: "€6.300,00",
+            value: model.accumulatedSavings,
             icon: <PiggyBank size={22} />,
             accentClass: "text-violet-600",
             bgClass: "bg-violet-50",
@@ -67,5 +72,5 @@ export const PlanningSummaryStrip = () => {
                 <SummaryCard key={card.label} {...card} />
             ))}
         </div>
-    )
-}
+    );
+};
