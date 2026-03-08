@@ -1,6 +1,5 @@
-import { CashflowItem } from "../../domain/models/cashflow-items";
-import { calculateAccumulatedSavings } from "../../domain/services/monthly-calculator";
-import { addMonths } from "../../shared/utils/date-utils";
+import type { CashflowItem } from "@core/index";
+import { calculateAccumulatedSavings, addMonths } from "@core/index";
 
 export interface BalanceSeriesPoint {
     year: number;

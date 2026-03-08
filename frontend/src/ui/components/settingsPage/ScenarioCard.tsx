@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { Scenario } from "@/store";
 import { Check, X, MoreVertical, Pencil, Trash2 } from "lucide-react";
 
@@ -7,7 +8,7 @@ interface ScenarioCardProps {
     editingName: string;
     menuOpen: boolean;
     canDelete: boolean;
-    menuRef: React.RefObject<HTMLDivElement | null>;
+    menuRef: RefObject<HTMLDivElement | null>;
     onEditingNameChange: (name: string) => void;
     onConfirmEdit: () => void;
     onCancelEdit: () => void;

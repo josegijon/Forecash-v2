@@ -139,6 +139,10 @@ export const useScenarioStore = create<ScenarioState>()(
         }),
         {
             name: "scenario-storage",
+            partialize: (state) => ({
+                scenarios: state.scenarios,
+                activeScenarioId: state.activeScenarioId,
+            }),
             version: 2,
         }
     )

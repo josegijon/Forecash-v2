@@ -1,20 +1,21 @@
-import { useCurrencySymbol } from "@/store"
-import type { CategoryChartData } from "./buildCategoryChartData"
+import { useCurrencySymbol } from "@/store";
+import type { CategoryChartData } from "./buildCategoryChartData";
+import { fmt } from "../simulation/types";
 
 interface CategoryLegendProps {
-    data: CategoryChartData[]
+    data: CategoryChartData[];
 }
 
 export const CategoryLegend = ({ data }: CategoryLegendProps) => {
-    const total = data.reduce((sum, cat) => sum + cat.value, 0)
-    const currencySymbol = useCurrencySymbol()
+    const total = data.reduce((sum, cat) => sum + cat.value, 0);
+    const currencySymbol = useCurrencySymbol();
 
-    if (data.length === 0) return null
+    if (data.length === 0) return null;
 
     return (
         <div className="flex flex-col gap-3 mt-4">
             {data.map((cat) => {
-                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(1) : "0"
+                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(1) : "0";
                 return (
                     <div key={cat.name} className="flex items-center justify-between group">
                         <div className="flex items-center gap-3">
@@ -28,15 +29,15 @@ export const CategoryLegend = ({ data }: CategoryLegendProps) => {
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-bold text-slate-800">
-                                {currencySymbol}{cat.value.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                {currencySymbol}{fmt(cat.value)}
                             </span>
                             <span className="text-xs font-semibold text-slate-400 min-w-10 text-right">
                                 {percent}%
                             </span>
                         </div>
                     </div>
-                )
+                );
             })}
         </div>
-    )
-}
+    );
+};

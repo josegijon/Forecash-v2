@@ -14,7 +14,7 @@ export const CategoryExpensesCard = ({ title, type, year, month }: CategoryExpen
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center mb-6">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">
                         <span className="text-rose-500 text-sm">📊</span>
@@ -24,8 +24,7 @@ export const CategoryExpensesCard = ({ title, type, year, month }: CategoryExpen
             </div>
 
             <CategoryDonutChart data={data} />
-
             <CategoryLegend data={data} />
         </div>
-    )
-}
+    );
+};

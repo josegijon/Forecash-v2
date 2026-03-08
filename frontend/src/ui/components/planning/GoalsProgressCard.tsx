@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { Target } from "lucide-react";
 
+import { calculateAccumulatedSavings, calculateMonthlySummary } from "@core";
+
 import { useActiveScenario, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 import { GoalProgressRing } from "./GoalProgressRing";
-import { calculateMonthlySummary, calculateAccumulatedSavings } from "@core";
 
 interface GoalsProgressCardProps {
     title: string;
@@ -58,7 +59,7 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
     if (!hasSavingsGoal && !hasCapitalGoal) {
         return (
             <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-5">
                     <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
                         <Target size={18} className="text-emerald-500" />
                     </div>
@@ -91,7 +92,6 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
                         isDeficit={isDeficitSavings}
                     />
                 )}
-
                 {hasCapitalGoal && (
                     <div className={hasSavingsGoal ? "pt-4" : ""}>
                         <GoalProgressRing

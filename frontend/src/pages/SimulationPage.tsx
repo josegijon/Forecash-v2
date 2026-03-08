@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { projectBalanceSeries } from "@core";
-import type { BalanceSeriesPoint } from "@core";
+import { projectBalanceSeries, type BalanceSeriesPoint } from "@core";
 
 import { SimulationHeader } from "@/ui/components/simulation/SimulationHeader";
 import { SimulationMilestonesTable } from "@/ui/components/simulation/SimulationMilestonesTable";

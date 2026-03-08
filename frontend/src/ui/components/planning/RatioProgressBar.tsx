@@ -5,7 +5,7 @@ interface RatioProgressBarProps {
 }
 
 export const RatioProgressBar = ({ label, percentage, color }: RatioProgressBarProps) => {
-    // Clamp the bar width: never below 0, cap visually at 100% but allow overflow indicator
+    // El ancho visual se clampea a 100%, pero el valor puede superarlo (overflow indicator)
     const barWidth = Math.min(Math.abs(percentage), 100);
     const isOverflow = percentage > 100;
     const formattedPercentage = percentage.toFixed(2);

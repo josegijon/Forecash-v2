@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import type { LaborProfile, RiskProfile } from "@core";
-import { LABOR_OPTIONS, RISK_OPTIONS } from "./useCushionCalculator";
+import { LABOR_OPTIONS, RISK_OPTIONS } from "./cushionCalculator";
 import { ToggleRow } from "./ToggleRow";
 
 interface QuestionsStepProps {
@@ -10,7 +10,7 @@ interface QuestionsStepProps {
     riskProfile: RiskProfile;
     onLaborChange: (v: LaborProfile) => void;
     onDependantsChange: (v: boolean) => void;
-    onDebtChange: (v: boolean) => void;
+    onFixedDebtChange: (v: boolean) => void;
     onRiskChange: (v: RiskProfile) => void;
     onNext: () => void;
     onClose: () => void;
@@ -18,7 +18,7 @@ interface QuestionsStepProps {
 
 export const QuestionsStep = ({
     laborProfile, hasDependants, hasFixedDebt, riskProfile,
-    onLaborChange, onDependantsChange, onDebtChange, onRiskChange,
+    onLaborChange, onDependantsChange, onFixedDebtChange, onRiskChange,
     onNext, onClose,
 }: QuestionsStepProps) => (
     <>
@@ -33,7 +33,6 @@ export const QuestionsStep = ({
                             key={opt.value}
                             emoji={opt.emoji}
                             label={opt.label}
-                            sublabel=""
                             checked={laborProfile === opt.value}
                             onChange={() => onLaborChange(opt.value)}
                         />
@@ -55,7 +54,7 @@ export const QuestionsStep = ({
                     label="Tengo deudas con cuota fija"
                     sublabel="Hipoteca, préstamo de coche, etc."
                     checked={hasFixedDebt}
-                    onChange={onDebtChange}
+                    onChange={onFixedDebtChange}
                 />
             </div>
 
@@ -70,8 +69,8 @@ export const QuestionsStep = ({
                             type="button"
                             onClick={() => onRiskChange(opt.value)}
                             className={`flex flex-col items-center gap-1.5 px-2 py-3 rounded-xl border text-center transition-all cursor-pointer ${riskProfile === opt.value
-                                ? "border-amber-400 bg-amber-50"
-                                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                                    ? "border-amber-400 bg-amber-50"
+                                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                                 }`}
                         >
                             <span className="text-xl">{opt.emoji}</span>

@@ -1,23 +1,23 @@
-import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts"
+import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts";
 
-import { useCurrencySymbol } from "@/store"
+import { useCurrencySymbol } from "@/store";
 
-import type { CategoryChartData } from "./buildCategoryChartData"
+import type { CategoryChartData } from "./buildCategoryChartData";
+import { fmt } from "../simulation/types";
 
 interface CategoryDonutChartProps {
-    data: CategoryChartData[]
+    data: CategoryChartData[];
 }
 
-// Componente de gráfico de dona para mostrar la distribución de gastos o ingresos por categoría, con tooltip personalizado y total en el centro
 const CustomTooltip = ({ active, payload, total }: {
-    active?: boolean
-    payload?: { name: string; value: number; payload: CategoryChartData }[]
-    total: number
+    active?: boolean;
+    payload?: { name: string; value: number; payload: CategoryChartData }[];
+    total: number;
 }) => {
     if (!active || !payload?.length) return null;
+
     const { name, value, payload: cat } = payload[0];
     const percent = total > 0 ? ((value / total) * 100).toFixed(1) : "0";
-
     const currencySymbol = useCurrencySymbol();
 
     return (
@@ -27,24 +27,19 @@ const CustomTooltip = ({ active, payload, total }: {
                     className="w-2.5 h-2.5 rounded-full"
                     style={{ backgroundColor: cat.fill }}
                 />
-
                 <span className="text-sm font-bold text-slate-800">
                     {name}
                 </span>
             </div>
-
-            <p className="text-sm text-slate-600 z-90">
+            <p className="text-sm text-slate-600">
                 {currencySymbol}{value.toLocaleString("es-ES")}
-                ·
-                <span className="font-semibold">
-                    {percent}%
-                </span>
+                {" · "}
+                <span className="font-semibold">{percent}%</span>
             </p>
         </div>
-    )
-}
+    );
+};
 
-// Componente de gráfico de dona para mostrar la distribución de gastos o ingresos por categoría, con tooltip personalizado y total en el centro
 export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
     const total = data.reduce((sum, cat) => sum + cat.value, 0);
     const currencySymbol = useCurrencySymbol();
@@ -55,7 +50,7 @@ export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
                 No hay datos para este mes
             </div>
         );
-    };
+    }
 
     return (
         <div className="relative w-full h-52">
@@ -78,14 +73,11 @@ export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
                 </PieChart>
             </ResponsiveContainer>
 
-            {/* Center label */}
+            {/* Centro: total acumulado */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">
-                    Total
-                </span>
-
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Total</span>
                 <span className="text-lg font-extrabold text-slate-800">
-                    {currencySymbol}{total.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {currencySymbol}{fmt(total)}
                 </span>
             </div>
         </div>

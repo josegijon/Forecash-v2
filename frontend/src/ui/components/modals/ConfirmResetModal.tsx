@@ -1,12 +1,12 @@
 import { AlertTriangle, Trash2, X } from "lucide-react";
 
-interface Props {
+interface ConfirmResetModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
 }
 
-export const ConfirmResetModal = ({ isOpen, onClose, onConfirm }: Props) => {
+export const ConfirmResetModal = ({ isOpen, onClose, onConfirm }: ConfirmResetModalProps) => {
     if (!isOpen) return null;
 
     const handleConfirm = () => {

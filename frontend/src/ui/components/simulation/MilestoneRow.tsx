@@ -1,11 +1,6 @@
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-interface DataPoint {
-    month: string;
-    actual: number;
-    comparado: number;
-    diferencia: number;
-}
+import { type DataPoint, fmt } from "./types";
 
 interface MilestoneRowProps {
     milestone: number;
@@ -19,12 +14,9 @@ const milestoneLabel = (m: number) => {
     return "5 años";
 };
 
-const fmt = (n: number) =>
-    n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
 export const MilestoneRow = ({ milestone, point }: MilestoneRowProps) => {
-    const d = point.diferencia;
-    const isPositive = d >= 0;
+    const diff = point.diferencia;
+    const isPositive = diff >= 0;
 
     return (
         <tr className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
@@ -41,13 +33,10 @@ export const MilestoneRow = ({ milestone, point }: MilestoneRowProps) => {
             </td>
 
             <td className="py-3 px-4 text-right">
-                <span
-                    className={`inline-flex items-center gap-1 font-semibold ${isPositive ? "text-emerald-600" : "text-red-600"
-                        }`}
-                >
+                <span className={`inline-flex items-center gap-1 font-semibold ${isPositive ? "text-emerald-600" : "text-red-600"}`}>
                     {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                     {isPositive ? "+" : ""}
-                    {fmt(d)} €
+                    {fmt(diff)} €
                 </span>
             </td>
         </tr>

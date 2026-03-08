@@ -1,14 +1,14 @@
-import { TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react"
+import { TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react";
 
-import { usePlanningSummaryStripModel } from "./usePlanningSummaryStripModel"
+import { usePlanningSummaryStripModel } from "./usePlanningSummaryStripModel";
 
 interface SummaryCardProps {
-    label: string
-    value: string
-    icon: React.ReactNode
-    trend?: { value: string; positive: boolean }
-    accentClass: string
-    bgClass: string
+    label: string;
+    value: string;
+    icon: React.ReactNode;
+    trend?: { value: string; positive: boolean };
+    accentClass: string;
+    bgClass: string;
 }
 
 const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: SummaryCardProps) => (
@@ -29,7 +29,6 @@ const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: Summar
 );
 
 export const PlanningSummaryStrip = () => {
-
     const model = usePlanningSummaryStripModel();
 
     const cards: SummaryCardProps[] = [
@@ -64,7 +63,7 @@ export const PlanningSummaryStrip = () => {
             accentClass: "text-violet-600",
             bgClass: "bg-violet-50",
         },
-    ]
+    ];
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">

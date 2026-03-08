@@ -1,13 +1,13 @@
-import React from "react";
+import type { ReactNode } from "react";
 
 interface ActionButtonProps {
     onClick: () => void;
     iconBg: string;
     iconBorder: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
     label: string;
     sublabel: string;
-    actionIcon: React.ReactNode;
+    actionIcon: ReactNode;
     variant?: "solid" | "dashed";
 }
 
@@ -28,17 +28,13 @@ export const ActionButton = ({
                 : "border border-slate-200 bg-slate-50 hover:bg-slate-100"
             }`}
     >
-        <span
-            className={`w-9 h-9 rounded-lg flex items-center justify-center border ${iconBg} ${iconBorder}`}
-        >
+        <span className={`w-9 h-9 rounded-lg flex items-center justify-center border ${iconBg} ${iconBorder}`}>
             {icon}
         </span>
-
         <div className="text-left flex-1">
             <p className="text-sm font-semibold text-slate-800">{label}</p>
             <p className="text-xs text-slate-500">{sublabel}</p>
         </div>
-
         {actionIcon}
     </button>
 );

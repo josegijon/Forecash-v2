@@ -38,10 +38,13 @@ export const calculateNetBalance = ({ items, year, month }: MonthlyCalcProps): n
 };
 
 // ── Ahorro acumulado ──
-// Suma el netBalance de cada mes desde (referenceYear, referenceMonth)
-// hasta (targetYear, targetMonth), partiendo de initialBalance.
-// Nota: complejidad O(meses * ítems). Aceptable para horizontes ≤ 60 meses.
 
+/**
+ * Suma el netBalance de cada mes desde (referenceYear, referenceMonth)
+ * hasta (targetYear, targetMonth), partiendo de initialBalance.
+ *
+ * Complejidad O(meses × ítems). Aceptable para horizontes ≤ 60 meses.
+ */
 export const calculateAccumulatedSavings = (
     items: CashflowItem[],
     initialBalance: number,
@@ -51,13 +54,13 @@ export const calculateAccumulatedSavings = (
     targetMonth: number,
 ): number => {
     let accumulated = initialBalance;
-    let y = referenceYear;
-    let m = referenceMonth;
+    let year = referenceYear;
+    let month = referenceMonth;
 
-    while (y < targetYear || (y === targetYear && m <= targetMonth)) {
-        accumulated += calculateNetBalance({ items, year: y, month: m });
-        m++;
-        if (m > 11) { m = 0; y++; }
+    while (year < targetYear || (year === targetYear && month <= targetMonth)) {
+        accumulated += calculateNetBalance({ items, year, month }); // shorthand sin cambios
+        month++;
+        if (month > 11) { month = 0; year++; }
     }
 
     return accumulated;

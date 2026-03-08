@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Layers, Plus } from "lucide-react";
-import type { Scenario } from "@/store/scenarioStore";
+import type { Scenario } from "@/store";
 import { ConfirmDeleteScenarioModal } from "@/ui/components/modals/ConfirmDeleteScenarioModal";
 import { ScenarioCard } from "./ScenarioCard";
 

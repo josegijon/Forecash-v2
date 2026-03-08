@@ -2,10 +2,16 @@ import { useNavigate } from "react-router";
 
 import { prepareSnapshotImport } from "@core";
 
-import { useCategoryStore, useExpenseCategories, useIncomeCategories } from "@/store/categoryStore";
-import { useSettingsStore, type Currency } from "@/store/settingsStore";
-import { useScenarioStore } from "@/store/scenarioStore";
-import { useCashflowStore } from "@/store/cashflowStore";
+import {
+    useCategoryStore,
+    useExpenseCategories,
+    useIncomeCategories,
+    useSettingsStore,
+    useScenarioStore,
+    useCashflowStore,
+} from "@/store";
+import type { Currency } from "@/store";
+
 import { CategoryManagerCard } from "@/ui/components/settingsPage/CategoryManagerCard";
 import { CurrencySelector } from "@/ui/components/settingsPage/CurrencySelector";
 import { ImportExportCard } from "@/ui/components/settingsPage/ImportExportCard";

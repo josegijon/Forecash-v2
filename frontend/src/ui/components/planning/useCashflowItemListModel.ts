@@ -6,6 +6,12 @@ import { useActiveScenario, useCashflowStore, useCategoryStore, useCurrencySymbo
 
 type FilterType = "all" | "income" | "expense";
 
+const FILTER_TABS: { key: FilterType; label: string }[] = [
+    { key: "all", label: "Todos" },
+    { key: "income", label: "Ingresos" },
+    { key: "expense", label: "Gastos" },
+];
+
 export const useCashflowItemListModel = () => {
     const [filter, setFilter] = useState<FilterType>("all");
     const [searchQuery, setSearchQuery] = useState("");
@@ -61,12 +67,6 @@ export const useCashflowItemListModel = () => {
         });
     }, [allItems, activeYear, activeMonth, initialBalance, savingsGoal]);
 
-    const filterTabs: { key: FilterType; label: string }[] = [
-        { key: "all", label: "Todos" },
-        { key: "income", label: "Ingresos" },
-        { key: "expense", label: "Gastos" },
-    ];
-
     const onDeleteItem = (itemId: string) => removeItem(itemId, activeScenarioId);
 
     return {
@@ -77,7 +77,7 @@ export const useCashflowItemListModel = () => {
         filteredItems,
         summary,
         currencySymbol,
-        filterTabs,
+        filterTabs: FILTER_TABS,
         getCategoryName,
         onDeleteItem,
     };

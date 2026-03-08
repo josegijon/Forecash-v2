@@ -1,7 +1,5 @@
 import { isActiveMonth } from "@core";
-import type { CashflowItem } from "@core";
-// ✅ Category importado desde @core, no desde el store
-import type { SnapshotCategory as Category } from "@core";
+import type { CashflowItem, SnapshotCategory as Category } from "@core";
 
 export interface CategoryChartData {
     name: string;

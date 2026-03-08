@@ -100,6 +100,7 @@ export const calculateCushion = (
         accumulated += 1;
     }
 
+    // Redondeo al múltiplo de 0.5 más cercano (granularidad de medio mes).
     const afterRisk = Math.round(accumulated * risk.factor * 2) / 2;
     const riskDelta = Math.round((afterRisk - accumulated) * 2) / 2;
 

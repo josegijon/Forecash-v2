@@ -1,5 +1,5 @@
-import { CashflowItem } from "@core/index";
-import { parseISODate, monthDiff } from "../../shared/utils/date-utils";
+import type { CashflowItem } from "@core/index";
+import { parseISODate, monthDiff } from "@core/index";
 
 interface IsActiveMonthProps {
     item: CashflowItem;

@@ -12,7 +12,7 @@ interface GoalProgressRingProps {
 
 const CIRCLE_RADIUS = 28;
 const CIRCLE_CENTER = 32;
-const CIRCLE_CIRCUMFERENCE = 175.9;
+const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS; // ≈ 175.93
 
 const getDashOffset = (progress: number) =>
     CIRCLE_CIRCUMFERENCE - (CIRCLE_CIRCUMFERENCE * progress / 100);

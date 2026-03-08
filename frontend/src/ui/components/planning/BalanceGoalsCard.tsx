@@ -10,18 +10,19 @@ interface BalanceGoalsCardProps {
 }
 
 export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
-    const currencySymbol = useCurrencySymbol();
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
     const activeScenario = useActiveScenario();
+    const currencySymbol = useCurrencySymbol();
+
+    const initialBalance = activeScenario?.initialBalance ?? 0;
+    const savingsGoal = activeScenario?.savingsGoal ?? 0;
+    const cushionBalance = activeScenario?.cushionBalance ?? 0;
+    const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
     const setInitialBalance = useScenarioStore((s) => s.setInitialBalance);
     const setSavingsGoal = useScenarioStore((s) => s.setSavingsGoal);
     const setCushionBalance = useScenarioStore((s) => s.setCushionBalance);
     const setCapitalGoal = useScenarioStore((s) => s.setCapitalGoal);
-    const initialBalance = activeScenario?.initialBalance ?? 0;
-    const savingsGoal = activeScenario?.savingsGoal ?? 0;
-    const cushionBalance = activeScenario?.cushionBalance ?? 0;
-    const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
     const [showCalculator, setShowCalculator] = useState(false);
 
@@ -37,19 +38,18 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
 
                 <div className="space-y-4">
                     <CurrencyInputField
-                        label="Saldo Inicial Actual"
+                        label="Saldo inicial actual"
                         value={initialBalance}
                         currencySymbol={currencySymbol}
                         onChange={(newValue) => setInitialBalance(activeScenarioId, newValue)}
-                        allowNegative={true}
+                        allowNegative
                     />
 
                     <CurrencyInputField
-                        label="Objetivo de Ahorro Mensual"
+                        label="Objetivo de ahorro mensual"
                         value={savingsGoal}
                         currencySymbol={currencySymbol}
                         onChange={(newValue) => setSavingsGoal(activeScenarioId, newValue)}
-                        allowNegative={false}
                     />
 
                     <div className="space-y-1.5">
@@ -58,7 +58,6 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                             value={cushionBalance}
                             currencySymbol={currencySymbol}
                             onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
-                            allowNegative={false}
                         />
                         <button
                             type="button"
@@ -75,7 +74,6 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                         value={capitalGoal}
                         currencySymbol={currencySymbol}
                         onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
-                        allowNegative={false}
                     />
                 </div>
             </div>

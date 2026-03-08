@@ -1,20 +1,15 @@
 import { GitCompareArrows } from "lucide-react";
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from "recharts";
 
-interface DataPoint {
-    month: string;
-    actual: number;
-    comparado: number;
-    diferencia: number;
-}
+import { type DataPoint } from "./types";
 
-interface Props {
+interface SimulationChartProps {
     data: DataPoint[];
     scenarioName: string;
     selectedMonths: number;
 }
 
-export const SimulationChart = ({ data, scenarioName, selectedMonths }: Props) => (
+export const SimulationChart = ({ data, scenarioName, selectedMonths }: SimulationChartProps) => (
     <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
         <div className="flex items-center gap-2 mb-6">
             <GitCompareArrows size={20} className="text-primary" />
