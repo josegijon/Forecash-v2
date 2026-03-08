@@ -2,6 +2,7 @@ import { Layers, GitCompareArrows, TrendingUp, TrendingDown, ArrowUpRight, Arrow
 
 import { fmt } from "./types";
 import { StatCard } from "./StatCard";
+import { useCurrencySymbol } from "@/store";
 
 interface SimulationSummaryCardsProps {
     actualBalance: number;
@@ -13,6 +14,8 @@ interface SimulationSummaryCardsProps {
 export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenarioName, selectedMonths }: SimulationSummaryCardsProps) => {
     const diff = comparedBalance - actualBalance;
     const isPositive = diff >= 0;
+    const currencySymbol = useCurrencySymbol();
+
 
     const diffPercent = actualBalance !== 0
         ? ((diff / actualBalance) * 100).toFixed(1)
@@ -24,7 +27,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                 icon={<Layers size={16} className="text-blue-600" />}
                 iconBg="bg-blue-100"
                 label="Escenario Actual"
-                value={`${fmt(actualBalance)} €`}
+                value={`${fmt(actualBalance)} ${currencySymbol}`}
                 description={`Saldo proyectado a ${selectedMonths} meses`}
                 className="bg-card-light border-slate-200"
             />
@@ -33,7 +36,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                 icon={<GitCompareArrows size={16} className="text-indigo-600" />}
                 iconBg="bg-indigo-100"
                 label={scenarioName}
-                value={`${fmt(comparedBalance)} €`}
+                value={`${fmt(comparedBalance)} ${currencySymbol}`}
                 description={`Saldo proyectado a ${selectedMonths} meses`}
                 className="bg-card-light border-slate-200"
             />
@@ -46,7 +49,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
                 }
                 iconBg={isPositive ? "bg-emerald-100" : "bg-red-100"}
                 label="Diferencia"
-                value={`${isPositive ? "+" : ""}${fmt(diff)} €`}
+                value={`${isPositive ? "+" : ""}${fmt(diff)} ${currencySymbol}`}
                 description={`El ${scenarioName.toLowerCase()} ${isPositive ? "supera" : "queda por debajo de"} tu escenario actual`}
                 className={isPositive ? "bg-emerald-50/60 border-emerald-200" : "bg-red-50/60 border-red-200"}
             >

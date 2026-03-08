@@ -10,7 +10,7 @@ import { detectBalanceCrosses } from "@core";
 import type { CrossType } from "@core";
 
 import type { MonthData } from "./projectionTypes";
-import { useActiveScenario } from "@/store";
+import { useActiveScenario, useCurrencySymbol } from "@/store";
 
 interface BalanceAreaChartProps {
     data: MonthData[];
@@ -24,7 +24,7 @@ const tickFormatter = (v: number) =>
         ? `${(v / 1000).toFixed(Math.abs(v) >= 10000 ? 0 : 1)}k`
         : `${v}`;
 
-const euroFormatter = (v: number) => `${v.toLocaleString("es-ES")} €`;
+const euroFormatter = (v: number) => `${v.toLocaleString("es-ES")}`;
 
 // ─── CrossingDot ──────────────────────────────────────────────────────────────
 
@@ -133,6 +133,8 @@ interface CustomTooltipProps {
 }
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+    const currencySymbol = useCurrencySymbol();
+
     if (!active || !payload?.length) return null;
 
     const d = payload[0].payload;
@@ -154,7 +156,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
                 }} />
                 <span style={{ color: "#64748b" }}>Balance:</span>
                 <span style={{ fontWeight: 700, color: isNeg ? "#ef4444" : "#1e293b", marginLeft: "auto" }}>
-                    {euroFormatter(balance)}
+                    {euroFormatter(balance)}{currencySymbol}
                 </span>
             </div>
 
@@ -223,6 +225,8 @@ const MilestoneBadge = ({ icon, label, className }: MilestoneBadgeProps) => (
 
 export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps) => {
     const activeScenario = useActiveScenario();
+    const currencySymbol = useCurrencySymbol();
+
     const cushionBalance = activeScenario?.cushionBalance ?? 0;
     const capitalGoal = activeScenario?.capitalGoal ?? 0;
 
@@ -268,9 +272,9 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
 
     const activeRefs: { value: number; color: string; label: string }[] = [];
     if (cushionBalance > 0)
-        activeRefs.push({ value: cushionBalance, color: "#f59e0b", label: `Colchón: ${euroFormatter(cushionBalance)}` });
+        activeRefs.push({ value: cushionBalance, color: "#f59e0b", label: `Colchón: ${euroFormatter(cushionBalance)}${currencySymbol}` });
     if (capitalGoal > 0)
-        activeRefs.push({ value: capitalGoal, color: "#10b981", label: `Objetivo: ${euroFormatter(capitalGoal)}` });
+        activeRefs.push({ value: capitalGoal, color: "#10b981", label: `Objetivo: ${euroFormatter(capitalGoal)}${currencySymbol}` });
 
     // Pre-computed antes del return para evitar IIFE en JSX
     const capitalEntry = lastCapitalCross ? enrichedData[lastCapitalCross.index] : null;
