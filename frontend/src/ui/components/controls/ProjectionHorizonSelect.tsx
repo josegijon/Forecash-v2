@@ -29,5 +29,5 @@ export const ProjectionHorizonSelect = ({ selectedMonths, onMonthsChange }: Proj
                 />
             </div>
         </div>
-    )
-}
+    );
+};

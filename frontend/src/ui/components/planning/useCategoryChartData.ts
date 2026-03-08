@@ -1,8 +1,9 @@
-import { useCategoryStore, useScenarioItems, useScenarioStore } from "@/store"
-import { buildCategoryChartData, type CategoryChartData } from "./buildCategoryChartData"
 import { useMemo } from "react";
 
-// Hook para obtener los datos del gráfico de categorías, memoizados para evitar cálculos innecesarios
+import { useCategoryStore, useScenarioItems, useScenarioStore } from "@/store";
+
+import { buildCategoryChartData, type CategoryChartData } from "./buildCategoryChartData";
+
 export const useCategoryChartData = (
     type: "expense" | "income",
     year: number,

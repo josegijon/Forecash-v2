@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Tags, PlusCircle, Pencil, Trash2, Check, X } from "lucide-react";
-import type { Category } from "@/store/categoryStore";
+import type { Category } from "@/store";
 
-interface Props {
+interface CategoryManagerCardProps {
     type: "expense" | "income";
     categories: Category[];
     onAdd: (name: string) => void;
@@ -10,7 +10,7 @@ interface Props {
     onDelete: (id: string) => void;
 }
 
-export const CategoryManagerCard = ({ type, categories, onAdd, onRename, onDelete }: Props) => {
+export const CategoryManagerCard = ({ type, categories, onAdd, onRename, onDelete }: CategoryManagerCardProps) => {
     const [newName, setNewName] = useState("");
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingName, setEditingName] = useState("");

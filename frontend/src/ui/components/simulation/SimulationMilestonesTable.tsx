@@ -1,12 +1,7 @@
 import { Clock } from "lucide-react";
-import { MilestoneRow } from "./MilestoneRow";
 
-interface DataPoint {
-    month: string;
-    actual: number;
-    comparado: number;
-    diferencia: number;
-}
+import { type DataPoint } from "./types";
+import { MilestoneRow } from "./MilestoneRow";
 
 interface SimulationMilestonesTableProps {
     data: DataPoint[];
@@ -15,8 +10,6 @@ interface SimulationMilestonesTableProps {
 }
 
 const MILESTONES = [3, 6, 12, 24, 60];
-
-// ── Subcomponentes ────────────────────────────────────────────────────────────
 
 const MilestoneTableHead = ({ scenarioName }: { scenarioName: string }) => (
     <thead>
@@ -32,8 +25,6 @@ const MilestoneTableHead = ({ scenarioName }: { scenarioName: string }) => (
         </tr>
     </thead>
 );
-
-// ── Componente principal ──────────────────────────────────────────────────────
 
 export const SimulationMilestonesTable = ({ data, scenarioName, selectedMonths }: SimulationMilestonesTableProps) => (
     <div className="bg-card-light rounded-2xl border border-slate-200 p-6">

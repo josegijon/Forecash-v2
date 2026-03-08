@@ -114,16 +114,18 @@ export const useCashflowStore = create<CashflowState>()(
     )
 );
 
-// ── Selectores auxiliares ── 
-const EMPTY_ITEMS: CashflowItem[] = []; // referencia estable, no se recrea en cada render 
+// ── Selectores auxiliares ──
+const EMPTY_ITEMS: CashflowItem[] = []; // referencia estable, no se recrea en cada render
 
 export const useScenarioItems = (scenarioId: string) =>
     useCashflowStore((state) => state.items[scenarioId] ?? EMPTY_ITEMS);
 
 export const useScenarioIncomes = (scenarioId: string) =>
-    useCashflowStore(
-        (state) => (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "income"));
+    useCashflowStore((state) =>
+        (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "income")
+    );
 
 export const useScenarioExpenses = (scenarioId: string) =>
     useCashflowStore((state) =>
-        (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "expense"));
+        (state.items[scenarioId] ?? EMPTY_ITEMS).filter((i) => i.type === "expense")
+    );

@@ -2,14 +2,15 @@ import { useState, useMemo } from "react";
 import { X, Calculator } from "lucide-react";
 
 import { useCurrencySymbol, useScenarioItems, useScenarioStore } from "@/store";
-import { isActiveMonth, addMonths } from "@core";
-
 import {
     calculateCushion,
+    isActiveMonth,
+    addMonths,
     type LaborProfile,
     type RiskProfile,
     type CushionInputs,
-} from "./useCushionCalculator";
+} from "@core";
+
 import { QuestionsStep } from "./QuestionsStep";
 import { ResultStep } from "./ResultStep";
 
@@ -21,30 +22,32 @@ interface CushionCalculatorModalProps {
 type Step = "questions" | "result";
 
 export const CushionCalculatorModal = ({ onClose, onApply }: CushionCalculatorModalProps) => {
+    // ── Store ──
     const currencySymbol = useCurrencySymbol();
     const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
     const allItems = useScenarioItems(activeScenarioId);
 
-    const fixedExpenses = useMemo(() => {
-        const now = new Date();
-        const refYear = now.getFullYear();
-        const refMonth = now.getMonth();
-        const MONTHS = 12;
-        let total = 0;
-        for (let i = 0; i < MONTHS; i++) {
-            const { year, month } = addMonths({ year: refYear, month: refMonth }, i);
-            total += allItems
-                .filter((item) => item.type === "expense" && item.frequency !== "once" && isActiveMonth({ item, year, month }))
-                .reduce((sum, item) => sum + item.amount, 0);
-        }
-        return Math.round(total / MONTHS);
-    }, [allItems]);
-
+    // ── Estado ── 
     const [step, setStep] = useState<Step>("questions");
     const [laborProfile, setLaborProfile] = useState<LaborProfile>("empleado");
     const [hasDependants, setHasDependants] = useState(false);
     const [hasFixedDebt, setHasFixedDebt] = useState(false);
     const [riskProfile, setRiskProfile] = useState<RiskProfile>("equilibrado");
+
+    // ── Derivados ──
+    const fixedExpenses = useMemo(() => {
+        const now = new Date();
+        const ref = { year: now.getFullYear(), month: now.getMonth() };
+        // Ventana fija de 12 meses para promediar gastos recurrentes (independiente del horizonte de proyección)
+        let total = 0;
+        for (let i = 0; i < 12; i++) {
+            const { year, month } = addMonths(ref, i);
+            total += allItems
+                .filter((item) => item.type === "expense" && item.frequency !== "once" && isActiveMonth({ item, year, month }))
+                .reduce((sum, item) => sum + item.amount, 0);
+        }
+        return Math.round(total / 12);
+    }, [allItems]);
 
     const result = useMemo(() => {
         const inputs: CushionInputs = { laborProfile, hasDependants, hasFixedDebt, riskProfile };
@@ -83,7 +86,7 @@ export const CushionCalculatorModal = ({ onClose, onApply }: CushionCalculatorMo
                         riskProfile={riskProfile}
                         onLaborChange={setLaborProfile}
                         onDependantsChange={setHasDependants}
-                        onDebtChange={setHasFixedDebt}
+                        onFixedDebtChange={setHasFixedDebt}
                         onRiskChange={setRiskProfile}
                         onNext={() => setStep("result")}
                         onClose={onClose}

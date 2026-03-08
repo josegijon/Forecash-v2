@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 
-interface Props {
+interface ConfirmDeleteScenarioModalProps {
     scenarioName: string;
     onConfirm: () => void;
     onCancel: () => void;
 }
 
-export const ConfirmDeleteScenarioModal = ({ scenarioName, onConfirm, onCancel }: Props) => {
+export const ConfirmDeleteScenarioModal = ({ scenarioName, onConfirm, onCancel }: ConfirmDeleteScenarioModalProps) => {
     const cancelRef = useRef<HTMLButtonElement>(null);
 
     // Focus the cancel button on mount (safe default)

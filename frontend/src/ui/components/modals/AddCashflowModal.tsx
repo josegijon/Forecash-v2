@@ -24,7 +24,7 @@ export interface CashflowFormData {
 interface AddCashflowModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave?: (data: CashflowFormData) => void;
+    onSave: (data: CashflowFormData) => void;
 }
 
 export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalProps) => {
@@ -62,7 +62,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
     const handleSave = () => {
         if (!concept.trim() || !amount) return;
 
-        onSave?.({
+        onSave({
             type,
             concept: concept.trim(),
             amount: parseFloat(amount),

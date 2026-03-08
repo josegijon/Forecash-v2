@@ -13,16 +13,21 @@ export const useMonthlyRatiosSummary = () => {
     const initialBalance = activeScenario?.initialBalance ?? 0;
     const savingsGoal = activeScenario?.savingsGoal ?? 0;
 
-    return useMemo(() => {
-        const now = new Date();
-        return calculateMonthlySummary({
-            items,
-            year: activeYear,
-            month: activeMonth,
-            initialBalance,
-            savingsGoal,
-            referenceYear: now.getFullYear(),
-            referenceMonth: now.getMonth(),
-        });
-    }, [items, activeYear, activeMonth, initialBalance, savingsGoal]);
+    const now = new Date();
+    const referenceYear = now.getFullYear();
+    const referenceMonth = now.getMonth();
+
+    return useMemo(
+        () =>
+            calculateMonthlySummary({
+                items,
+                year: activeYear,
+                month: activeMonth,
+                initialBalance,
+                savingsGoal,
+                referenceYear,
+                referenceMonth,
+            }),
+        [items, activeYear, activeMonth, initialBalance, savingsGoal, referenceYear, referenceMonth]
+    );
 };

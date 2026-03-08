@@ -1,4 +1,5 @@
-import { MinusCircle, PlusCircle, Trash2 } from "lucide-react"
+import { MinusCircle, PlusCircle, Trash2 } from "lucide-react";
+import { fmt } from "../simulation/types";
 
 interface CashflowItemProps {
     type: "income" | "expense";
@@ -11,14 +12,14 @@ interface CashflowItemProps {
 }
 
 export const CashflowItem = ({ type, name, category, frequency, amount, currencySymbol, onDelete }: CashflowItemProps) => {
-    const isIncome = type === 'income';
+    const isIncome = type === "income";
 
     return (
         <div className="group flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 p-4 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-all">
             <div className="flex items-center gap-4 w-full md:w-auto">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isIncome
-                    ? 'bg-emerald-100 text-emerald-600'
-                    : 'bg-rose-100 text-rose-600'}`}
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-rose-100 text-rose-600"}`}
                 >
                     {isIncome
                         ? <PlusCircle size={18} />
@@ -35,8 +36,8 @@ export const CashflowItem = ({ type, name, category, frequency, amount, currency
             </div>
 
             <div className="flex items-center justify-center gap-6 w-full md:w-auto">
-                <span className={`font-bold ${isIncome ? 'text-emerald-600' : 'text-slate-800'}`}>
-                    {currencySymbol}{amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <span className={`font-bold ${isIncome ? "text-emerald-600" : "text-slate-800"}`}>
+                    {currencySymbol}{fmt(amount)}
                 </span>
                 <button
                     onClick={onDelete}
@@ -46,5 +47,5 @@ export const CashflowItem = ({ type, name, category, frequency, amount, currency
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};

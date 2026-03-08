@@ -1,9 +1,9 @@
 import type { Scenario } from "../../domain/models/scenario";
 import type { CashflowItem } from "../../domain/models/cashflow-items";
-import { Category } from "./import-snapshot.types";
+import type { Category } from "./import-snapshot.types";
 
 export interface AppSnapshotV1 {
-    version: number;
+    version: 1;
     exportedAt: string;
     scenarios: Scenario[];
     items: Record<string, CashflowItem[]>;

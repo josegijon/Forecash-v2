@@ -15,21 +15,16 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
     const navigate = useNavigate();
     const addScenario = useScenarioStore((s) => s.addScenario);
 
-    const resetForm = () => {
-        setName("");
-    };
-
     const handleClose = () => {
-        resetForm();
+        setName("");
         onClose();
     };
 
-    const handleSubmit = (name: string) => {
+    const handleSubmit = () => {
         if (!name.trim()) return;
-
         const newId = addScenario(name);
         navigate(`/escenario/${newId}/planificacion`);
-        onClose();
+        handleClose();
     };
 
     if (!isOpen) return null;
@@ -62,7 +57,6 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
 
                 {/* Body */}
                 <div className="px-6 py-4 space-y-5">
-                    {/* Nombre */}
                     <div>
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
                             Nombre del escenario
@@ -74,7 +68,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                                 placeholder="Ej: Escenario optimista, Plan B..."
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleSubmit(name)}
+                                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                                 autoFocus
                                 className="w-full pl-10 pr-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                             />
@@ -91,7 +85,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                         Cancelar
                     </button>
                     <button
-                        onClick={() => handleSubmit(name)}
+                        onClick={handleSubmit}
                         disabled={!name.trim()}
                         className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
                     >

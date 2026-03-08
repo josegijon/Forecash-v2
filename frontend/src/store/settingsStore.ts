@@ -36,12 +36,7 @@ export const useSettingsStore = create<SettingsState>()(
                 set({ theme }),
 
             toggleTheme: () =>
-                set((state) => ({
-                    theme:
-                        state.theme === "dark"
-                            ? "light"
-                            : "dark",
-                })),
+                set((state) => ({ theme: state.theme === "dark" ? "light" : "dark" })),
         }),
         {
             name: "settings-storage",

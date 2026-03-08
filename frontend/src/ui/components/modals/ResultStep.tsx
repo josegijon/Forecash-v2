@@ -10,7 +10,7 @@ interface ResultStepProps {
 }
 
 export const ResultStep = ({ result, fixedExpenses, currencySymbol, onBack, onApply }: ResultStepProps) => {
-    const fmt = (n: number) =>
+    const formatAmount = (n: number) =>
         `${currencySymbol}${n.toLocaleString("es-ES", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
     return (
@@ -20,9 +20,9 @@ export const ResultStep = ({ result, fixedExpenses, currencySymbol, onBack, onAp
                     <p className="text-xs text-amber-600 font-semibold uppercase tracking-wide mb-1">
                         Colchón recomendado
                     </p>
-                    <p className="text-3xl font-bold text-slate-900">{fmt(result.totalAmount)}</p>
+                    <p className="text-3xl font-bold text-slate-900">{formatAmount(result.totalAmount)}</p>
                     <p className="text-sm text-slate-500 mt-1">
-                        {result.totalMonths} meses de gastos fijos · {fmt(fixedExpenses)}/mes
+                        {result.totalMonths} meses de gastos fijos · {formatAmount(fixedExpenses)}/mes
                     </p>
                 </div>
 

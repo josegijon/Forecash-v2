@@ -3,6 +3,7 @@ import {
     ChevronDown, Clock, ShieldAlert, TrendingUp,
 } from "lucide-react";
 import type { MonthData } from "./projectionTypes";
+import { fmt } from "../simulation/types";
 
 interface ProjectionDetailTableProps {
     data: MonthData[];
@@ -77,19 +78,19 @@ export const ProjectionDetailTable = ({ data }: ProjectionDetailTableProps) => (
                             >
                                 <td className="py-3 px-4 font-medium text-slate-700">{row.month}</td>
                                 <td className="py-3 px-4 text-right text-slate-700">
-                                    {row.ingresos.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                                    {fmt(row.ingresos)} €
                                 </td>
                                 <td className="py-3 px-4 text-right text-slate-700">
-                                    {row.gastos.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                                    {fmt(row.gastos)} €
                                 </td>
                                 <td className="py-3 px-4 text-right">
                                     <span className={`inline-flex items-center gap-1 font-semibold ${cfPositive ? "text-emerald-600" : "text-red-600"}`}>
                                         {cfPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                                        {cfPositive ? "+" : ""}{row.cashflow.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                                        {cfPositive ? "+" : ""}{fmt(row.cashflow)} €
                                     </span>
                                 </td>
                                 <td className={`py-3 px-4 text-right font-medium ${row.isNegativeBalance ? "text-red-700" : "text-slate-700"}`}>
-                                    {row.balance.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                                    {fmt(row.balance)} €
                                 </td>
                                 <td className="py-3 px-4 text-center">
                                     <StatusBadge row={row} />

@@ -1,10 +1,11 @@
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
-import { usePlanningStore } from "@/store"
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+
+import { usePlanningStore } from "@/store";
 
 const MONTHS = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-]
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+];
 
 export const MonthNavigator = () => {
     const activeMonth = usePlanningStore((s) => s.activeMonth);
@@ -50,5 +51,5 @@ export const MonthNavigator = () => {
                 </button>
             )}
         </div>
-    )
-}
+    );
+};

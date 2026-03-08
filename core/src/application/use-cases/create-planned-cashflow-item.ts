@@ -1,6 +1,5 @@
-import { Frequency, ISODateString, toISODateString } from "@core/index";
+import { Frequency, ISODateString, toISODateString, addMonths, toISOFirstOfMonth } from "@core/index";
 import { assertCashflowItemValid } from "@core/domain/rules/cashflow-invariants";
-import { addMonths, toISOFirstOfMonth } from "../../shared/utils/date-utils";
 
 export interface CreatePlannedCashflowItemInput {
     scenarioId: string;
@@ -41,8 +40,8 @@ export interface NewPlannedCashflowItem {
  * Usa addMonths para evitar overflows de fin de mes.
  */
 const offsetToISODate = (base: Date, offsetMonths: number): ISODateString => {
-    const ym = { year: base.getFullYear(), month: base.getMonth() };
-    return toISODateString(toISOFirstOfMonth(addMonths(ym, offsetMonths)));
+    const yearMonth = { year: base.getFullYear(), month: base.getMonth() };  // ← renombrado
+    return toISODateString(toISOFirstOfMonth(addMonths(yearMonth, offsetMonths)));
 };
 
 export const createPlannedCashflowItem = (
@@ -52,14 +51,14 @@ export const createPlannedCashflowItem = (
         throw new Error(`startsInMonths debe ser >= 0. Recibido: ${input.startsInMonths}`);
     }
 
+    if (input.frequency === "once" && input.endsInMonths !== undefined) {
+        throw new Error(`Un ítem con frecuencia "once" no puede tener endsInMonths.`);
+    }
+
     if (input.endsInMonths !== undefined && input.endsInMonths <= input.startsInMonths) {
         throw new Error(
             `endsInMonths (${input.endsInMonths}) debe ser mayor que startsInMonths (${input.startsInMonths}).`
         );
-    }
-
-    if (input.frequency === "once" && input.endsInMonths !== undefined) {
-        throw new Error(`Un ítem con frecuencia "once" no puede tener endsInMonths.`);
     }
 
     const now = input.now ?? new Date();

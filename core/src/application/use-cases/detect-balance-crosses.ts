@@ -21,8 +21,10 @@ export interface DetectBalanceCrossesInput {
  *
  * Función pura — no depende de React ni de ningún detalle de presentación.
  *
- * @returns [] si threshold < 0 (los balances negativos los gestiona la UI
- *          con threshold=0, que sí es válido como zona de riesgo).
+ * Nota: si threshold < 0 devuelve [] inmediatamente. Los balances negativos
+ * se gestionan en la UI usando threshold=0 (zona de riesgo).
+ *
+ * @returns Array de eventos de cruce ordenados cronológicamente.
  */
 export const detectBalanceCrosses = ({
     balances,
@@ -30,18 +32,18 @@ export const detectBalanceCrosses = ({
 }: DetectBalanceCrossesInput): CrossEvent[] => {
     if (threshold < 0) return [];
 
-    const events: CrossEvent[] = [];
+    const crosses: CrossEvent[] = [];
 
     for (let i = 1; i < balances.length; i++) {
         const prev = balances[i - 1];
         const curr = balances[i];
 
         if (prev < threshold && curr >= threshold) {
-            events.push({ index: i, type: "gained" });
+            crosses.push({ index: i, type: "gained" });
         } else if (prev >= threshold && curr < threshold) {
-            events.push({ index: i, type: "lost" });
+            crosses.push({ index: i, type: "lost" });
         }
     }
 
-    return events;
+    return crosses;
 };

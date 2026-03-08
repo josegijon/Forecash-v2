@@ -1,8 +1,9 @@
-import { useScenarioStore } from "@/store";
 import { Copy, ChevronDown } from "lucide-react";
+
+import { useScenarioStore } from "@/store";
 import { ProjectionHorizonSelect } from "../controls/ProjectionHorizonSelect";
 
-interface Props {
+interface SimulationHeaderProps {
     selectedScenario: string;
     selectedMonths: number;
     onScenarioChange: (id: string) => void;
@@ -10,8 +11,7 @@ interface Props {
     onCopyScenario: () => void;
 }
 
-export const SimulationHeader = ({ selectedScenario, selectedMonths, onScenarioChange, onMonthsChange, onCopyScenario }: Props) => {
-
+export const SimulationHeader = ({ selectedScenario, selectedMonths, onScenarioChange, onMonthsChange, onCopyScenario }: SimulationHeaderProps) => {
     const scenarios = useScenarioStore((s) => s.scenarios);
 
     return (
@@ -32,10 +32,7 @@ export const SimulationHeader = ({ selectedScenario, selectedMonths, onScenarioC
                         className="appearance-none bg-white border border-slate-200 hover:border-blue-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none cursor-pointer transition-all hover:shadow-md"
                     >
                         {scenarios.map((s) => (
-                            <option
-                                key={s.id}
-                                value={s.id}
-                            >
+                            <option key={s.id} value={s.id}>
                                 vs {s.name}
                             </option>
                         ))}

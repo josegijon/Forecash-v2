@@ -1,24 +1,22 @@
 import { Layers, GitCompareArrows, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
+
+import { fmt } from "./types";
 import { StatCard } from "./StatCard";
 
-interface Props {
+interface SimulationSummaryCardsProps {
     actualBalance: number;
     comparedBalance: number;
     scenarioName: string;
     selectedMonths: number;
 }
 
-export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenarioName, selectedMonths }: Props) => {
+export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenarioName, selectedMonths }: SimulationSummaryCardsProps) => {
     const diff = comparedBalance - actualBalance;
+    const isPositive = diff >= 0;
 
     const diffPercent = actualBalance !== 0
         ? ((diff / actualBalance) * 100).toFixed(1)
         : null;
-
-    const isPositive = diff >= 0;
-
-    const fmt = (n: number) =>
-        n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

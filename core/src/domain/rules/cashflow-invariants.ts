@@ -1,5 +1,4 @@
-import { CashflowItem } from "@core/index";
-import { RANGED_FREQUENCIES } from "@core/index";
+import { CashflowItem, RANGED_FREQUENCIES } from "@core/index";
 
 export type InvariantViolation =
     | "AMOUNT_MUST_BE_POSITIVE"
@@ -9,10 +8,10 @@ export type InvariantViolation =
     | "EMPTY_NAME";
 
 /**
-* Valida las invariantes de un CashflowItem.
-* Devuelve un array de violaciones (vacío = válido).
-* Función pura y testeable.
-*/
+ * Valida las invariantes de un CashflowItem.
+ * Devuelve un array de violaciones (vacío = válido).
+ * Función pura y testeable.
+ */
 export const validateCashflowItem = (
     item: Omit<CashflowItem, "id">
 ): InvariantViolation[] => {
@@ -51,8 +50,6 @@ export const validateCashflowItem = (
 export const assertCashflowItemValid = (item: Omit<CashflowItem, "id">): void => {
     const violations = validateCashflowItem(item);
     if (violations.length > 0) {
-        throw new Error(
-            `CashflowItem inválido: [${violations.join(", ")}]`
-        );
+        throw new Error(`CashflowItem inválido: [${violations.join(", ")}]`);
     }
 };
