@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { SettingsPersistedSchema } from "@/schemas/store.schemas";
+import { createValidatedMerge } from "./persist-validation";
 
-// ── Monedas soportadas ──
 export type Currency = "EUR" | "USD" | "GBP";
 
 export const currencySymbols: Record<Currency, string> = {
@@ -9,6 +10,9 @@ export const currencySymbols: Record<Currency, string> = {
     USD: "$",
     GBP: "£",
 };
+
+const VALID_CURRENCIES = new Set<string>(["EUR", "USD", "GBP"]);
+const VALID_THEMES = new Set<string>(["light", "dark"]);
 
 export type Theme = "light" | "dark";
 
@@ -24,33 +28,38 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
     persist(
         (set) => ({
-            // ── Estado ──
             currency: "EUR",
             theme: "dark",
 
-            // ── Acciones ──
-            setCurrency: (currency) =>
-                set({ currency }),
+            setCurrency: (currency) => {
+                if (!VALID_CURRENCIES.has(currency)) return;
+                set({ currency });
+            },
 
-            setTheme: (theme) =>
-                set({ theme }),
+            setTheme: (theme) => {
+                if (!VALID_THEMES.has(theme)) return;
+                set({ theme });
+            },
 
             toggleTheme: () =>
-                set((state) => ({ theme: state.theme === "dark" ? "light" : "dark" })),
+                set((state) => ({
+                    theme: state.theme === "dark" ? "light" : "dark",
+                })),
         }),
         {
             name: "settings-storage",
-
             partialize: (state) => ({
                 currency: state.currency,
                 theme: state.theme,
             }),
-
             version: 1,
-        }
-    )
+            merge: createValidatedMerge<SettingsState>(
+                SettingsPersistedSchema,
+                "settingsStore",
+            ),
+        },
+    ),
 );
 
-// ── Selector auxiliar ──
 export const useCurrencySymbol = () =>
     useSettingsStore((state) => currencySymbols[state.currency]);

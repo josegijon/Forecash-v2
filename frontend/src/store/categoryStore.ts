@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
+import { CategoryPersistedSchema } from "@/schemas/store.schemas";
+import { createValidatedMerge } from "./persist-validation";
 
 export interface Category {
     id: string;
@@ -39,7 +41,7 @@ export const useCategoryStore = create<CategoryState>()(
                     const exists = state.categories.some(
                         (c) =>
                             c.name.toLowerCase() === trimmed.toLowerCase() &&
-                            c.type === type
+                            c.type === type,
                     );
                     if (exists) return state;
 
@@ -62,7 +64,7 @@ export const useCategoryStore = create<CategoryState>()(
                     if (!trimmed) return state;
                     return {
                         categories: state.categories.map((c) =>
-                            c.id === id ? { ...c, name: trimmed } : c
+                            c.id === id ? { ...c, name: trimmed } : c,
                         ),
                     };
                 }),
@@ -73,12 +75,20 @@ export const useCategoryStore = create<CategoryState>()(
             name: "category-storage",
             partialize: (state) => ({ categories: state.categories }),
             version: 1,
-        }
-    )
+            merge: createValidatedMerge<CategoryState>(
+                CategoryPersistedSchema,
+                "categoryStore",
+            ),
+        },
+    ),
 );
 
 export const useIncomeCategories = () =>
-    useCategoryStore(useShallow((s) => s.categories.filter((c) => c.type === "income")));
+    useCategoryStore(
+        useShallow((s) => s.categories.filter((c) => c.type === "income")),
+    );
 
 export const useExpenseCategories = () =>
-    useCategoryStore(useShallow((s) => s.categories.filter((c) => c.type === "expense")));
+    useCategoryStore(
+        useShallow((s) => s.categories.filter((c) => c.type === "expense")),
+    );

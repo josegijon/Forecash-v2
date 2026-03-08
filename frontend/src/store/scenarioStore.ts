@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Scenario } from "@core";
+import { ScenarioPersistedSchema } from "@/schemas/store.schemas";
+import { createValidatedMerge } from "./persist-validation";
 
 export type { Scenario };
 
@@ -32,6 +34,8 @@ const createDefaultScenario = (): Scenario => ({
     cushionBalance: 0,
     capitalGoal: undefined,
 });
+
+const isFiniteNumber = (v: number): boolean => Number.isFinite(v);
 
 export const useScenarioStore = create<ScenarioState>()(
     persist(
@@ -78,7 +82,7 @@ export const useScenarioStore = create<ScenarioState>()(
             renameScenario: (id, newName) => {
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
-                        s.id === id ? { ...s, name: newName } : s
+                        s.id === id ? { ...s, name: newName } : s,
                     ),
                 }));
             },
@@ -106,33 +110,38 @@ export const useScenarioStore = create<ScenarioState>()(
             },
 
             setInitialBalance: (id, balance) => {
+                if (!isFiniteNumber(balance)) return;
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
-                        s.id === id ? { ...s, initialBalance: balance } : s
+                        s.id === id ? { ...s, initialBalance: balance } : s,
                     ),
                 }));
             },
 
             setSavingsGoal: (id, goal) => {
+                if (!isFiniteNumber(goal) || goal < 0) return;
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
-                        s.id === id ? { ...s, savingsGoal: goal } : s
+                        s.id === id ? { ...s, savingsGoal: goal } : s,
                     ),
                 }));
             },
 
             setCushionBalance: (id, cushion) => {
+                if (!isFiniteNumber(cushion) || cushion < 0) return;
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
-                        s.id === id ? { ...s, cushionBalance: cushion } : s
+                        s.id === id ? { ...s, cushionBalance: cushion } : s,
                     ),
                 }));
             },
 
             setCapitalGoal: (id, capitalGoal) => {
+                if (capitalGoal !== undefined && (!isFiniteNumber(capitalGoal) || capitalGoal < 0))
+                    return;
                 set((state) => ({
                     scenarios: state.scenarios.map((s) =>
-                        s.id === id ? { ...s, capitalGoal } : s
+                        s.id === id ? { ...s, capitalGoal } : s,
                     ),
                 }));
             },
@@ -144,11 +153,15 @@ export const useScenarioStore = create<ScenarioState>()(
                 activeScenarioId: state.activeScenarioId,
             }),
             version: 2,
-        }
-    )
+            merge: createValidatedMerge<ScenarioState>(
+                ScenarioPersistedSchema,
+                "scenarioStore",
+            ),
+        },
+    ),
 );
 
 export const useActiveScenario = () =>
     useScenarioStore((s) =>
-        s.scenarios.find((sc) => sc.id === s.activeScenarioId)
+        s.scenarios.find((sc) => sc.id === s.activeScenarioId),
     );

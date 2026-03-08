@@ -1,8 +1,9 @@
 import { create } from "zustand";
 
-// ── Mes actual en tiempo de carga del módulo (para el estado inicial) ──
-// goToToday() recalcula en tiempo de llamada para no quedar obsoleto.
 const now = new Date();
+
+const MIN_YEAR = 1900;
+const MAX_YEAR = 2200;
 
 interface PlanningState {
     activeMonth: number;
@@ -19,6 +20,7 @@ export const usePlanningStore = create<PlanningState>()((set) => ({
 
     goForward: () =>
         set((state) => {
+            if (state.activeYear >= MAX_YEAR && state.activeMonth === 11) return state;
             if (state.activeMonth === 11) {
                 return { activeMonth: 0, activeYear: state.activeYear + 1 };
             }
@@ -27,6 +29,7 @@ export const usePlanningStore = create<PlanningState>()((set) => ({
 
     goBack: () =>
         set((state) => {
+            if (state.activeYear <= MIN_YEAR && state.activeMonth === 0) return state;
             if (state.activeMonth === 0) {
                 return { activeMonth: 11, activeYear: state.activeYear - 1 };
             }
