@@ -8,7 +8,7 @@ import {
 } from "@core";
 
 import { MONTH_NAMES, type MonthData, type ProjectionAlert } from "./projectionTypes";
-import { useActiveScenario, useScenarioItems } from "@/store";
+import { useActiveScenario, useCurrencySymbol, useScenarioItems } from "@/store";
 
 export interface UseProjectionDataReturn {
     data: MonthData[];
@@ -87,6 +87,7 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
         const firstPoint = data[0];
         const balanceDiff = lastPoint.balance - firstPoint.balance;
         const isPositive = balanceDiff >= 0;
+        const currencySymbol = useCurrencySymbol();
 
         const negativeMonths = data.filter((d) => d.isNegativeCashflow).length;
         const peakExpenseMonths = data.filter((d) => d.isPeakExpense).length;
@@ -101,7 +102,7 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
         if (negBalanceMonths.length > 0) {
             alerts.push({
                 type: "danger",
-                message: `Tu balance entra en negativo en ${negBalanceMonths.length} ${negBalanceMonths.length === 1 ? "mes" : "meses"}. El punto más bajo es ${minBalance.toLocaleString("es-ES")} €.`,
+                message: `Tu balance entra en negativo en ${negBalanceMonths.length} ${negBalanceMonths.length === 1 ? "mes" : "meses"}. El punto más bajo es ${minBalance.toLocaleString("es-ES")} ${currencySymbol}.`,
             });
         }
         if (negativeMonths >= 3) {
@@ -119,7 +120,7 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
         if (avgCashflow > 0 && negativeMonths === 0) {
             alerts.push({
                 type: "info",
-                message: `Margen medio positivo de ${avgCashflow.toLocaleString("es-ES")} €/mes. Tu plan es sostenible.`,
+                message: `Margen medio positivo de ${avgCashflow.toLocaleString("es-ES")} ${currencySymbol}/mes. Tu plan es sostenible.`,
             });
         }
 

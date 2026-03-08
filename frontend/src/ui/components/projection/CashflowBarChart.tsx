@@ -4,6 +4,7 @@ import {
     ResponsiveContainer, Bar, BarChart, type BarProps,
 } from "recharts";
 import type { MonthData } from "./projectionTypes";
+import { useCurrencySymbol } from "@/store";
 
 interface CashflowBarChartProps {
     data: MonthData[];
@@ -38,6 +39,8 @@ const ExpenseBar = (props: BarProps) => {
 };
 
 export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps) => {
+    const currencySymbol = useCurrencySymbol();
+
     const barSize = selectedMonths <= 12 ? 24 : 14;
 
     return (
@@ -66,7 +69,7 @@ export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps
                     <Tooltip
                         contentStyle={tooltipContentStyle}
                         formatter={(value, name) => [
-                            `${Number(value).toLocaleString("es-ES")} €`,
+                            `${Number(value).toLocaleString("es-ES")} ${currencySymbol}`,
                             name === "ingresos" ? "Ingresos" : "Gastos",
                         ]}
                         labelStyle={{ fontWeight: 600, color: "#1e293b" }}

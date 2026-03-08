@@ -35,7 +35,7 @@ export const KpiCard = ({ title, value, icon, description, variant = "neutral", 
             </span>
         </div>
 
-        <div className={`flex items-end gap-2 ${align === "between" ? "justify-between" : ""}`}>  {/* ← sin salto de línea */}
+        <div className={`flex items-end gap-2 ${align === "between" ? "justify-between" : ""}`}>
             <p className="text-2xl font-bold text-slate-900">
                 {value}
             </p>
