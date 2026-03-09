@@ -12,7 +12,7 @@ interface SummaryCardProps {
 }
 
 const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: SummaryCardProps) => (
-    <div className="rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between items-start">
+    <div className={`rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between ${trend ? 'items-start' : 'items-center'}`}>
         <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">
                 {label}
@@ -20,17 +20,17 @@ const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: Summar
             <p className="text-2xl font-bold">
                 {value}
             </p>
-            <div className="flex items-center gap-1 text-sm">
-                {trend && (
-                    <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${trend.positive ? "text-emerald-600" : "text-red-600"}`}>
+
+            {trend && (
+                <div className="flex items-center gap-1 text-sm">
+                    <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${trend.positive ? "text-emerald-600" : "text-red-600"}`}>
                         {trend.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />} {trend.value}
                     </div>
-                )}
-
-                <span className="text-xs text-muted-foreground">
-                    vs mes anterior
-                </span>
-            </div>
+                    <span className="text-xs text-muted-foreground">
+                        vs mes anterior
+                    </span>
+                </div>
+            )}
         </div>
 
         <div className="p-3 bg-primary/20 rounded-full">

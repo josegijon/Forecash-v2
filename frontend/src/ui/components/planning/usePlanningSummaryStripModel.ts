@@ -39,7 +39,7 @@ const formatCurrency = (amount: number, symbol: string): string => {
         maximumFractionDigits: 2,
     });
 
-    return `${amount < 0 ? "-" : ""}${symbol}${formatted}`;
+    return `${amount < 0 ? "-" : ""}${symbol} ${formatted}`;
 };
 
 /** Devuelve el mes anterior dado (year, month 0-indexed) */
