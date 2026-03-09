@@ -1,6 +1,33 @@
 @import "tailwindcss";
 
+/* @font-face {
+    font-family: Poppins;
+    font-weight: 700;
+    src: url('./assets/fonts/Poppins-Bold.ttf');
+} */
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 400;
+    src: url('./assets/fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 500;
+    src: url('./assets/fonts/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 700;
+    src: url('./assets/fonts/Poppins-Bold.ttf');
+}
+
 @theme {
+    /* Font */
+    --font-poppins: "Poppins";
+
     /* Radius */
     --radius: 0.5rem;
 
