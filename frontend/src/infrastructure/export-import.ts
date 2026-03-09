@@ -1,6 +1,9 @@
 import type { Scenario } from "@/store/scenarioStore";
 import type { CashflowItem } from "@/store/cashflowStore";
-import { AppSnapshotV1Schema, type ValidatedSnapshot } from "@/schemas/snapshot.schema";
+import {
+    AppSnapshotV1Schema,
+    type ValidatedSnapshot,
+} from "@/schemas/snapshot.schema";
 
 /* ── Constantes ─────────────────────────────────────────────────────────── */
 
@@ -20,11 +23,7 @@ export class ImportError extends Error {
     public readonly kind: ImportErrorKind;
     public readonly details?: string;
 
-    constructor(
-        kind: ImportErrorKind,
-        message: string,
-        details?: string,
-    ) {
+    constructor(kind: ImportErrorKind, message: string, details?: string) {
         super(message);
         this.kind = kind;
         this.details = details;
@@ -43,18 +42,11 @@ export const exportToJson = (snapshot: ValidatedSnapshot): void => {
 
 /* ── JSON import ────────────────────────────────────────────────────────── */
 
-/**
- * Lee y valida estructuralmente un archivo JSON de snapshot.
- * Devuelve un `ValidatedSnapshot` correctamente tipado, o rechaza con
- * un `ImportError` descriptivo que la UI puede distinguir por `.kind`.
- */
 export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
     new Promise((resolve, reject) => {
-        // ── Validaciones previas al FileReader ──
-
         if (file.size === 0) {
             return reject(
-                new ImportError("EMPTY_FILE", "El archivo está vacío.")
+                new ImportError("EMPTY_FILE", "El archivo está vacío."),
             );
         }
 
@@ -62,14 +54,14 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
             return reject(
                 new ImportError(
                     "FILE_TOO_LARGE",
-                    `El archivo supera el límite de ${MAX_IMPORT_SIZE_BYTES / 1024 / 1024} MB.`
-                )
+                    `El archivo supera el límite de ${MAX_IMPORT_SIZE_BYTES / 1024 / 1024} MB.`,
+                ),
             );
         }
 
         const hasValidExtension = file.name.toLowerCase().endsWith(".json");
         const hasValidMime =
-            file.type === "" || // algunos SO no reportan MIME
+            file.type === "" ||
             file.type === "application/json" ||
             file.type === "text/json";
 
@@ -77,12 +69,10 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
             return reject(
                 new ImportError(
                     "INVALID_FILE_TYPE",
-                    "Solo se admiten archivos .json."
-                )
+                    "Solo se admiten archivos .json.",
+                ),
             );
         }
-
-        // ── Lectura y validación ──
 
         const reader = new FileReader();
 
@@ -91,7 +81,7 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
 
             if (typeof raw !== "string" || raw.trim() === "") {
                 return reject(
-                    new ImportError("EMPTY_FILE", "El archivo está vacío.")
+                    new ImportError("EMPTY_FILE", "El archivo está vacío."),
                 );
             }
 
@@ -102,17 +92,17 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
                 return reject(
                     new ImportError(
                         "NOT_VALID_JSON",
-                        "El archivo no contiene JSON válido."
-                    )
+                        "El archivo no contiene JSON válido.",
+                    ),
                 );
             }
 
-            // Validación estructural con Zod — narrowing completo del tipo
+            // Validación estructural + integridad referencial con Zod
             const result = AppSnapshotV1Schema.safeParse(parsed);
 
             if (!result.success) {
                 const details = result.error.issues
-                    .slice(0, 5) // limitar para no saturar la UI
+                    .slice(0, 5)
                     .map((i) => `${i.path.join(".")}: ${i.message}`)
                     .join("; ");
 
@@ -120,8 +110,8 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
                     new ImportError(
                         "SCHEMA_VALIDATION_FAILED",
                         "El archivo no tiene el formato esperado de Forecash.",
-                        details
-                    )
+                        details,
+                    ),
                 );
             }
 
@@ -129,16 +119,24 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
         };
 
         reader.onerror = () =>
-            reject(new ImportError("READ_ERROR", "Error al leer el archivo."));
+            reject(
+                new ImportError("READ_ERROR", "Error al leer el archivo."),
+            );
 
         reader.readAsText(file);
     });
 
 /* ── CSV export ─────────────────────────────────────────────────────────── */
 
+/**
+ * Caracteres que inician una fórmula en hojas de cálculo.
+ * Prefijamos con comilla simple para neutralizar CSV injection (OWASP).
+ */
+const CSV_INJECTION_PREFIXES = new Set(["=", "+", "-", "@", "\t", "\r"]);
+
 export const exportToCsv = (
     scenarios: Scenario[],
-    items: Record<string, CashflowItem[]>
+    items: Record<string, CashflowItem[]>,
 ): void => {
     const headers = [
         "Escenario",
@@ -173,9 +171,8 @@ export const exportToCsv = (
 
     const csv = [headers, ...rows]
         .map((row) => row.map(csvCell).join(","))
-        .join("\r\n"); // CRLF: estándar RFC 4180
+        .join("\r\n");
 
-    // BOM UTF-8 (\uFEFF) para que Excel en Windows reconozca la codificación
     const bom = "\uFEFF";
     const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
     triggerDownload(blob, `forecash-export-${dateTag()}.csv`);
@@ -184,19 +181,22 @@ export const exportToCsv = (
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 
 /**
- * Envuelve el valor en comillas dobles escapando comillas internas y
- * eliminando saltos de línea que romperían la estructura del CSV.
+ * Envuelve el valor en comillas dobles, escapando comillas internas,
+ * eliminando saltos de línea y neutralizando CSV injection.
  */
-const csvCell = (value: string): string =>
-    `"${value.replace(/"/g, '""').replace(/[\r\n]+/g, " ")}"`;
+const csvCell = (value: string): string => {
+    let sanitized = value.replace(/"/g, '""').replace(/[\r\n]+/g, " ");
 
-const dateTag = (): string =>
-    new Date().toISOString().slice(0, 10);
+    // Neutralizar CSV injection: prefijo con comilla simple
+    if (sanitized.length > 0 && CSV_INJECTION_PREFIXES.has(sanitized[0])) {
+        sanitized = `'${sanitized}`;
+    }
 
-/**
- * Revoca la URL de objeto de forma diferida para garantizar que el navegador
- * haya iniciado la descarga antes de liberar el recurso.
- */
+    return `"${sanitized}"`;
+};
+
+const dateTag = (): string => new Date().toISOString().slice(0, 10);
+
 const triggerDownload = (blob: Blob, fileName: string): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
