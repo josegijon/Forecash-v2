@@ -7,7 +7,7 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
     return (
-        <div className="flex h-screen bg-background transition-colors duration-300">
+        <div className="flex h-screen bg-background transition-colors duration-300 font-poppins text-foreground">
             <Sidebar />
             <div className="flex-1 flex flex-col">
                 <Header />

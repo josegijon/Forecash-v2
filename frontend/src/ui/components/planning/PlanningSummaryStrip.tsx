@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, ArrowUp, ArrowDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 import { usePlanningSummaryStripModel } from "./usePlanningSummaryStripModel";
 
@@ -12,18 +12,29 @@ interface SummaryCardProps {
 }
 
 const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: SummaryCardProps) => (
-    <div className="flex items-center gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow-md transition-shadow">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bgClass} ${accentClass}`}>
-            {icon}
-        </div>
-        <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
-            <span className="text-xl font-extrabold text-slate-800">{value}</span>
-            {trend && (
-                <span className={`text-[11px] font-semibold ${trend.positive ? "text-emerald-500" : "text-rose-500"}`}>
-                    {trend.positive ? "↑" : "↓"} {trend.value} vs mes anterior
+    <div className="rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between items-start">
+        <div className="flex flex-col gap-1">
+            <p className="text-sm text-muted-foreground">
+                {label}
+            </p>
+            <p className="text-2xl font-bold">
+                {value}
+            </p>
+            <div className="flex items-center gap-1 text-sm">
+                {trend && (
+                    <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${trend.positive ? "text-emerald-600" : "text-red-600"}`}>
+                        {trend.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />} {trend.value}
+                    </div>
+                )}
+
+                <span className="text-xs text-muted-foreground">
+                    vs mes anterior
                 </span>
-            )}
+            </div>
+        </div>
+
+        <div className="p-3 bg-primary/20 rounded-full">
+            {icon}
         </div>
     </div>
 );
