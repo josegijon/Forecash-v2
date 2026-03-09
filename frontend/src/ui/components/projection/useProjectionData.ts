@@ -27,6 +27,8 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
     const activeScenario = useActiveScenario();
     const initialBalance = activeScenario?.initialBalance ?? 0;
     const items = useScenarioItems(activeScenario?.id ?? "");
+    const currencySymbol = useCurrencySymbol();
+
 
     const data = useMemo((): MonthData[] => {
         const now = new Date();
@@ -87,7 +89,6 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
         const firstPoint = data[0];
         const balanceDiff = lastPoint.balance - firstPoint.balance;
         const isPositive = balanceDiff >= 0;
-        const currencySymbol = useCurrencySymbol();
 
         const negativeMonths = data.filter((d) => d.isNegativeCashflow).length;
         const peakExpenseMonths = data.filter((d) => d.isPeakExpense).length;
@@ -130,5 +131,5 @@ export function useProjectionData(selectedMonths: number): UseProjectionDataRetu
             negativeMonths, peakExpenseMonths,
             minBalance, avgCashflow, alerts,
         };
-    }, [data]);
+    }, [data, currencySymbol]);
 }
