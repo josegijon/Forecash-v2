@@ -42,11 +42,15 @@ export const DataPage = () => {
 
     // ── Export JSON ──
     const handleExportJson = () => {
+        const scenarioIds = new Set(scenarios.map((s) => s.id));
+        const filteredItems = Object.fromEntries(
+            Object.entries(items).filter(([key]) => scenarioIds.has(key))
+        );
         const snapshot = {
             version: 1 as const,
             exportedAt: new Date().toISOString(),
             scenarios,
-            items,
+            items: filteredItems,
             categories: useCategoryStore.getState().categories,
             currency,
         } satisfies ValidatedSnapshot;
