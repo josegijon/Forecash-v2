@@ -31,7 +31,7 @@ export const SidebarNavigation = () => {
 
     return (
         <>
-            <p className="px-3 mb-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            <p className="px-2 mb-3 text-xs font-semibold text-muted-foreground uppercase">
                 Menú Principal
             </p>
 

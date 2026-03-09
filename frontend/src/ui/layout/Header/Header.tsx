@@ -1,6 +1,8 @@
+import { Menu } from "lucide-react";
 import { useLocation } from "react-router";
 
-import { useActiveScenario } from "@/store";
+import { ScenarioSelector } from "./ScenarioSelector";
+import { ThemeToggle } from "../Sidebar/ThemeToggle";
 
 const PAGE_TITLES: Record<string, string> = {
     planificacion: "Planificación Financiera",
@@ -9,24 +11,38 @@ const PAGE_TITLES: Record<string, string> = {
     datos: "Datos y Ajustes",
 };
 
-export const Header = () => {
-    const location = useLocation();
-    const activeScenario = useActiveScenario();
+interface HeaderProps {
+    onMenuClick: () => void;
+}
 
-    const lastSegment = location.pathname.split("/").filter(Boolean).pop() ?? "";
-    const title = PAGE_TITLES[lastSegment] ?? "Forecash";
+export const Header = ({ onMenuClick }: HeaderProps) => {
+    const location = useLocation();
+
+    // const lastSegment = location.pathname.split("/").filter(Boolean).pop() ?? "";
+    // const title = PAGE_TITLES[lastSegment] ?? "Forecash";
 
     return (
-        <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur-lg sticky top-0 z-10 shadow-sm py-4">
-            <div className="h-full px-8 flex items-center justify-between">
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h1>
-                    <div className="flex items-center gap-2 text-sm">
-                        <span className="text-slate-500 font-medium">Escenario:</span>
-                        <span className="px-2.5 py-1 bg-linear-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg font-semibold text-xs border border-blue-100 capitalize">
-                            {activeScenario?.name || "Escenario 1"}
-                        </span>
-                    </div>
+        <header className="border-b border-border bg-background/20 backdrop-blur-lg sticky top-0 z-10 shadow-sm">
+            <div className="h-full px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+                {/* Botón menú móvil */}
+                <button
+                    onClick={onMenuClick}
+                    className="lg:hidden p-2 rounded-md hover:bg-accent shrink-0 cursor-pointer transition-colors"
+                    aria-label="Abrir menú"
+                >
+                    <Menu size={20} />
+                </button>
+
+                {/* Título y escenario activo */}
+                {/* <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <h1 className="text-2xl font-bold tracking-tight truncate">
+                        {title}
+                    </h1>
+                </div> */}
+
+                {/* Acciones derecha */}
+                <div className="flex items-center gap-2 shrink-0">
+                    <ScenarioSelector />
                 </div>
             </div>
         </header>
