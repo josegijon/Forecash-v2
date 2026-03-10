@@ -16,13 +16,13 @@ interface HeaderProps {
 }
 
 export const Header = ({ onMenuClick }: HeaderProps) => {
-    const location = useLocation();
+    // const location = useLocation();
 
     // const lastSegment = location.pathname.split("/").filter(Boolean).pop() ?? "";
     // const title = PAGE_TITLES[lastSegment] ?? "Forecash";
 
     return (
-        <header className="border-b border-border bg-background/20 backdrop-blur-lg sticky top-0 z-10 shadow-sm">
+        <header className="bg-background/60 backdrop-blur sticky top-0 z-10">
             <div className="h-full px-4 md:px-8 py-4 flex items-center justify-between gap-4">
                 {/* Botón menú móvil */}
                 <button

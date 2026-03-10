@@ -4,11 +4,13 @@ interface SidebarNavLinkProps {
     to: string;
     icon: React.ReactNode;
     label: string;
+    onClick?: () => void;
 };
 
-export const SidebarNavLink = ({ to, icon, label }: SidebarNavLinkProps) => (
+export const SidebarNavLink = ({ to, icon, label, onClick }: SidebarNavLinkProps) => (
     <NavLink
         to={to}
+        onClick={onClick}
         className={({ isActive }: { isActive: boolean }) =>
             `w-full relative flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all cursor-pointer group text-card-foreground
         ${isActive

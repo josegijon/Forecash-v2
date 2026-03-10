@@ -3,7 +3,11 @@ import { SidebarHeader } from "./SidebarHeader";
 import { SidebarNavigation } from "./SidebarNavigation";
 import { ThemeToggle } from "./ThemeToggle";
 
-export const Sidebar = () => {
+interface SidebarProps {
+    onClose: () => void;
+}
+
+export const Sidebar = ({ onClose }: SidebarProps) => {
     return (
         <div className="sticky top-0 z-11 flex flex-col justify-between h-screen shadow-sm border-r border-border">
             {/* Header */}
@@ -14,7 +18,7 @@ export const Sidebar = () => {
 
             {/* Navigation */}
             <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-                <SidebarNavigation />
+                <SidebarNavigation onClose={onClose} />
             </nav>
 
             <ThemeToggle />

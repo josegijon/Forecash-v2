@@ -26,7 +26,11 @@ const NAV_ITEMS = [
     }
 ];
 
-export const SidebarNavigation = () => {
+interface SidebarNavigationProps {
+    onClose: () => void;
+}
+
+export const SidebarNavigation = ({ onClose }: SidebarNavigationProps) => {
     const { id } = useParams();
 
     return (
@@ -41,6 +45,7 @@ export const SidebarNavigation = () => {
                     to={`/escenario/${id}/${path}`}
                     icon={<Icon size={20} />}
                     label={label}
+                    onClick={onClose}
                 />
             ))}
         </>
