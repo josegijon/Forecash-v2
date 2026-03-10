@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, ArrowUp, ArrowDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 import { usePlanningSummaryStripModel } from "./usePlanningSummaryStripModel";
 
@@ -7,11 +7,9 @@ interface SummaryCardProps {
     value: string;
     icon: React.ReactNode;
     trend?: { value: string; positive: boolean };
-    accentClass: string;
-    bgClass: string;
 }
 
-const SummaryCard = ({ label, value, icon, trend, accentClass, bgClass }: SummaryCardProps) => (
+const SummaryCard = ({ label, value, icon, trend }: SummaryCardProps) => (
     <div className={`rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between ${trend ? 'items-start' : 'items-center'}`}>
         <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">
@@ -48,31 +46,23 @@ export const PlanningSummaryStrip = () => {
             value: model.totalIncome,
             icon: <TrendingUp size={22} />,
             trend: model.incomeTrend,
-            accentClass: "text-emerald-600",
-            bgClass: "bg-emerald-50",
         },
         {
             label: "Gastos totales",
             value: model.totalExpense,
             icon: <TrendingDown size={22} />,
             trend: model.expenseTrend,
-            accentClass: "text-rose-600",
-            bgClass: "bg-rose-50",
         },
         {
             label: "Balance neto",
             value: model.netBalance,
             icon: <Wallet size={22} />,
             trend: model.balanceTrend,
-            accentClass: "text-blue-600",
-            bgClass: "bg-blue-50",
         },
         {
             label: "Ahorro acumulado",
             value: model.accumulatedSavings,
             icon: <PiggyBank size={22} />,
-            accentClass: "text-violet-600",
-            bgClass: "bg-violet-50",
         },
     ];
 
