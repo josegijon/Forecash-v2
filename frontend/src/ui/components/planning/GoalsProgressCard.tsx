@@ -73,15 +73,14 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
-                    <Target size={18} className="text-emerald-500" />
-                </div>
-                <h3 className="font-bold text-slate-900">{title}</h3>
+        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+            <div className="flex items-center gap-2 mb-6">
+                <h3 className="text-lg font-medium leading-none tracking-tight">
+                    {title}
+                </h3>
             </div>
 
-            <div className="space-y-4 divide-y divide-slate-100">
+            <div className="grid grid-cols-2 items-baseline gap-4">
                 {hasSavingsGoal && (
                     <GoalProgressRing
                         progress={savingsProgress}
