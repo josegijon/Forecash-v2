@@ -15,37 +15,48 @@ export const CashflowItem = ({ type, name, category, frequency, amount, currency
     const isIncome = type === "income";
 
     return (
-        <div className="group flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 p-4 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-all">
-            <div className="flex items-center gap-4 w-full md:w-auto">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isIncome
-                    ? "bg-emerald-100 text-emerald-600"
-                    : "bg-rose-100 text-rose-600"}`}
-                >
-                    {isIncome
-                        ? <PlusCircle size={18} />
-                        : <MinusCircle size={18} />
-                    }
-                </div>
+        <>
+            <tr className="group bg-card transition-colors hover:bg-muted/50">
+                <td className="p-4 rounded-l-3xl">
+                    <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isIncome
+                            ? "bg-success text-success-foreground"
+                            : "bg-chart-line text-chart-fill"}`}
+                        >
+                            {isIncome
+                                ? <PlusCircle size={18} />
+                                : <MinusCircle size={18} />
+                            }
+                        </div>
+                        <span>
+                            {name}
+                        </span>
+                    </div>
+                </td>
 
-                <div>
-                    <p className="font-semibold text-slate-800">{name}</p>
-                    <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
-                        {category} • {frequency}
-                    </p>
-                </div>
-            </div>
+                <td className="p-4">
+                    {category}
+                </td>
 
-            <div className="flex items-center justify-center gap-6 w-full md:w-auto">
-                <span className={`font-bold ${isIncome ? "text-emerald-600" : "text-slate-800"}`}>
-                    {currencySymbol}{fmt(amount)}
-                </span>
-                <button
-                    onClick={onDelete}
-                    className="text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
-                >
-                    <Trash2 size={18} />
-                </button>
-            </div>
-        </div>
+                <td className="p-4">
+                    {frequency}
+                </td>
+
+                <td className="p-4">
+                    <span className={`font-bold ${isIncome ? "text-success" : "text-chart-line"}`}>
+                        {currencySymbol}{fmt(amount)}
+                    </span>
+                </td>
+
+                <td className="p-4 rounded-r-3xl text-left">
+                    <button
+                        onClick={onDelete}
+                        className="text-slate-300 hover:text-destructive transition-all cursor-pointer"
+                    >
+                        <Trash2 size={18} />
+                    </button>
+                </td>
+            </tr>
+        </>
     );
 };

@@ -42,29 +42,26 @@ export const PlanningPage = () => {
 
                 <PlanningSummaryStrip />
 
-                <div className="grid grid-cols-12 gap-6">
+                <CashflowItemList
+                    onAddItem={() => setIsAddModalOpen(true)}
+                />
 
-                    <CashflowItemList
-                        onAddItem={() => setIsAddModalOpen(true)}
+                <AddCashflowModal
+                    isOpen={isAddModalOpen}
+                    onClose={() => setIsAddModalOpen(false)}
+                    onSave={handleAddItem}
+                />
+
+                <div className="col-span-12 lg:col-span-5 space-y-6">
+                    <MonthlyRatiosCard title="Ratios Mensuales" />
+                    <BalanceGoalsCard title="Saldo y metas" />
+                    <GoalsProgressCard title="Progreso de objetivos" />
+                    <CategoryExpensesCard
+                        title="Gastos por categoría"
+                        type="expense"
+                        year={activeYear}
+                        month={activeMonth}
                     />
-
-                    <AddCashflowModal
-                        isOpen={isAddModalOpen}
-                        onClose={() => setIsAddModalOpen(false)}
-                        onSave={handleAddItem}
-                    />
-
-                    <div className="col-span-12 lg:col-span-5 space-y-6">
-                        <MonthlyRatiosCard title="Ratios Mensuales" />
-                        <BalanceGoalsCard title="Saldo y metas" />
-                        <GoalsProgressCard title="Progreso de objetivos" />
-                        <CategoryExpensesCard
-                            title="Gastos por categoría"
-                            type="expense"
-                            year={activeYear}
-                            month={activeMonth}
-                        />
-                    </div>
                 </div>
             </div>
         </div>
