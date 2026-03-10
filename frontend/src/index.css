@@ -25,6 +25,9 @@
 }
 
 @theme {
+    /* Breakpoint */
+    --breakpoint-xs: 400px;
+
     /* Font */
     --font-poppins: "Poppins";
 

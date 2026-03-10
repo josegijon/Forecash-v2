@@ -27,7 +27,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     } = useCashflowItemListModel();
 
     return (
-        <div className="flex flex-col gap-1.5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none px-6 overflow-auto">
+        <div className="flex flex-col gap-1.5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none px-6 overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between py-6">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
@@ -66,7 +66,9 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                                 }`}>
                                 {filterIcons[key] ?? null}
                             </span>
-                            {label}
+                            <span className="hidden xs:block">
+                                {label}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -92,56 +94,66 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                 </div>
             </div>
 
-            {/* Items */}
-            <table className="w-full caption-bottom text-sm border-separate border-spacing-y-3">
-                <thead>
-                    <tr className="text-sm bg-card transition-colors">
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-l-3xl">
-                            Nombre
-                        </th>
-
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                            Categoría
-                        </th>
-
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                            Frecuencia
-                        </th>
-
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                            Cantidad
-                        </th>
-
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-r-3xl">
-                            Eliminar
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {filteredItems.length > 0 ? (
-                        filteredItems.map((item) => (
-                            <CashflowItem
-                                key={item.id}
-                                type={item.type}
-                                name={item.name}
-                                category={getCategoryName(item.categoryId)}
-                                frequency={item.frequency}
-                                currencySymbol={currencySymbol}
-                                amount={item.amount}
-                                onDelete={() => onDeleteItem(item.id)}
-                            />
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={5} className="text-center py-8 text-slate-400">
-                                <p className="text-sm font-medium">No se encontraron ítems</p>
-                                <p className="text-xs mt-1">Intenta con otro filtro o término de búsqueda</p>
-                            </td>
+            {/*
+                Wrapper con scroll horizontal para desktop si la tabla no cabe.
+                En móvil el scroll es vertical sobre las cards; el scrollbar
+                se oculta con [&::-webkit-scrollbar] pero sigue siendo táctil.
+            */}
+            <div className="
+                overflow-x-auto
+                [&::-webkit-scrollbar]:h-1
+                [&::-webkit-scrollbar-track]:bg-transparent
+                [&::-webkit-scrollbar-thumb]:bg-border/40
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb:hover]:bg-border/70
+            ">
+                <table className="w-full caption-bottom text-sm border-separate border-spacing-y-3 min-w-120 sm:min-w-0">
+                    {/* Cabecera */}
+                    <thead className="hidden sm:table-header-group">
+                        <tr className="text-sm bg-card transition-colors">
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-l-3xl">
+                                Nombre
+                            </th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                                Categoría
+                            </th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                                Frecuencia
+                            </th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                                Cantidad
+                            </th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-r-3xl">
+                                Eliminar
+                            </th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        {filteredItems.length > 0 ? (
+                            filteredItems.map((item) => (
+                                <CashflowItem
+                                    key={item.id}
+                                    type={item.type}
+                                    name={item.name}
+                                    category={getCategoryName(item.categoryId)}
+                                    frequency={item.frequency}
+                                    currencySymbol={currencySymbol}
+                                    amount={item.amount}
+                                    onDelete={() => onDeleteItem(item.id)}
+                                />
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={5} className="text-center py-8 text-slate-400">
+                                    <p className="text-sm font-medium">No se encontraron ítems</p>
+                                    <p className="text-xs mt-1">Intenta con otro filtro o término de búsqueda</p>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
