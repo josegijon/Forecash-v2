@@ -13,25 +13,31 @@ export const CategoryLegend = ({ data }: CategoryLegendProps) => {
     if (data.length === 0) return null;
 
     return (
-        <div className="flex flex-col gap-3 mt-4">
-            {data.map((cat) => {
-                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(1) : "0";
+        <div className="flex flex-col mt-4">
+            {data.map((cat, i) => {
+                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(2) : "0";
+                const isLast = i === data.length - 1;
+
                 return (
-                    <div key={cat.name} className="flex items-center justify-between group">
-                        <div className="flex items-center gap-3">
+                    <div
+                        key={cat.name}
+                        className={`flex items-center justify-between py-3 ${!isLast ? "border-b border-border" : ""}`}
+                    >
+                        <div className="flex items-center gap-2">
                             <div
                                 className="w-3 h-3 rounded-full shrink-0"
                                 style={{ backgroundColor: cat.fill }}
                             />
-                            <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+                            <span className="text-sm text-muted-foreground">
                                 {cat.name}
                             </span>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-bold text-slate-800">
+
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm font-medium">
                                 {currencySymbol}{fmt(cat.value)}
                             </span>
-                            <span className="text-xs font-semibold text-slate-400 min-w-10 text-right">
+                            <span className="text-sm text-muted-foreground">
                                 {percent}%
                             </span>
                         </div>

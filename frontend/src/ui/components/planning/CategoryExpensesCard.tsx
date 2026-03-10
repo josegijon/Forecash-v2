@@ -13,14 +13,11 @@ export const CategoryExpensesCard = ({ title, type, year, month }: CategoryExpen
     const data = useCategoryChartData(type, year, month);
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-            <div className="flex items-center mb-6">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">
-                        <span className="text-rose-500 text-sm">📊</span>
-                    </div>
-                    <h3 className="font-bold text-slate-900">{title}</h3>
-                </div>
+        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+            <div className="flex items-center gap-2 mb-6">
+                <h3 className="text-lg font-medium leading-none tracking-tight">
+                    {title}
+                </h3>
             </div>
 
             <CategoryDonutChart data={data} />
