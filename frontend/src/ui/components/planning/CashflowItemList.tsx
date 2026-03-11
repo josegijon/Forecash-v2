@@ -43,8 +43,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
             </div>
 
             {/* Filters + Search */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-
+            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5">
                 {/* Filter tabs */}
                 <div className="flex bg-muted/60 rounded-xl p-1 gap-0.5">
                     {filterTabs.map(({ key, label }) => (
@@ -56,26 +55,30 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                                 : "text-muted-foreground hover:text-foreground"
                                 }`}
                         >
-                            <span className={`transition-colors ${filter === key
-                                ? key === "income"
-                                    ? "text-emerald-500"
-                                    : key === "expense"
-                                        ? "text-rose-500"
-                                        : "text-primary"
-                                : ""
-                                }`}>
+                            <span
+                                className={`transition-colors ${filter === key
+                                    ? key === "income"
+                                        ? "text-emerald-500"
+                                        : key === "expense"
+                                            ? "text-rose-500"
+                                            : "text-primary"
+                                    : ""
+                                    }`}
+                            >
                                 {filterIcons[key] ?? null}
                             </span>
-                            <span className="hidden xs:block">
-                                {label}
-                            </span>
+                            {/* Etiqueta visible siempre — era solo xs:block, ahora siempre visible */}
+                            <span>{label}</span>
                         </button>
                     ))}
                 </div>
 
                 {/* Search */}
                 <div className="relative flex-1">
-                    <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none" />
+                    <Search
+                        size={13}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
+                    />
                     <input
                         type="text"
                         placeholder="Buscar..."
@@ -94,11 +97,6 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                 </div>
             </div>
 
-            {/*
-                Wrapper con scroll horizontal para desktop si la tabla no cabe.
-                En móvil el scroll es vertical sobre las cards; el scrollbar
-                se oculta con [&::-webkit-scrollbar] pero sigue siendo táctil.
-            */}
             <div className="
                 overflow-x-auto
                 [&::-webkit-scrollbar]:h-1
@@ -107,10 +105,10 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                 [&::-webkit-scrollbar-thumb]:rounded-full
                 [&::-webkit-scrollbar-thumb:hover]:bg-border/70
             ">
-                <table className="w-full caption-bottom text-sm border-separate border-spacing-y-3 min-w-120 sm:min-w-0">
-                    {/* Cabecera */}
+                <table className="w-full caption-bottom text-sm border-separate border-spacing-y-3">
+                    {/* Cabecera — solo visible en sm+ */}
                     <thead className="hidden sm:table-header-group">
-                        <tr className="text-sm bg-card transition-colors">
+                        <tr className="text-sm bg-card">
                             <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-l-3xl">
                                 Nombre
                             </th>
@@ -147,7 +145,9 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                             <tr>
                                 <td colSpan={5} className="text-center py-8 text-slate-400">
                                     <p className="text-sm font-medium">No se encontraron ítems</p>
-                                    <p className="text-xs mt-1">Intenta con otro filtro o término de búsqueda</p>
+                                    <p className="text-xs mt-1">
+                                        Intenta con otro filtro o término de búsqueda
+                                    </p>
                                 </td>
                             </tr>
                         )}
