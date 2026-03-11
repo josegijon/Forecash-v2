@@ -9,6 +9,14 @@ interface MilestoneRowProps {
 }
 
 const milestoneLabel = (m: number) => {
+    if (m < 12) return `${m}m`;          // "3m" en móvil
+    if (m === 12) return "1 año";
+    if (m === 24) return "2 años";
+    return "5 años";
+};
+
+// Etiqueta larga para pantallas más grandes
+const milestoneLabelLong = (m: number) => {
     if (m < 12) return `${m} meses`;
     if (m === 12) return "1 año";
     if (m === 24) return "2 años";
@@ -22,24 +30,36 @@ export const MilestoneRow = ({ milestone, point }: MilestoneRowProps) => {
     const isPositive = diff >= 0;
 
     return (
-        <tr className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-            <td className="py-3 px-4 font-medium text-slate-700">
-                {milestoneLabel(milestone)}
+        <tr className="border-b border-border transition-colors hover:bg-muted/50">
+            {/* Periodo — abreviado en móvil, completo en sm+ */}
+            <td className="py-3 px-3 sm:px-4 font-medium text-xs sm:text-sm whitespace-nowrap">
+                <span className="xs:hidden">{milestoneLabel(milestone)}</span>
+                <span className="hidden xs:inline">{milestoneLabelLong(milestone)}</span>
             </td>
 
-            <td className="py-3 px-4 text-right text-slate-700 font-medium">
-                {fmt(point.actual)} {currencySymbol}
+            {/* Actual — se oculta en pantallas muy pequeñas para evitar overflow */}
+            <td className="py-3 px-3 sm:px-4 text-right font-medium text-xs sm:text-sm whitespace-nowrap hidden xs:table-cell">
+                {currencySymbol}{fmt(point.actual)}
             </td>
 
-            <td className="py-3 px-4 text-right text-slate-700 font-medium">
-                {fmt(point.comparado)} {currencySymbol}
+            {/* Escenario comparado */}
+            <td className="py-3 px-3 sm:px-4 text-right font-medium text-xs sm:text-sm whitespace-nowrap">
+                {currencySymbol}{fmt(point.comparado)}
             </td>
 
-            <td className="py-3 px-4 text-right">
-                <span className={`inline-flex items-center gap-1 font-semibold ${isPositive ? "text-emerald-600" : "text-red-600"}`}>
-                    {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+            {/* Diferencia */}
+            <td className="py-3 px-3 sm:px-4 text-right whitespace-nowrap">
+                <span
+                    className={`inline-flex items-center justify-end gap-0.5 font-semibold text-xs sm:text-sm ${isPositive ? "text-success" : "text-chart-line"
+                        }`}
+                >
+                    {isPositive ? (
+                        <ArrowUpRight size={13} />
+                    ) : (
+                        <ArrowDownRight size={13} />
+                    )}
                     {isPositive ? "+" : ""}
-                    {fmt(diff)} {currencySymbol}
+                    {currencySymbol}{fmt(diff)}
                 </span>
             </td>
         </tr>
