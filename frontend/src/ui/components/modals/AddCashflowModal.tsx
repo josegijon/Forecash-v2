@@ -86,10 +86,10 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
 
-            <div className="relative bg-card text-card-foreground rounded-3xl shadow-xl border border-border w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="relative bg-card text-card-foreground rounded-3xl shadow-xl border border-border w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95 flex flex-col max-h-[calc(100dvh-2rem)]">
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 pt-6 pb-2">
+                <div className="flex items-center justify-between px-6 pt-6 pb-2 shrink-0">
                     <h2 className="text-lg font-medium leading-none tracking-tight">Nuevo Ítem</h2>
                     <button
                         onClick={handleClose}
@@ -100,7 +100,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                 </div>
 
                 {/* Body */}
-                <div className="px-6 py-4 space-y-5">
+                <div className="px-6 py-4 space-y-5 overflow-y-auto">
 
                     <TypeToggle
                         type={type}
@@ -185,7 +185,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30 shrink-0">
                     <button
                         onClick={handleClose}
                         className="px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all cursor-pointer"
