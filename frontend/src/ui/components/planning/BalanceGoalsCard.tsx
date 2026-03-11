@@ -27,55 +27,52 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
     const [showCalculator, setShowCalculator] = useState(false);
 
     return (
-        <>
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-6">
-                    <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                        <span className="text-amber-500 text-sm">🎯</span>
-                    </div>
-                    <h3 className="font-bold text-slate-900">{title}</h3>
+        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+            <div className="flex items-center gap-2 mb-6">
+                <h3 className="text-lg font-medium leading-none tracking-tight">
+                    {title}
+                </h3>
+            </div>
+
+            <div className="space-y-4">
+                <CurrencyInputField
+                    label="Saldo inicial actual"
+                    value={initialBalance}
+                    currencySymbol={currencySymbol}
+                    onChange={(newValue) => setInitialBalance(activeScenarioId, newValue)}
+                    allowNegative
+                />
+
+                <CurrencyInputField
+                    label="Objetivo de ahorro mensual"
+                    value={savingsGoal}
+                    currencySymbol={currencySymbol}
+                    onChange={(newValue) => setSavingsGoal(activeScenarioId, newValue)}
+                />
+
+                <div className="space-y-1.5">
+                    <CurrencyInputField
+                        label="Colchón mínimo (opcional)"
+                        value={cushionBalance}
+                        currencySymbol={currencySymbol}
+                        onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowCalculator(true)}
+                        className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-medium px-1 py-0.5 rounded transition-colors hover:underline cursor-pointer"
+                    >
+                        <Calculator className="w-3 h-3" />
+                        Calcular automáticamente
+                    </button>
                 </div>
 
-                <div className="space-y-4">
-                    <CurrencyInputField
-                        label="Saldo inicial actual"
-                        value={initialBalance}
-                        currencySymbol={currencySymbol}
-                        onChange={(newValue) => setInitialBalance(activeScenarioId, newValue)}
-                        allowNegative
-                    />
-
-                    <CurrencyInputField
-                        label="Objetivo de ahorro mensual"
-                        value={savingsGoal}
-                        currencySymbol={currencySymbol}
-                        onChange={(newValue) => setSavingsGoal(activeScenarioId, newValue)}
-                    />
-
-                    <div className="space-y-1.5">
-                        <CurrencyInputField
-                            label="Colchón mínimo (opcional)"
-                            value={cushionBalance}
-                            currencySymbol={currencySymbol}
-                            onChange={(newValue) => setCushionBalance(activeScenarioId, newValue)}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowCalculator(true)}
-                            className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-medium px-1 py-0.5 rounded transition-colors hover:underline cursor-pointer"
-                        >
-                            <Calculator className="w-3 h-3" />
-                            Calcular automáticamente
-                        </button>
-                    </div>
-
-                    <CurrencyInputField
-                        label="Objetivo de capital (opcional)"
-                        value={capitalGoal}
-                        currencySymbol={currencySymbol}
-                        onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
-                    />
-                </div>
+                <CurrencyInputField
+                    label="Objetivo de capital (opcional)"
+                    value={capitalGoal}
+                    currencySymbol={currencySymbol}
+                    onChange={(newValue) => setCapitalGoal(activeScenarioId, newValue)}
+                />
             </div>
 
             {showCalculator && (
@@ -84,6 +81,6 @@ export const BalanceGoalsCard = ({ title }: BalanceGoalsCardProps) => {
                     onApply={(value) => setCushionBalance(activeScenarioId, value)}
                 />
             )}
-        </>
+        </div>
     );
 };
