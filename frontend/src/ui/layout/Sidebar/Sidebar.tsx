@@ -9,7 +9,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ onClose }: SidebarProps) => {
     return (
-        <div className="sticky top-0 z-11 flex flex-col justify-between h-screen shadow-sm border-r border-border">
+        <div className="sticky top-0 flex flex-col justify-between h-screen shadow-sm border-r border-border">
             {/* Header */}
             <SidebarHeader
                 icon={<Wallet size={24} className="text-white" strokeWidth={2.5} />}

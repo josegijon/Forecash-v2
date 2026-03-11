@@ -29,13 +29,13 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         >
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-11 lg:hidden"
+                    className="fixed inset-0 bg-black/50 z-49 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             <aside className={`
-                fixed lg:sticky top-0 z-30 h-screen
+                fixed lg:sticky top-0 z-50 h-screen
                 w-64 border-r border-border
                 transition-transform duration-300 bg-background
                 ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
@@ -45,7 +45,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
             <div className="flex-1 flex flex-col min-w-0 overflow-auto">
                 <Header onMenuClick={() => setSidebarOpen(true)} />
-                <main className="flex-1 p-4 md:p-8">
+                <main className="flex-1 z-20 p-4 md:p-8">
                     <div className="flex-1 overflow-y-auto scrollbar-hide">
                         <div className="max-w-6xl mx-auto space-y-6">
                             <div className="flex flex-col gap-1 flex-1 min-w-0">
