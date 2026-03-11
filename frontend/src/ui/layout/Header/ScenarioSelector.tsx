@@ -22,7 +22,7 @@ export const ScenarioSelector = () => {
             </button>
 
             {open && (
-                <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border
+                <div className="absolute right-0 sm:left-0 mt-2 w-56 rounded-lg border border-border
                                 bg-card shadow-lg py-1 z-50">
                     {scenarios.map((s) => (
                         <button
