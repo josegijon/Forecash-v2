@@ -19,24 +19,24 @@ export const MonthNavigator = () => {
 
     return (
         <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-1 bg-card rounded-xl border border-border shadow-sm">
                 <button
                     onClick={goBack}
-                    className="p-2 hover:bg-slate-50 rounded-l-xl transition-colors cursor-pointer text-slate-500 hover:text-slate-700"
+                    className="p-2 hover:bg-muted rounded-l-xl transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
                 >
                     <ChevronLeft size={18} />
                 </button>
 
                 <div className="flex items-center gap-2 px-3 py-1.5 min-w-40 justify-center">
                     <Calendar size={14} className="text-primary" />
-                    <span className="font-bold text-slate-800 text-sm">
+                    <span className="font-medium text-foreground text-sm">
                         {MONTHS[activeMonth]} {activeYear}
                     </span>
                 </div>
 
                 <button
                     onClick={goForward}
-                    className="p-2 hover:bg-slate-50 rounded-r-xl transition-colors cursor-pointer text-slate-500 hover:text-slate-700"
+                    className="p-2 hover:bg-muted rounded-r-xl transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
                 >
                     <ChevronRight size={18} />
                 </button>
