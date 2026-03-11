@@ -27,9 +27,9 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     } = useCashflowItemListModel();
 
     return (
-        <div className="flex flex-col gap-1.5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none px-6 overflow-hidden">
+        <div className="flex flex-col gap-1.5 sm:rounded-3xl border-0 text-card-foreground bg-transparent shadow-none sm:px-6 overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between py-6">
+            <div className="flex items-center justify-between pb-6">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     Flujo de Efectivo
                 </h3>
