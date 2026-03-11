@@ -36,46 +36,47 @@ export const PlanningPage = () => {
     };
 
     return (
-        <div className="flex-1 overflow-y-auto scrollbar-hide">
-            <div className="max-w-6xl mx-auto space-y-6">
+        <>
+            {/*  <div className="flex-1 overflow-y-auto scrollbar-hide"> */}
+            {/*      <div className="max-w-6xl mx-auto space-y-6"> */}
 
-                <MonthNavigator />
-                <PlanningSummaryStrip />
+            <MonthNavigator />
+            <PlanningSummaryStrip />
 
-                {/* ── Mobile: columna única en el orden de consulta
+            {/* ── Mobile: columna única en el orden de consulta
                         Desktop: dos columnas 7/5 ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                    {/* Columna derecha en desktop — en móvil aparece primero
+                {/* Columna derecha en desktop — en móvil aparece primero
                         porque está antes en el DOM que CashflowItemList */}
-                    <div className="lg:col-span-5 lg:order-2 space-y-6">
-                        <MonthlyRatiosCard title="Ratios Mensuales" />
-                        <CategoryExpensesCard
-                            title="Gastos por categoría"
-                            type="expense"
-                            year={activeYear}
-                            month={activeMonth}
-                        />
-                        <GoalsProgressCard title="Progreso de objetivos" />
-                        <BalanceGoalsCard title="Saldo y metas" />
-                    </div>
-
-                    {/* Columna izquierda en desktop — en móvil aparece después */}
-                    <div className="lg:col-span-7 lg:order-1">
-                        <CashflowItemList
-                            onAddItem={() => setIsAddModalOpen(true)}
-                        />
-                    </div>
-
+                <div className="lg:col-span-5 lg:order-2 space-y-6">
+                    <MonthlyRatiosCard title="Ratios Mensuales" />
+                    <CategoryExpensesCard
+                        title="Gastos por categoría"
+                        type="expense"
+                        year={activeYear}
+                        month={activeMonth}
+                    />
+                    <GoalsProgressCard title="Progreso de objetivos" />
+                    <BalanceGoalsCard title="Saldo y metas" />
                 </div>
 
-                <AddCashflowModal
-                    isOpen={isAddModalOpen}
-                    onClose={() => setIsAddModalOpen(false)}
-                    onSave={handleAddItem}
-                />
+                {/* Columna izquierda en desktop — en móvil aparece después */}
+                <div className="lg:col-span-7 lg:order-1">
+                    <CashflowItemList
+                        onAddItem={() => setIsAddModalOpen(true)}
+                    />
+                </div>
 
             </div>
-        </div>
+
+            <AddCashflowModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSave={handleAddItem}
+            />
+
+            {/* </div> */}
+        </>
     );
 };

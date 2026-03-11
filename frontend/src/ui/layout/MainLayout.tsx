@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Header } from "./Header/Header";
 import { Sidebar } from "./Sidebar/Sidebar";
+import { useLocation } from "react-router";
+
+const PAGE_TITLES: Record<string, string> = {
+    planificacion: "Planificación Financiera",
+    simulaciones: 'Simulador "What-If"',
+    proyeccion: "Análisis de Futuro",
+    datos: "Datos y Ajustes",
+};
 
 interface MainLayoutProps {
     children: React.ReactNode;
@@ -8,6 +16,11 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const location = useLocation();
+
+    const lastSegment = location.pathname.split("/").filter(Boolean).pop() ?? "";
+    const title = PAGE_TITLES[lastSegment] ?? "Forecash";
 
     return (
         <div
@@ -33,8 +46,18 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="flex-1 flex flex-col min-w-0 overflow-auto">
                 <Header onMenuClick={() => setSidebarOpen(true)} />
                 <main className="flex-1 p-4 md:p-8">
-                    {children}
+                    <div className="flex-1 overflow-y-auto scrollbar-hide">
+                        <div className="max-w-6xl mx-auto space-y-6">
+                            <div className="flex flex-col gap-1 flex-1 min-w-0">
+                                <h1 className="text-2xl font-bold tracking-tight truncate">
+                                    {title}
+                                </h1>
+                            </div>
+                            {children}
+                        </div>
+                    </div>
                 </main>
+
             </div>
         </div>
     );

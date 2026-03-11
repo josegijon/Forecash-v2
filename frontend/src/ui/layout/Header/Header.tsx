@@ -1,15 +1,6 @@
 import { Menu } from "lucide-react";
-import { useLocation } from "react-router";
 
 import { ScenarioSelector } from "./ScenarioSelector";
-import { ThemeToggle } from "../Sidebar/ThemeToggle";
-
-const PAGE_TITLES: Record<string, string> = {
-    planificacion: "Planificación Financiera",
-    simulaciones: 'Simulador "What-If"',
-    proyeccion: "Análisis de Futuro",
-    datos: "Datos y Ajustes",
-};
 
 interface HeaderProps {
     onMenuClick: () => void;
@@ -32,13 +23,6 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                 >
                     <Menu size={20} />
                 </button>
-
-                {/* Título y escenario activo */}
-                {/* <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <h1 className="text-2xl font-bold tracking-tight truncate">
-                        {title}
-                    </h1>
-                </div> */}
 
                 {/* Acciones derecha */}
                 <div className="flex items-center gap-2 shrink-0">
