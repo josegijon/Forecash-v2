@@ -1,41 +1,7 @@
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank } from "lucide-react";
 
+import { SummaryCard, type SummaryCardProps } from "../kpi/SummaryCard";
 import { usePlanningSummaryStripModel } from "./usePlanningSummaryStripModel";
-
-interface SummaryCardProps {
-    label: string;
-    value: string;
-    icon: React.ReactNode;
-    trend?: { value: string; positive: boolean };
-}
-
-const SummaryCard = ({ label, value, icon, trend }: SummaryCardProps) => (
-    <div className={`rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between ${trend ? 'items-start' : 'items-center'}`}>
-        <div className="flex flex-col gap-1">
-            <p className="text-sm text-muted-foreground">
-                {label}
-            </p>
-            <p className="text-2xl font-bold">
-                {value}
-            </p>
-
-            {trend && (
-                <div className="flex items-center gap-1 text-sm">
-                    <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${trend.positive ? "text-emerald-600" : "text-red-600"}`}>
-                        {trend.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />} {trend.value}
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                        vs mes anterior
-                    </span>
-                </div>
-            )}
-        </div>
-
-        <div className="p-3 bg-primary/20 rounded-full">
-            {icon}
-        </div>
-    </div>
-);
 
 export const PlanningSummaryStrip = () => {
     const model = usePlanningSummaryStripModel();
@@ -45,19 +11,25 @@ export const PlanningSummaryStrip = () => {
             label: "Ingresos totales",
             value: model.totalIncome,
             icon: <TrendingUp size={22} />,
-            trend: model.incomeTrend,
+            trend: model.incomeTrend
+                ? { ...model.incomeTrend, label: "vs mes anterior" }
+                : undefined,
         },
         {
             label: "Gastos totales",
             value: model.totalExpense,
             icon: <TrendingDown size={22} />,
-            trend: model.expenseTrend,
+            trend: model.expenseTrend
+                ? { ...model.expenseTrend, label: "vs mes anterior" }
+                : undefined,
         },
         {
             label: "Balance neto",
             value: model.netBalance,
             icon: <Wallet size={22} />,
-            trend: model.balanceTrend,
+            trend: model.balanceTrend
+                ? { ...model.balanceTrend, label: "vs mes anterior" }
+                : undefined,
         },
         {
             label: "Ahorro acumulado",

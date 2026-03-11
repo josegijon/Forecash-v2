@@ -18,7 +18,6 @@ export const ProjectionPage = () => {
         balanceDiff,
         isPositive,
         negativeMonths,
-        avgCashflow,
         alerts,
         minBalance,
     } = useProjectionData(selectedMonths);
@@ -41,7 +40,6 @@ export const ProjectionPage = () => {
                     finalBalance={lastPoint.balance}
                     balanceDiff={balanceDiff}
                     isPositive={isPositive}
-                    avgCashflow={avgCashflow}
                     negativeMonths={negativeMonths}
                     selectedMonths={selectedMonths}
                     minBalance={minBalance}
