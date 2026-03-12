@@ -32,16 +32,16 @@ export const SimulationChart = ({ data, scenarioName, selectedMonths }: Simulati
                             <stop offset="100%" stopColor="#22C55E" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
                     <XAxis
                         dataKey="month"
-                        tick={{ fontSize: 12, fill: "#94a3b8" }}
-                        axisLine={{ stroke: "#e2e8f0" }}
+                        tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+                        axisLine={false}
                         tickLine={false}
                         interval={selectedMonths <= 12 ? 0 : selectedMonths <= 24 ? 2 : 5}
                     />
                     <YAxis
-                        tick={{ fontSize: 12, fill: "#94a3b8" }}
+                        tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(v: number) => `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k`}
