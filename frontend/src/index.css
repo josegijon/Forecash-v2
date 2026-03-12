@@ -70,6 +70,14 @@
     --color-chart-fill: hsl(var(--chart-fill));
 
     --color-navy: hsl(var(--navy));
+
+    /* Badge tokens */
+    --color-badge-danger-bg: hsl(var(--badge-danger-bg));
+    --color-badge-danger-fg: hsl(var(--badge-danger-fg));
+    --color-badge-warning-bg: hsl(var(--badge-warning-bg));
+    --color-badge-warning-fg: hsl(var(--badge-warning-fg));
+    --color-badge-neutral-bg: hsl(var(--badge-neutral-bg));
+    --color-badge-neutral-fg: hsl(var(--badge-neutral-fg));
 }
 
 @layer base {
@@ -98,6 +106,14 @@
         --chart-line: 354 100% 65%;
         --chart-fill: 354 100% 94%;
         --navy: 240 64% 27%;
+
+        /* Badge tokens */
+        --badge-danger-bg: 0 61% 92%;
+        --badge-danger-fg: 0 61% 30%;
+        --badge-warning-bg: 38 95% 88%;
+        --badge-warning-fg: 32 81% 29%;
+        --badge-neutral-bg: 220 14% 88%;
+        --badge-neutral-fg: 220 9% 35%;
     }
 
     .dark {
@@ -125,5 +141,13 @@
         --chart-line: 354 100% 65%;
         --chart-fill: 354 70% 30%;
         --navy: 240 64% 27%;
+
+        /* Badge tokens */
+        --badge-danger-bg: 0 61% 18%;
+        --badge-danger-fg: 0 80% 72%;
+        --badge-warning-bg: 38 60% 18%;
+        --badge-warning-fg: 38 90% 68%;
+        --badge-neutral-bg: 220 14% 18%;
+        --badge-neutral-fg: 220 9% 65%;
     }
 }

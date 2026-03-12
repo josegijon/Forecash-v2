@@ -13,7 +13,7 @@ export const SimulationChart = ({ data, scenarioName, selectedMonths }: Simulati
     const currencySymbol = useCurrencySymbol();
 
     return (
-        <div className="">
+        <>
             <div className="flex items-center gap-2 mb-6">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     Trayectoria comparativa
@@ -66,6 +66,6 @@ export const SimulationChart = ({ data, scenarioName, selectedMonths }: Simulati
                     <Area type="monotone" dataKey="comparado" stroke="#22C55E" strokeWidth={2.5} fill="url(#gradComparado)" dot={false} activeDot={{ r: 5, fill: "#22C55E", strokeWidth: 2, stroke: "#fff" }} />
                 </AreaChart>
             </ResponsiveContainer>
-        </div>
+        </>
     );
 };
