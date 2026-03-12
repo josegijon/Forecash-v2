@@ -17,7 +17,7 @@ export interface SummaryCardProps {
 }
 
 export const SummaryCard = ({ label, value, icon, description, trend }: SummaryCardProps) => (
-    <div className={`rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between ${trend ? "items-start" : "items-center"} ${trend?.bgColor ? trend.bgColor : ""}`}>
+    <div className={`max-w-75 w-full rounded-3xl border-0 bg-card text-card-foreground shadow-sm p-6 flex justify-between ${trend ? "items-start" : "items-center"} ${trend?.bgColor ? trend.bgColor : ""}`}>
         <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">{label}</p>
             <p className="text-2xl font-bold">{value}</p>
