@@ -56,22 +56,6 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
     const hasSavingsGoal = savingsGoal > 0;
     const hasCapitalGoal = capitalGoal > 0;
 
-    if (!hasSavingsGoal && !hasCapitalGoal) {
-        return (
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
-                        <Target size={18} className="text-emerald-500" />
-                    </div>
-                    <h3 className="font-bold text-slate-900">{title}</h3>
-                </div>
-                <p className="text-sm text-slate-400 text-center py-4">
-                    Define un objetivo de ahorro o de capital para ver tu progreso.
-                </p>
-            </div>
-        );
-    }
-
     return (
         <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
             <div className="flex items-center gap-2 mb-6">
@@ -80,30 +64,39 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
                 </h3>
             </div>
 
-            <div className="grid grid-cols-2 items-baseline gap-4">
-                {hasSavingsGoal && (
-                    <GoalProgressRing
-                        progress={savingsProgress}
-                        savedAmount={summary.netBalance}
-                        goalAmount={savingsGoal}
-                        label="Ahorro mensual"
-                        color="primary"
-                        isDeficit={isDeficitSavings}
-                    />
-                )}
-                {hasCapitalGoal && (
-                    <div className={hasSavingsGoal ? "pt-4" : ""}>
+            {!hasSavingsGoal && !hasCapitalGoal ? (
+                <div className="flex flex-col items-center gap-2 py-4 text-center">
+                    <Target size={22} className="text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">
+                        Define un objetivo de ahorro o de capital para ver tu progreso.
+                    </p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-2 items-baseline gap-4">
+                    {hasSavingsGoal && (
                         <GoalProgressRing
-                            progress={capitalProgress}
-                            savedAmount={accumulatedSavings}
-                            goalAmount={capitalGoal}
-                            label="Objetivo de capital"
-                            color="violet"
-                            isDeficit={accumulatedSavings < 0}
+                            progress={savingsProgress}
+                            savedAmount={summary.netBalance}
+                            goalAmount={savingsGoal}
+                            label="Ahorro mensual"
+                            color="primary"
+                            isDeficit={isDeficitSavings}
                         />
-                    </div>
-                )}
-            </div>
+                    )}
+                    {hasCapitalGoal && (
+                        <div className={hasSavingsGoal ? "pt-4" : ""}>
+                            <GoalProgressRing
+                                progress={capitalProgress}
+                                savedAmount={accumulatedSavings}
+                                goalAmount={capitalGoal}
+                                label="Objetivo de capital"
+                                color="violet"
+                                isDeficit={accumulatedSavings < 0}
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

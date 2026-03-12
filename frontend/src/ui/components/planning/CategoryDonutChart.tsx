@@ -21,7 +21,7 @@ export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
 
     if (data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-14 text-sm text-slate-400">
+            <div className="text-sm text-muted-foreground text-center py-6">
                 No hay datos para este mes
             </div>
         );
