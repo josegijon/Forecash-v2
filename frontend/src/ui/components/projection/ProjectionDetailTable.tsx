@@ -1,5 +1,5 @@
 import {
-    AlertTriangle, ArrowDownRight, ArrowUpRight,
+    AlertTriangle, ArrowDown, ArrowUp,
     ChevronDown, ShieldAlert, TrendingUp,
 } from "lucide-react";
 import type { MonthData } from "./projectionTypes";
@@ -74,7 +74,7 @@ const TableRow = ({ row, currencySymbol }: RowProps) => {
                 </td>
                 <td className={`${CELL_BASE} text-right`}>
                     <span className={`inline-flex items-center justify-end gap-1 font-semibold ${cfPositive ? "text-success" : "text-destructive"}`}>
-                        {cfPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                        {cfPositive ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
                         {cfPositive ? "+" : ""}{fmt(row.cashflow)} {currencySymbol}
                     </span>
                 </td>
@@ -117,7 +117,7 @@ const TableRow = ({ row, currencySymbol }: RowProps) => {
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                             <span>Cashflow</span>
                             <span className={`inline-flex items-center gap-0.5 font-semibold ${cfPositive ? "text-success" : "text-destructive"}`}>
-                                {cfPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                                {cfPositive ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
                                 {cfPositive ? "+" : ""}{fmt(row.cashflow)} {currencySymbol}
                             </span>
                         </div>
@@ -138,7 +138,13 @@ const TableRow = ({ row, currencySymbol }: RowProps) => {
 export const ProjectionDetailTable = ({ data }: ProjectionDetailTableProps) => {
     const currencySymbol = useCurrencySymbol();
 
-    if (data.length === 0) {
+    // El primer punto (i=0) es el mes de referencia con cashflow:0,
+    // solo existe como punto de arranque del gráfico — se excluye de la tabla.
+    const tableData = data.slice(1);
+
+    const hasActivity = tableData.some((row) => row.ingresos > 0 || row.gastos > 0);
+
+    if (!hasActivity) {
         return (
             <div className="rounded-3xl bg-card text-card-foreground shadow-sm p-6 text-center text-sm">
                 No hay datos de proyección disponibles.
@@ -174,7 +180,7 @@ export const ProjectionDetailTable = ({ data }: ProjectionDetailTableProps) => {
                             </thead>
 
                             <tbody>
-                                {data.map((row) => (
+                                {tableData.map((row) => (
                                     <TableRow
                                         key={row.month}
                                         row={row}
