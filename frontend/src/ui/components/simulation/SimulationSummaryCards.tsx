@@ -19,7 +19,7 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
         : null;
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 justify-items-center gap-4 lg:max-w-[80%] mx-auto">
             <SummaryCard
                 label="Escenario Actual"
                 value={`${fmt(actualBalance)} ${currencySymbol}`}
