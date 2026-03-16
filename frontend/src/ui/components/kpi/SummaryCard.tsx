@@ -23,7 +23,7 @@ export const SummaryCard = ({ label, value, icon, description, trend }: SummaryC
             <p className="text-2xl font-bold">{value}</p>
 
             {trend && (
-                <div className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-1 flex-wrap text-sm">
                     <div className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${trend.positive ? "text-emerald-600" : "text-red-600"}`}>
                         {trend.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />} {trend.value}
                     </div>
