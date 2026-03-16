@@ -1,4 +1,5 @@
-import { Frequency, getFrequencyInterval } from "@core/index";
+import type { Frequency } from "../../domain/models/frequency";
+import { getFrequencyInterval } from "../../domain/models/frequency";
 
 /**
  * Mapa de frecuencia → intervalo en meses.

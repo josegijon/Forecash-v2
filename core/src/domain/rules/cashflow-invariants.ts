@@ -1,4 +1,5 @@
-import { CashflowItem, RANGED_FREQUENCIES } from "@core/index";
+import type { CashflowItem } from "../models/cashflow-items";
+import { RANGED_FREQUENCIES } from "../models/frequency";
 
 export type InvariantViolation =
     | "AMOUNT_MUST_BE_POSITIVE"
