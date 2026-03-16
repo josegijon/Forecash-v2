@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Target, Shield, TrendingDown } from "lucide-react";
 import {
     XAxis, YAxis, CartesianGrid, Tooltip,
@@ -49,6 +49,35 @@ function useZeroOffset(balances: number[]) {
         const range = max - min;
         return max / range;          // fracción [0,1] donde cae el cero
     }, [balances]);
+}
+
+// ─── Hook: intervalo dinámico del eje X según número de meses y ancho ─────────
+//
+// En desktop se muestra más detalle, en móvil se espacian más las etiquetas para evitar solapamientos.
+
+const useXAxisInterval = (selectedMonths: number): number => {
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handler = () => setWidth(window.innerWidth);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+    }, []);
+
+    const isMobile = width < 640;
+
+    if (!isMobile) {
+        // Desktop: comportamiento original
+        if (selectedMonths <= 12) return 0;
+        if (selectedMonths <= 24) return 2;
+        return 5;
+    }
+
+    // Mobile: mostrar menos etiquetas
+    if (selectedMonths <= 6) return 0;
+    if (selectedMonths <= 12) return 1;
+    if (selectedMonths <= 24) return 3;
+    return 11; // ~5 años → una etiqueta cada 12 meses
 }
 
 // ─── CrossingDot ──────────────────────────────────────────────────────────────
@@ -319,9 +348,12 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
     // Porcentajes para el gradiente SVG (Recharts los acepta como string "X%")
     const zeroOffsetPct = zeroOffset !== null ? `${(zeroOffset * 100).toFixed(1)}%` : "0%";
 
+    // El intervalo del eje X también se adapta al número de meses y al ancho de pantalla
+    const xAxisInterval = useXAxisInterval(selectedMonths);
+
     return (
         <>
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between gap-3 mb-5">
                 <div className="flex items-center gap-2 mb-6">
                     <h3 className="text-lg font-medium leading-none tracking-tight">
                         Balance acumulado
@@ -393,7 +425,7 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                         tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                         axisLine={false}
                         tickLine={false}
-                        interval={selectedMonths <= 12 ? 0 : selectedMonths <= 24 ? 2 : 5}
+                        interval={xAxisInterval}
                     />
                     <YAxis
                         tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
