@@ -4,7 +4,6 @@ import {
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Area, AreaChart, ReferenceLine,
 } from "recharts";
-import type { DotProps } from "recharts";
 
 import { detectBalanceCrosses } from "@core";
 import type { CrossType } from "@core";
