@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
     XAxis, YAxis, Tooltip,
     ResponsiveContainer, Bar, BarChart, type BarProps,
@@ -36,10 +37,46 @@ const ExpenseBar = (props: BarProps) => {
     );
 };
 
+const useWindowWidth = () => {
+    const [width, setWidth] = useState(window.innerWidth);
+    useEffect(() => {
+        const handler = () => setWidth(window.innerWidth);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+    }, []);
+    return width;
+}
+
+const calcXAxisInterval = (selectedMonths: number, isMobile: boolean): number => {
+    if (!isMobile) {
+        if (selectedMonths <= 12) return 0;
+        if (selectedMonths <= 24) return 2;
+        return 5;
+    }
+    // Mobile: mostrar menos etiquetas
+    if (selectedMonths <= 6) return 0;
+    if (selectedMonths <= 12) return 1;
+    if (selectedMonths <= 24) return 3;
+    return 11; // ~5 años → una etiqueta cada 12 meses
+}
+
+const calcBarSize = (selectedMonths: number, isMobile: boolean): number => {
+    if (!isMobile) {
+        return selectedMonths <= 12 ? 24 : 14;
+    }
+    // Mobile: barras más finas para que quepan
+    if (selectedMonths <= 12) return 16;
+    if (selectedMonths <= 24) return 8;
+    return 4;
+}
+
 export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps) => {
     const currencySymbol = useCurrencySymbol();
+    const windowWidth = useWindowWidth();
+    const isMobile = windowWidth < 640;
 
-    const barSize = selectedMonths <= 12 ? 24 : 14;
+    const xAxisInterval = calcXAxisInterval(selectedMonths, isMobile);
+    const barSize = calcBarSize(selectedMonths, isMobile);
 
     return (
         <div className="">
@@ -50,13 +87,17 @@ export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps
             </div>
 
             <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <BarChart
+                    data={data}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                    barCategoryGap={selectedMonths > 24 && isMobile ? "10%" : "20%"}
+                >
                     <XAxis
                         dataKey="month"
                         tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                         axisLine={false}
                         tickLine={false}
-                        interval={selectedMonths <= 12 ? 0 : selectedMonths <= 24 ? 2 : 5}
+                        interval={xAxisInterval}
                     />
                     <YAxis
                         tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
@@ -69,7 +110,7 @@ export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps
                         itemSorter={(item) => item.dataKey === "ingresos" ? -1 : 1}
                         formatter={(value, name) => [
                             <span className="font-semibold">
-                                ${Number(value).toLocaleString("es-ES")} ${currencySymbol}
+                                {Number(value).toLocaleString("es-ES")} {currencySymbol}
                             </span>,
                             name === "ingresos" ? "Ingresos" : "Gastos",
                         ]}
@@ -98,30 +139,30 @@ export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps
 
             {/* Leyenda manual — más fiable que Legend de Recharts con shapes personalizados */}
             <div className="flex items-center justify-center mt-4 space-x-6">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
                     <div
-                        className="w-3 h-3 rounded-full"
+                        className="w-1 sm:w-3 h-3 rounded-full"
                         style={{ backgroundColor: COLOR_INCOME }}
                     />
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                         Ingresos
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
                     <div
-                        className="w-3 h-3 rounded-full"
+                        className="w-1 sm:w-3 h-3 rounded-full"
                         style={{ backgroundColor: COLOR_EXPENSE_NORMAL }}
                     />
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                         Gasto normal
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
                     <div
-                        className="w-3 h-3 rounded-full"
+                        className="w-1 sm:w-3 h-3 rounded-full"
                         style={{ backgroundColor: COLOR_EXPENSE_PEAK }}
                     />
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                         Pico de gasto (&gt;130% media)
                     </span>
                 </div>
