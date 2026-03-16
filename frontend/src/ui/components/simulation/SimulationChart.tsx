@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from "recharts";
 
 import { type DataPoint } from "./types";
@@ -9,8 +10,34 @@ interface SimulationChartProps {
     selectedMonths: number;
 }
 
+const useXAxisInterval = (selectedMonths: number): number => {
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handler = () => setWidth(window.innerWidth);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+    }, []);
+
+    const isMobile = width < 640;
+
+    if (!isMobile) {
+        // Desktop: comportamiento original
+        if (selectedMonths <= 12) return 0;
+        if (selectedMonths <= 24) return 2;
+        return 5;
+    }
+
+    // Mobile: mostrar menos etiquetas
+    if (selectedMonths <= 6) return 0;
+    if (selectedMonths <= 12) return 1;
+    if (selectedMonths <= 24) return 3;
+    return 11; // ~5 años → una etiqueta cada 12 meses
+}
+
 export const SimulationChart = ({ data, scenarioName, selectedMonths }: SimulationChartProps) => {
     const currencySymbol = useCurrencySymbol();
+    const xAxisInterval = useXAxisInterval(selectedMonths);
 
     return (
         <>
@@ -38,7 +65,7 @@ export const SimulationChart = ({ data, scenarioName, selectedMonths }: Simulati
                         tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                         axisLine={false}
                         tickLine={false}
-                        interval={selectedMonths <= 12 ? 0 : selectedMonths <= 24 ? 2 : 5}
+                        interval={xAxisInterval}
                     />
                     <YAxis
                         tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
