@@ -10,6 +10,6 @@
         "zustand": "^5.0.11"
     },
     "scripts": {
-        "build": "npm run build -w core && npm run build -w frontend"
+        "build": "npm run build -w core && cd frontend && npm install && npm run build"
     }
 }
