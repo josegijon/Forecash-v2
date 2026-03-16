@@ -2,15 +2,23 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useActiveScenario, useScenarioStore } from "@/store";
 import { ChevronDown, Plus } from "lucide-react";
+import { AddScenarioModal } from "@/ui/components/modals/AddScenarioModal";
 
 export const ScenarioSelector = () => {
     const [open, setOpen] = useState(false);
+    const [showAddScenarioModal, setShowAddScenarioModal] = useState(false);
+
     const scenarios = useScenarioStore((s) => s.scenarios);
     const active = useActiveScenario();
     const navigate = useNavigate();
 
     return (
         <div className="relative">
+            <AddScenarioModal
+                isOpen={showAddScenarioModal}
+                onClose={() => setShowAddScenarioModal(false)}
+            />
+
             <button
                 onClick={() => setOpen(!open)}
                 onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
@@ -38,14 +46,20 @@ export const ScenarioSelector = () => {
                                     setOpen(false);
                                 }}
                                 className={`w-full text-left px-4 py-2 text-sm hover:bg-accent cursor-pointer
-                                ${s.id === active?.id ? 'text-primary font-semibold' : 'text-foreground'}`}
+                                ${s.id === active?.id ? "text-primary font-semibold" : "text-foreground"}`}
                             >
                                 {s.name}
                             </button>
                         ))}
 
                         <div className="border-t border-border mt-1 pt-1">
-                            <button className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-accent cursor-pointer">
+                            <button
+                                onClick={() => {
+                                    setOpen(false);
+                                    setShowAddScenarioModal(true);
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-accent cursor-pointer"
+                            >
                                 <Plus size={14} className="inline mr-2" />
                                 Nuevo escenario
                             </button>
