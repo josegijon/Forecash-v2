@@ -7,8 +7,8 @@ import { SimulationMilestonesTable } from "@/ui/components/simulation/Simulation
 import { SimulationChart } from "@/ui/components/simulation/SimulationChart";
 import { SimulationSummaryCards } from "@/ui/components/simulation/SimulationSummaryCards";
 import { useActiveScenario, useCashflowStore, useScenarioItems, useScenarioStore } from "@/store";
+import { MONTH_NAMES } from "@/ui/utils/projectionConstants";
 
-const MONTH_NAMES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
 const toChartLabel = (point: BalanceSeriesPoint) =>
     `${MONTH_NAMES[point.month]} ${String(point.year).slice(-2)}`;

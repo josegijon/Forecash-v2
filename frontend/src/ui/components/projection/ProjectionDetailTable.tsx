@@ -2,8 +2,8 @@ import {
     AlertTriangle, ArrowDown, ArrowUp,
     ChevronDown, ShieldAlert, TrendingUp,
 } from "lucide-react";
-import type { MonthData } from "./projectionTypes";
-import { fmt } from "../simulation/types";
+import type { MonthData } from "../../utils/projectionTypes";
+import { fmt } from "@/ui/utils/format";
 import { useCurrencySymbol } from "@/store";
 
 interface ProjectionDetailTableProps {

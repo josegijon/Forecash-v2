@@ -1,5 +1,5 @@
 import { SummaryCard } from "../kpi/SummaryCard";
-import { fmt } from "./types";
+import { fmt } from "@/ui/utils/format";
 import { useCurrencySymbol } from "@/store";
 
 interface SimulationSummaryCardsProps {

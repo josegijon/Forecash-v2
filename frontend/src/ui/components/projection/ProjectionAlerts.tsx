@@ -1,5 +1,5 @@
 import { AlertTriangle, ShieldAlert, TrendingUp } from "lucide-react";
-import type { ProjectionAlert } from "./projectionTypes";
+import type { ProjectionAlert } from "../../utils/projectionTypes";
 
 interface ProjectionAlertsProps {
     alerts: ProjectionAlert[];

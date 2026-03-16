@@ -3,7 +3,7 @@ import {
     XAxis, YAxis, Tooltip,
     ResponsiveContainer, Bar, BarChart, type BarProps,
 } from "recharts";
-import type { MonthData } from "./projectionTypes";
+import type { MonthData } from "../../utils/projectionTypes";
 import { useCurrencySymbol } from "@/store";
 
 interface CashflowBarChartProps {

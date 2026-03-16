@@ -7,8 +7,9 @@ import {
     addMonths,
 } from "@core";
 
-import { MONTH_NAMES, type MonthData, type ProjectionAlert } from "./projectionTypes";
+import { type MonthData, type ProjectionAlert } from "../../utils/projectionTypes";
 import { useActiveScenario, useCurrencySymbol, useScenarioItems } from "@/store";
+import { MONTH_NAMES } from "../../utils/projectionConstants";
 
 export interface UseProjectionDataReturn {
     data: MonthData[];
