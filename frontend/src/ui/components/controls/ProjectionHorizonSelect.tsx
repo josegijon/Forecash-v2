@@ -19,9 +19,12 @@ export const ProjectionHorizonSelect = ({ selectedMonths, onMonthsChange }: Proj
                 className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mr-2 cursor-pointer appearance-none transition-all ease-in-out duration-300"
             >
                 <span className="capitalize">
-                    {selectedMonths} meses
+                    {TIME_OPTIONS.find((o) => o.value === selectedMonths)?.label ?? `${selectedMonths} meses`}
                 </span>
-                <ChevronDown size={14} className="transition-transform group-focus-within:rotate-180" />
+                <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                />
             </button>
 
             {open && (
