@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Target } from "lucide-react";
 
-import { calculateAccumulatedSavings, calculateMonthlySummary } from "@core";
+import { calculateMonthlySummary } from "@core";
 
 import { useActiveScenario, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
 import { GoalProgressRing } from "./GoalProgressRing";
@@ -34,24 +34,16 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
         });
     }, [allItems, activeYear, activeMonth, initialBalance, savingsGoal]);
 
-    const accumulatedSavings = useMemo(() => {
-        const now = new Date();
-        return calculateAccumulatedSavings(
-            allItems,
-            initialBalance,
-            now.getFullYear(),
-            now.getMonth(),
-            activeYear,
-            activeMonth,
-        );
-    }, [allItems, initialBalance, activeYear, activeMonth]);
 
     const capitalProgress = capitalGoal > 0
-        ? Math.round(Math.min((accumulatedSavings / capitalGoal) * 100, 100))
+        ? Math.round(Math.min((summary.accumulatedSavings / capitalGoal) * 100, 100))
         : 0;
 
     const isDeficitSavings = summary.netBalance < 0;
-    const savingsProgress = isDeficitSavings ? 0 : Math.round(summary.progressGoal * 100);
+    const savingsProgress =
+        isDeficitSavings || savingsGoal === 0
+            ? 0
+            : Math.round(Math.min((summary.netBalance / savingsGoal) * 100, 100));
 
     const hasSavingsGoal = savingsGoal > 0;
     const hasCapitalGoal = capitalGoal > 0;
@@ -87,11 +79,11 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
                         <div className={hasSavingsGoal ? "pt-4" : ""}>
                             <GoalProgressRing
                                 progress={capitalProgress}
-                                savedAmount={accumulatedSavings}
+                                savedAmount={summary.accumulatedSavings}
                                 goalAmount={capitalGoal}
                                 label="Objetivo de capital"
                                 color="violet"
-                                isDeficit={accumulatedSavings < 0}
+                                isDeficit={summary.accumulatedSavings < 0}
                             />
                         </div>
                     )}
