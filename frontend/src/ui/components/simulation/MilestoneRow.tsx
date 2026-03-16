@@ -1,6 +1,7 @@
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-import { type DataPoint, fmt } from "./types";
+import { type DataPoint } from "./types";
+import { fmt } from "@/ui/utils/format";
 import { useCurrencySymbol } from "@/store";
 
 interface MilestoneRowProps {

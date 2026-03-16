@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import type { LaborProfile, RiskProfile } from "@core";
-import { LABOR_OPTIONS, RISK_OPTIONS } from "./cushionCalculator";
 import { ToggleRow } from "./ToggleRow";
+import { LABOR_OPTIONS, RISK_OPTIONS } from "./cushionConstants";
 
 interface QuestionsStepProps {
     laborProfile: LaborProfile;
@@ -69,8 +69,8 @@ export const QuestionsStep = ({
                             type="button"
                             onClick={() => onRiskChange(opt.value)}
                             className={`flex flex-col items-center gap-1.5 px-2 py-3 rounded-xl border text-center transition-all cursor-pointer ${riskProfile === opt.value
-                                    ? "border-primary/50 bg-primary/10"
-                                    : "border-border bg-card hover:border-border/80 hover:bg-muted/50"
+                                ? "border-primary/50 bg-primary/10"
+                                : "border-border bg-card hover:border-border/80 hover:bg-muted/50"
                                 }`}
                         >
                             <span className="text-xl">{opt.emoji}</span>

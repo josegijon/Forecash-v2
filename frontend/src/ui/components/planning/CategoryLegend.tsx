@@ -1,6 +1,6 @@
 import { useCurrencySymbol } from "@/store";
-import type { CategoryChartData } from "./buildCategoryChartData";
-import { fmt } from "../simulation/types";
+import type { CategoryChartData } from "@/ui/utils/buildCategoryChartData";
+import { fmt } from "@/ui/utils/format";
 
 interface CategoryLegendProps {
     data: CategoryChartData[];

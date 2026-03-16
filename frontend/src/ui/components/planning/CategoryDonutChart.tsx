@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useCurrencySymbol } from "@/store";
-import type { CategoryChartData } from "./buildCategoryChartData";
-import { fmt } from "../simulation/types";
+import { fmt } from "@/ui/utils/format";
+import type { CategoryChartData } from "@/ui/utils/buildCategoryChartData";
 
 interface CategoryDonutChartProps {
     data: CategoryChartData[];

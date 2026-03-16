@@ -1,5 +1,5 @@
 import { MinusCircle, PlusCircle, Trash2 } from "lucide-react";
-import { fmt } from "../simulation/types";
+import { fmt } from "@/ui/utils/format";
 
 interface CashflowItemProps {
     type: "income" | "expense";
@@ -30,8 +30,8 @@ export const CashflowItem = ({
                     <div className="flex items-center gap-3">
                         <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isIncome
-                                    ? "bg-success text-success-foreground"
-                                    : "bg-chart-line text-chart-fill"
+                                ? "bg-success text-success-foreground"
+                                : "bg-chart-line text-chart-fill"
                                 }`}
                         >
                             {isIncome ? <PlusCircle size={18} /> : <MinusCircle size={18} />}
@@ -67,8 +67,8 @@ export const CashflowItem = ({
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div
                                 className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${isIncome
-                                        ? "bg-success text-success-foreground"
-                                        : "bg-chart-line text-chart-fill"
+                                    ? "bg-success text-success-foreground"
+                                    : "bg-chart-line text-chart-fill"
                                     }`}
                             >
                                 {isIncome ? <PlusCircle size={16} /> : <MinusCircle size={16} />}

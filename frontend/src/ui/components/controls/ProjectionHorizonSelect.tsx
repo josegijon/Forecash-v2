@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { TIME_OPTIONS } from "../../utils/projectionConstants";
 
-import { TIME_OPTIONS } from "../projection/projectionTypes";
 
 interface ProjectionHorizonSelectProps {
     selectedMonths: number;

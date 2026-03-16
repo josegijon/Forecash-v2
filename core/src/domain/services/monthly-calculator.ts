@@ -1,5 +1,6 @@
-import { CashflowItem, MonthlySummary } from "@core/index";
-import { isActiveMonth } from "@core/domain/rules/occurrence";
+import type { CashflowItem } from "../models/cashflow-items";
+import type { MonthlySummary } from "../models/monthly-summary";
+import { isActiveMonth } from "../rules/occurrence";
 
 // ── Props para cálculos de un solo mes ──
 

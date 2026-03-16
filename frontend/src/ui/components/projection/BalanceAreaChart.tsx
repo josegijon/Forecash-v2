@@ -9,7 +9,7 @@ import type { DotProps } from "recharts";
 import { detectBalanceCrosses } from "@core";
 import type { CrossType } from "@core";
 
-import type { MonthData } from "./projectionTypes";
+import type { MonthData } from "../../utils/projectionTypes";
 import { useActiveScenario, useCurrencySymbol } from "@/store";
 
 interface BalanceAreaChartProps {

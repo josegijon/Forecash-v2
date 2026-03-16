@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { formatDisplay, parseInput } from "./currencyInputFormat";
+import { formatDisplay, parseInput } from "@/ui/utils/currencyInputFormat";
 
 interface CurrencyInputFieldProps {
     label: string;

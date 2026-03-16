@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import { useCategoryStore, useScenarioItems, useScenarioStore } from "@/store";
+import { buildCategoryChartData, type CategoryChartData } from "@/ui/utils/buildCategoryChartData";
 
-import { buildCategoryChartData, type CategoryChartData } from "./buildCategoryChartData";
 
 export const useCategoryChartData = (
     type: "expense" | "income",
