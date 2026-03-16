@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tags, PlusCircle, Pencil, Trash2, Check, X } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, Check, X, Tag } from "lucide-react";
 import type { Category } from "@/store";
 
 interface CategoryManagerCardProps {
@@ -16,9 +16,11 @@ export const CategoryManagerCard = ({ type, categories, onAdd, onRename, onDelet
     const [editingName, setEditingName] = useState("");
 
     const isExpense = type === "expense";
-    const iconColor = isExpense ? "text-rose-500" : "text-emerald-500";
-    const dotColor = isExpense ? "bg-rose-400" : "bg-emerald-400";
+    const dotColor = isExpense ? "bg-chart-line" : "bg-success";
+    const accentText = isExpense ? "text-chart-line" : "text-success";
+    const accentBg = isExpense ? "bg-chart-fill" : "bg-success/10";
     const title = isExpense ? "Categorías de Gastos" : "Categorías de Ingresos";
+    const count = categories.length;
 
     const handleAdd = () => {
         const trimmed = newName.trim();
@@ -42,84 +44,102 @@ export const CategoryManagerCard = ({ type, categories, onAdd, onRename, onDelet
     const cancelEdit = () => setEditingId(null);
 
     return (
-        <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
-            <div className="flex items-center gap-2 mb-5">
-                <Tags size={20} className={iconColor} />
-                <h3 className="font-bold text-slate-900">{title}</h3>
-            </div>
-
-            <div className="flex flex-col gap-2">
-                {categories.map((cat) => (
-                    <div
-                        key={cat.id}
-                        className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100 group hover:border-slate-200 transition-all"
-                    >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <span className={`w-3 h-3 rounded-full shrink-0 ${dotColor}`} />
-                            {editingId === cat.id ? (
-                                <input
-                                    autoFocus
-                                    value={editingName}
-                                    onChange={(e) => setEditingName(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") confirmEdit();
-                                        if (e.key === "Escape") cancelEdit();
-                                    }}
-                                    className="flex-1 text-sm font-medium bg-white px-2 py-1 rounded-lg border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                />
-                            ) : (
-                                <span className="text-sm font-medium text-slate-700 truncate">{cat.name}</span>
-                            )}
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                            {editingId === cat.id ? (
-                                <>
-                                    <button
-                                        onClick={confirmEdit}
-                                        className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 transition-colors cursor-pointer"
-                                    >
-                                        <Check size={14} />
-                                    </button>
-                                    <button
-                                        onClick={cancelEdit}
-                                        className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors cursor-pointer"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <button
-                                        onClick={() => startEditing(cat)}
-                                        className="p-1.5 rounded-lg text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
-                                    >
-                                        <Pencil size={14} />
-                                    </button>
-                                    <button
-                                        onClick={() => onDelete(cat.id)}
-                                        className="p-1.5 rounded-lg text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-rose-50 hover:text-rose-500 transition-all cursor-pointer"
-                                    >
-                                        <Trash2 size={14} />
-                                    </button>
-                                </>
-                            )}
-                        </div>
+        <div className="flex flex-col gap-6 p-6 rounded-3xl border-0 bg-card text-card-foreground shadow-sm">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${accentBg}`}>
+                        <Tag size={15} className={accentText} />
                     </div>
-                ))}
+                    <h3 className="text-lg font-medium leading-none tracking-tight">
+                        {title}
+                    </h3>
+                </div>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${accentBg} ${accentText}`}>
+                    {count}
+                </span>
             </div>
 
-            <div className="flex items-center gap-2 mt-4">
+            {/* Lista */}
+            <div className="flex flex-col">
+                {categories.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                        Sin categorías todavía
+                    </p>
+                ) : (
+                    categories.map((cat, i) => (
+                        <div
+                            key={cat.id}
+                            className={`flex items-center justify-between py-3 ${i < categories.length - 1 ? "border-b border-border" : ""}`}
+                        >
+                            <div className="flex items-center gap-3 min-w-0">
+                                <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dotColor}`} />
+                                {editingId === cat.id ? (
+                                    <input
+                                        autoFocus
+                                        value={editingName}
+                                        onChange={(e) => setEditingName(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") confirmEdit();
+                                            if (e.key === "Escape") cancelEdit();
+                                        }}
+                                        className="flex-1 text-sm font-medium bg-background px-2 py-1 rounded-lg border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
+                                    />
+                                ) : (
+                                    <span className="text-sm font-medium text-foreground truncate">{cat.name}</span>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-1 shrink-0">
+                                {editingId === cat.id ? (
+                                    <>
+                                        <button
+                                            onClick={confirmEdit}
+                                            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-border bg-background hover:bg-success/10 hover:text-success hover:border-success/30 transition-colors cursor-pointer"
+                                        >
+                                            <Check size={14} />
+                                        </button>
+                                        <button
+                                            onClick={cancelEdit}
+                                            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-border bg-background hover:bg-muted transition-colors cursor-pointer"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => startEditing(cat)}
+                                            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+                                        >
+                                            <Pencil size={14} />
+                                        </button>
+                                        <button
+                                            onClick={() => onDelete(cat.id)}
+                                            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-border bg-background hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors cursor-pointer"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* Input nueva categoría */}
+            <div className="flex items-center gap-2">
                 <input
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                     placeholder="Nueva categoría…"
-                    className="flex-1 text-sm px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    className="flex h-10 w-full rounded-3xl border border-primary/20 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
                 <button
                     onClick={handleAdd}
-                    className="flex items-center gap-1 text-xs font-bold text-primary hover:bg-primary/5 px-3 py-2 rounded-xl border border-primary/20 transition-all cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer transition-colors"
                 >
                     <PlusCircle size={16} />
                     Añadir

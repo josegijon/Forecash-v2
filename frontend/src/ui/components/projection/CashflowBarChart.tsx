@@ -80,18 +80,18 @@ export const CashflowBarChart = ({ data, selectedMonths }: CashflowBarChartProps
                         cursor={false}
                     />
                     <Bar
-                        dataKey="gastos"
-                        fill={COLOR_EXPENSE_NORMAL}
-                        shape={<ExpenseBar />}
-                        maxBarSize={barSize}
-                        name="gastos"
-                    />
-                    <Bar
                         dataKey="ingresos"
                         fill={COLOR_INCOME}
                         radius={[4, 4, 0, 0]}
                         maxBarSize={barSize}
                         name="ingresos"
+                    />
+                    <Bar
+                        dataKey="gastos"
+                        fill={COLOR_EXPENSE_NORMAL}
+                        shape={<ExpenseBar />}
+                        maxBarSize={barSize}
+                        name="gastos"
                     />
                 </BarChart>
             </ResponsiveContainer>

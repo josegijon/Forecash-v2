@@ -11,20 +11,20 @@ export const DangerZoneCard = ({ onClearAllData }: Props) => {
 
     return (
         <>
-            <div className="rounded-2xl border border-rose-200 bg-rose-50/50 p-6">
-                <div className="flex items-center gap-2 mb-4">
-                    <AlertTriangle size={20} className="text-rose-500" />
-                    <h3 className="font-bold text-rose-700">Zona Peligrosa</h3>
+            <div className="rounded-2xl border border-destructive/20 bg-badge-danger-bg/40 p-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                    <AlertTriangle size={20} className="text-chart-line" />
+                    <h3 className="font-bold text-badge-danger-fg">Zona Peligrosa</h3>
                 </div>
 
-                <p className="text-sm text-rose-600/80 mb-5">
+                <p className="text-sm text-badge-danger-fg/70 mb-5">
                     Estas acciones son irreversibles. Úsalas con precaución.
                 </p>
 
                 <div className="flex flex-wrap gap-3">
                     <button
                         onClick={() => setModalOpen(true)}
-                        className="flex items-center gap-2 text-sm font-semibold text-rose-600 bg-white hover:bg-rose-50 px-4 py-2.5 rounded-xl border border-rose-200 hover:border-rose-300 transition-all cursor-pointer"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-chart-line bg-card hover:bg-destructive/5 px-4 py-2.5 rounded-xl border border-destructive/20 hover:border-destructive/40 transition-all cursor-pointer"
                     >
                         <Trash2 size={16} />
                         Borrar todos los datos
