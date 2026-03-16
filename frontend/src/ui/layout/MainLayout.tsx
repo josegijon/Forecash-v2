@@ -45,7 +45,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
             <div className="flex-1 flex flex-col min-w-0 overflow-auto">
                 <Header onMenuClick={() => setSidebarOpen(true)} />
-                <main className="flex-1 z-20 p-4 md:p-8">
+                <main className="flex-1 p-4 md:p-8">
                     <div className="flex-1 overflow-y-auto scrollbar-hide">
                         <div className="max-w-6xl mx-auto space-y-6">
                             <div className="flex flex-col gap-1 flex-1 min-w-0">
