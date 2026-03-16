@@ -26,7 +26,7 @@ const tooltipContentStyle = {
 // Custom shape: colorea según isPeakExpense sin usar Cell (deprecated)
 const ExpenseBar = (props: BarProps) => {
     const { x, y, width, height, payload } = props as BarProps & { payload: MonthData };
-    if (!height || height <= 0) return null;
+    if (!height || Number(height) <= 0) return null;
     const fill = payload?.isPeakExpense ? COLOR_EXPENSE_PEAK : COLOR_EXPENSE_NORMAL;
     const nx = Number(x), ny = Number(y), nw = Number(width), nh = Number(height), r = 4;
     return (

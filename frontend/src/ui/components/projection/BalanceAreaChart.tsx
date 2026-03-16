@@ -461,7 +461,7 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                         stroke="url(#gradBalanceLine)"
                         strokeWidth={2.5}
                         fill="url(#gradBalanceFill)"
-                        dot={(dotProps: DotProps & { payload?: EnrichedMonthData; index?: number }) => {
+                        dot={(dotProps: any) => {
                             const p = dotProps.payload;
                             if (p?._crossCapital || p?._crossCushion || p?._crossRisk) {
                                 return <CrossingDot key={dotProps.index} {...dotProps} />;
