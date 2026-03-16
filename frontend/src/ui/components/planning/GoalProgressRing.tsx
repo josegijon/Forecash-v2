@@ -36,11 +36,14 @@ export const GoalProgressRing = ({
     const currencySymbol = useCurrencySymbol();
 
     return (
-        <div className="flex items-center gap-4 pt-2">
-            <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
-                <svg className="w-full h-full transform -rotate-90">
+        <div className="flex flex-col items-center gap-3">
+            <div className="relative w-32.5 h-32.5">
+                <svg
+                    viewBox="0 0 64 64"
+                    className="absolute top-0 left-0 w-32.5 h-32.5"
+                >
                     <circle
-                        className="text-slate-100"
+                        className={ringColor + " opacity-20"}
                         cx={CIRCLE_CENTER}
                         cy={CIRCLE_CENTER}
                         fill="transparent"
@@ -48,6 +51,11 @@ export const GoalProgressRing = ({
                         stroke="currentColor"
                         strokeWidth="4"
                     />
+                </svg>
+                <svg
+                    viewBox="0 0 64 64"
+                    className="absolute top-0 left-0 -rotate-90 w-32.5 h-32.5"
+                >
                     <circle
                         className={ringColor}
                         cx={CIRCLE_CENTER}
@@ -61,19 +69,19 @@ export const GoalProgressRing = ({
                         strokeLinecap="round"
                     />
                 </svg>
-                <span className={`absolute text-[11px] font-bold ${isDeficit ? "text-red-500" : "text-slate-700"}`}>
+                <div className={`absolute inset-0 flex items-center justify-center text-2xl font-medium ${isDeficit ? "text-red-500" : "text-foreground"}`}>
                     {progress}%
-                </span>
+                </div>
             </div>
 
-            <div>
-                <p className="text-sm font-semibold text-slate-800">{label}</p>
+            <div className="text-center">
+                <p className="text-sm font-semibold text-foreground">{label}</p>
                 {isDeficit ? (
                     <p className="text-xs text-red-500 font-medium">
                         Déficit de {Math.abs(savedAmount).toLocaleString("es-ES", { minimumFractionDigits: 2 })} {currencySymbol}
                     </p>
                 ) : (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                         {sublabel ?? `${savedAmount.toLocaleString("es-ES", { minimumFractionDigits: 2 })} ${currencySymbol} de ${goalAmount.toLocaleString("es-ES", { minimumFractionDigits: 2 })} ${currencySymbol}`}
                     </p>
                 )}

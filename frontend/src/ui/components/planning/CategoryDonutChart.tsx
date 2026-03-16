@@ -1,7 +1,5 @@
-import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts";
-
+import { useEffect, useRef, useState } from "react";
 import { useCurrencySymbol } from "@/store";
-
 import type { CategoryChartData } from "./buildCategoryChartData";
 import { fmt } from "../simulation/types";
 
@@ -9,76 +7,54 @@ interface CategoryDonutChartProps {
     data: CategoryChartData[];
 }
 
-const CustomTooltip = ({ active, payload, total }: {
-    active?: boolean;
-    payload?: { name: string; value: number; payload: CategoryChartData }[];
-    total: number;
-}) => {
-    if (!active || !payload?.length) return null;
-
-    const { name, value, payload: cat } = payload[0];
-    const percent = total > 0 ? ((value / total) * 100).toFixed(1) : "0";
-    const currencySymbol = useCurrencySymbol();
-
-    return (
-        <div className="relative z-50 bg-white rounded-xl shadow-lg border border-slate-200 px-4 py-3">
-            <div className="flex items-center gap-2 mb-1">
-                <div
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: cat.fill }}
-                />
-                <span className="text-sm font-bold text-slate-800">
-                    {name}
-                </span>
-            </div>
-            <p className="text-sm text-slate-600">
-                {currencySymbol}{value.toLocaleString("es-ES")}
-                {" · "}
-                <span className="font-semibold">{percent}%</span>
-            </p>
-        </div>
-    );
-};
-
 export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
     const total = data.reduce((sum, cat) => sum + cat.value, 0);
     const currencySymbol = useCurrencySymbol();
+    const [animated, setAnimated] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        setAnimated(false);
+        const timeout = setTimeout(() => setAnimated(true), 30);
+        return () => clearTimeout(timeout);
+    }, [data]);
 
     if (data.length === 0) {
         return (
-            <div className="flex items-center justify-center h-52 text-sm text-slate-400">
+            <div className="text-sm text-muted-foreground text-center py-6">
                 No hay datos para este mes
             </div>
         );
     }
 
     return (
-        <div className="relative w-full h-52">
-            <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                    <Pie
-                        data={data}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius="60%"
-                        outerRadius="85%"
-                        paddingAngle={3}
-                        dataKey="value"
-                        strokeWidth={0}
-                    />
-                    <Tooltip
-                        content={<CustomTooltip total={total} />}
-                        wrapperStyle={{ zIndex: 10 }}
-                    />
-                </PieChart>
-            </ResponsiveContainer>
-
-            {/* Centro: total acumulado */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">Total</span>
-                <span className="text-lg font-extrabold text-slate-800">
+        <div ref={ref} className="w-full">
+            {/* Total */}
+            <div className="flex items-baseline justify-between mb-3">
+                <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">
+                    Total
+                </span>
+                <span className="text-sm font-medium text-foreground">
                     {currencySymbol}{fmt(total)}
                 </span>
+            </div>
+
+            {/* Segmented bar */}
+            <div className="h-2 w-full flex rounded-full overflow-hidden mb-6">
+                {data.map((cat, i) => {
+                    const pct = total > 0 ? (cat.value / total) * 100 : 0;
+                    return (
+                        <div
+                            key={cat.name}
+                            className="h-full transition-all duration-700 ease-out"
+                            style={{
+                                width: animated ? `${pct}%` : "0%",
+                                backgroundColor: cat.fill,
+                                transitionDelay: `${i * 60}ms`,
+                            }}
+                        />
+                    );
+                })}
             </div>
         </div>
     );

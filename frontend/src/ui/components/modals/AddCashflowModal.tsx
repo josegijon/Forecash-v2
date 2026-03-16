@@ -86,18 +86,21 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
 
-            <div className="relative bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="relative bg-card text-card-foreground rounded-3xl shadow-xl border border-border w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95 flex flex-col max-h-[calc(100dvh-2rem)]">
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 pt-6 pb-2">
-                    <h2 className="text-lg font-bold text-slate-900">Nuevo Ítem</h2>
-                    <button onClick={handleClose} className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer p-1 rounded-lg hover:bg-slate-100">
+                <div className="flex items-center justify-between px-6 pt-6 pb-2 shrink-0">
+                    <h2 className="text-lg font-medium leading-none tracking-tight">Nuevo Ítem</h2>
+                    <button
+                        onClick={handleClose}
+                        className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-1 rounded-xl hover:bg-muted"
+                    >
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Body */}
-                <div className="px-6 py-4 space-y-5">
+                <div className="px-6 py-4 space-y-5 overflow-y-auto">
 
                     <TypeToggle
                         type={type}
@@ -106,28 +109,28 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
 
                     {/* Concepto */}
                     <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
                             Concepto
                         </label>
                         <div className="relative">
-                            <Tag size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <Tag size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                             <input
                                 type="text"
                                 placeholder="Ej: Salario, Alquiler..."
                                 value={concept}
                                 onChange={(e) => setConcept(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                                className="w-full pl-10 pr-4 py-2.5 bg-muted/40 rounded-xl border border-border/60 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
                             />
                         </div>
                     </div>
 
                     {/* Cantidad */}
                     <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
                             Cantidad
                         </label>
                         <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                                 {currencySymbol}
                             </span>
                             <input
@@ -137,21 +140,20 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                                 placeholder="0.00"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all [&::-webkit-inner-spin-button]:appearance-none"
+                                className="w-full pl-10 pr-4 py-2.5 bg-muted/40 rounded-xl border border-border/60 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all [&::-webkit-inner-spin-button]:appearance-none"
                             />
                         </div>
                     </div>
 
                     {/* Categoría */}
                     <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
                             Categoría
                         </label>
-
                         <select
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            className="w-full px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer appearance-none"
+                            className="w-full px-4 py-2.5 bg-muted/40 rounded-xl border border-border/60 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all cursor-pointer appearance-none"
                         >
                             {filteredCategories.map((cat) => (
                                 <option key={cat.id} value={cat.id}>
@@ -183,10 +185,10 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30 shrink-0">
                     <button
                         onClick={handleClose}
-                        className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+                        className="px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all cursor-pointer"
                     >
                         Cancelar
                     </button>
@@ -194,7 +196,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                     <button
                         onClick={handleSave}
                         disabled={!concept.trim() || !amount}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl shadow-sm transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         <Save size={16} />
                         Guardar

@@ -1,4 +1,4 @@
-import { PercentCircle, TrendingDown } from "lucide-react";
+import { PiggyBank, TrendingDown } from "lucide-react";
 
 import { RatioProgressBar } from "./RatioProgressBar";
 import { useMonthlyRatiosSummary } from "./useMonthlyRatiosSummary";
@@ -9,7 +9,7 @@ interface MonthlyRatiosCardProps {
 
 // Devuelve el color de la barra de tasa de ahorro
 const getSavingsRateColor = (rate: number): string => {
-    if (rate < 0) return "#ef4444"; // negativo → rojo
+    if (rate <= 0) return "#ef4444"; // negativo → rojo
     return "#10b981";               // positivo → verde
 };
 
@@ -26,26 +26,23 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
     const hasNoIncome = summary.totalIncome === 0;
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
+        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
             <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <PercentCircle size={18} className="text-primary" />
-                </div>
-                <h3 className="font-bold text-slate-900 capitalize">
+                <h3 className="text-lg font-medium leading-none tracking-tight">
                     {title}
                 </h3>
             </div>
 
             {hasNoIncome ? (
                 <div className="flex flex-col items-center justify-center gap-3 py-4 text-center">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                        <TrendingDown size={20} className="text-slate-400" />
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                        <TrendingDown size={22} className="text-muted-foreground/40" />
                     </div>
                     <div>
-                        <p className="text-sm font-semibold text-slate-600">
+                        <p className="text-sm font-semibold text-muted-foreground">
                             Sin ingresos este mes
                         </p>
-                        <p className="text-xs text-slate-400 mt-0.5">
+                        <p className="text-xs text-muted-foreground">
                             Añade ingresos para calcular los ratios
                         </p>
                     </div>
@@ -56,11 +53,15 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
                         label="Tasa de ahorro"
                         percentage={summary.savingsRate * 100}
                         color={getSavingsRateColor(summary.savingsRate)}
+                        icon={<PiggyBank size={16} />}
+                        bgClass="bg-emerald-100"
                     />
                     <RatioProgressBar
                         label="Tasa de gasto"
                         percentage={summary.expenseRate * 100}
                         color={getExpenseRateColor(summary.expenseRate)}
+                        icon={<TrendingDown size={16} />}
+                        bgClass="bg-rose-100"
                     />
                 </div>
             )}

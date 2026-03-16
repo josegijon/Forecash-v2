@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router";
 import { X, Layers, Save } from "lucide-react";
 
@@ -28,72 +29,77 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
     };
 
     if (!isOpen) return null;
+    if (typeof document === "undefined") return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                onClick={handleClose}
-            />
-
-            {/* Modal */}
-            <div className="relative bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95">
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 pt-6 pb-2">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Layers size={16} className="text-primary" />
+    return createPortal(
+        <div
+            className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            onMouseDown={(e) => {
+                if (e.target === e.currentTarget) handleClose();
+            }}
+        >
+            <div className="relative w-full max-w-md bg-card text-card-foreground rounded-3xl shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95">
+                <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <Layers size={18} className="text-primary" />
                         </div>
-                        <h2 className="text-lg font-bold text-slate-900">Nuevo Escenario</h2>
+                        <div>
+                            <h2 className="text-lg font-medium leading-none tracking-tight">
+                                Nuevo escenario
+                            </h2>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Crea una versión alternativa de tu planificación
+                            </p>
+                        </div>
                     </div>
+
                     <button
                         onClick={handleClose}
-                        className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer p-1 rounded-lg hover:bg-slate-100"
+                        aria-label="Cerrar"
+                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                     >
-                        <X size={20} />
+                        <X size={16} />
                     </button>
                 </div>
 
-                {/* Body */}
-                <div className="px-6 py-4 space-y-5">
-                    <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
-                            Nombre del escenario
-                        </label>
-                        <div className="relative">
-                            <Layers size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Ej: Escenario optimista, Plan B..."
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                                autoFocus
-                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-                            />
-                        </div>
+                <div className="px-6 py-5">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                        Nombre del escenario
+                    </label>
+
+                    <div className="relative">
+                        <Layers size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Ej: Escenario optimista, Plan B..."
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                            autoFocus
+                            className="w-full pl-10 pr-4 py-2.5 bg-background rounded-xl border border-border text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                        />
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30">
                     <button
                         onClick={handleClose}
-                        className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+                        className="px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={handleSubmit}
                         disabled={!name.trim()}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         <Save size={16} />
-                        Crear Escenario
+                        Crear escenario
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };

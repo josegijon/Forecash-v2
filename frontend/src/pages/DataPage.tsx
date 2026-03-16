@@ -40,7 +40,6 @@ export const DataPage = () => {
         }
     };
 
-    // ── Export JSON ──
     const handleExportJson = () => {
         const scenarioIds = new Set(scenarios.map((s) => s.id));
         const filteredItems = Object.fromEntries(
@@ -57,19 +56,16 @@ export const DataPage = () => {
         exportToJson(snapshot);
     };
 
-    // ── Export CSV ──
     const handleExportCsv = () => {
         exportToCsv(scenarios, items);
     };
 
-    // ── Import JSON ──
     const handleImportFile = async (file: File) => {
         try {
             const snapshot = await importFromJson(file);
             applySnapshot(snapshot);
         } catch (err) {
             if (err instanceof ImportError) {
-                // Permite diferenciar el tipo de error en UI si se desea
                 const detail = err.details ? `\n\nDetalle: ${err.details}` : "";
                 alert(`${err.message}${detail}`);
             } else {
@@ -78,11 +74,8 @@ export const DataPage = () => {
         }
     };
 
-    // ── applySnapshot: orquesta stores a partir del resultado puro del core ──
     const applySnapshot = (snapshot: ValidatedSnapshot) => {
         const existingCategories = useCategoryStore.getState().categories;
-
-        // El core calcula qué importar sin tocar stores
         const { scenariosToImport, categoriesToAdd, currency: snapshotCurrency } =
             prepareSnapshotImport(snapshot, existingCategories);
 
@@ -113,7 +106,6 @@ export const DataPage = () => {
 
     const handleImport = useFileInput(".json", handleImportFile);
 
-    // ── Clear all data ──
     const handleClearAllData = () => {
         const cashflowStore = useCashflowStore.getState();
         const scenarioStore = useScenarioStore.getState();
@@ -126,46 +118,70 @@ export const DataPage = () => {
 
     return (
         <div className="flex-1 overflow-y-auto scrollbar-hide">
-            <div className="max-w-5xl mx-auto space-y-6">
+            <div className="max-w-5xl mx-auto space-y-8">
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <CategoryManagerCard
-                        type="expense"
-                        categories={expenseCategories}
-                        onAdd={(name) => addCategory(name, "expense")}
-                        onRename={renameCategory}
-                        onDelete={removeCategory}
-                    />
-                    <CategoryManagerCard
-                        type="income"
-                        categories={incomeCategories}
-                        onAdd={(name) => addCategory(name, "income")}
-                        onRename={renameCategory}
-                        onDelete={removeCategory}
-                    />
-                </div>
+                {/* ── Sección: Categorías ── */}
+                <section className="space-y-4">
+                    <SectionLabel label="Categorías" />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <CategoryManagerCard
+                            type="expense"
+                            categories={expenseCategories}
+                            onAdd={(name) => addCategory(name, "expense")}
+                            onRename={renameCategory}
+                            onDelete={removeCategory}
+                        />
+                        <CategoryManagerCard
+                            type="income"
+                            categories={incomeCategories}
+                            onAdd={(name) => addCategory(name, "income")}
+                            onRename={renameCategory}
+                            onDelete={removeCategory}
+                        />
+                    </div>
+                </section>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <CurrencySelector
-                        value={currency}
-                        onChange={(code) => setCurrency(code as Currency)}
-                    />
-                    <ImportExportCard
-                        onExportJson={handleExportJson}
-                        onExportCsv={handleExportCsv}
-                        onImport={handleImport}
-                    />
-                </div>
+                {/* ── Sección: Preferencias ── */}
+                <section className="space-y-4">
+                    <SectionLabel label="Preferencias" />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <CurrencySelector
+                            value={currency}
+                            onChange={(code) => setCurrency(code as Currency)}
+                        />
+                        <ImportExportCard
+                            onExportJson={handleExportJson}
+                            onExportCsv={handleExportCsv}
+                            onImport={handleImport}
+                        />
+                    </div>
+                </section>
 
-                <ScenarioManagerCard
-                    scenarios={scenarios}
-                    onAdd={addScenario}
-                    onRename={renameScenario}
-                    onDelete={handleDeleteScenario}
-                />
+                {/* ── Sección: Escenarios ── */}
+                <section className="space-y-4">
+                    <SectionLabel label="Escenarios" />
+                    <ScenarioManagerCard
+                        scenarios={scenarios}
+                        onAdd={addScenario}
+                        onRename={renameScenario}
+                        onDelete={handleDeleteScenario}
+                    />
+                </section>
 
+                {/* ── Zona peligrosa ── */}
                 <DangerZoneCard onClearAllData={handleClearAllData} />
+
             </div>
         </div>
     );
 };
+
+// ── Helper: etiqueta de sección ───────────────────────────────────────────────
+const SectionLabel = ({ label }: { label: string }) => (
+    <div className="flex items-center gap-3">
+        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            {label}
+        </span>
+        <div className="flex-1 h-px bg-border" />
+    </div>
+);

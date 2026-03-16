@@ -1,5 +1,153 @@
 @import "tailwindcss";
 
+/* @font-face {
+    font-family: Poppins;
+    font-weight: 700;
+    src: url('./assets/fonts/Poppins-Bold.ttf');
+} */
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 400;
+    src: url('./assets/fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 500;
+    src: url('./assets/fonts/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 700;
+    src: url('./assets/fonts/Poppins-Bold.ttf');
+}
+
 @theme {
-    --color-primary: #6366f1;
+    /* Breakpoint */
+    --breakpoint-xs: 400px;
+
+    /* Font */
+    --font-poppins: "Poppins";
+
+    /* Radius */
+    --radius: 0.5rem;
+
+    /* Colors — mapped from CSS vars so Tailwind genera utilities */
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
+
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
+
+    --color-popover: hsl(var(--popover));
+    --color-popover-foreground: hsl(var(--popover-foreground));
+
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
+
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+    --color-muted: hsl(var(--muted));
+    --color-muted-foreground: hsl(var(--muted-foreground));
+
+    --color-accent: hsl(var(--accent));
+    --color-accent-foreground: hsl(var(--accent-foreground));
+
+    --color-destructive: hsl(var(--destructive));
+    --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+    --color-border: hsl(var(--border));
+    --color-input: hsl(var(--input));
+    --color-ring: hsl(var(--ring));
+
+    --color-success: hsl(var(--success));
+    --color-success-foreground: hsl(var(--success-foreground));
+
+    --color-chart-line: hsl(var(--chart-line));
+    --color-chart-fill: hsl(var(--chart-fill));
+
+    --color-navy: hsl(var(--navy));
+
+    /* Badge tokens */
+    --color-badge-danger-bg: hsl(var(--badge-danger-bg));
+    --color-badge-danger-fg: hsl(var(--badge-danger-fg));
+    --color-badge-warning-bg: hsl(var(--badge-warning-bg));
+    --color-badge-warning-fg: hsl(var(--badge-warning-fg));
+    --color-badge-neutral-bg: hsl(var(--badge-neutral-bg));
+    --color-badge-neutral-fg: hsl(var(--badge-neutral-fg));
+}
+
+@layer base {
+    :root {
+        --background: 142 61% 95%;
+        --foreground: 142 5% 0%;
+        --card: 142 65% 98%;
+        --card-foreground: 142 5% 10%;
+        --popover: 142 61% 95%;
+        --popover-foreground: 142 95% 0%;
+        --primary: 142 76.1% 36.1%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 142 30% 70%;
+        --secondary-foreground: 0 0% 0%;
+        --muted: 104 30% 85%;
+        --muted-foreground: 142 5% 35%;
+        --accent: 104 30% 80%;
+        --accent-foreground: 142 5% 10%;
+        --destructive: 0 61% 30%;
+        --destructive-foreground: 142 5% 90%;
+        --border: 142 35% 90%;
+        --input: 142 30% 18%;
+        --ring: 142 76.1% 36.1%;
+        --success: 142 76% 36%;
+        --success-foreground: 210 40% 98%;
+        --chart-line: 354 100% 65%;
+        --chart-fill: 354 100% 94%;
+        --navy: 240 64% 27%;
+
+        /* Badge tokens */
+        --badge-danger-bg: 0 61% 92%;
+        --badge-danger-fg: 0 61% 30%;
+        --badge-warning-bg: 38 95% 88%;
+        --badge-warning-fg: 32 81% 29%;
+        --badge-neutral-bg: 220 14% 88%;
+        --badge-neutral-fg: 220 9% 35%;
+    }
+
+    .dark {
+        --background: 142 50% 5%;
+        --foreground: 142 5% 90%;
+        --card: 142 50% 0%;
+        --card-foreground: 142 5% 90%;
+        --popover: 142 50% 5%;
+        --popover-foreground: 142 5% 90%;
+        --primary: 142 76.1% 36.1%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 142 30% 10%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 104 30% 15%;
+        --muted-foreground: 142 5% 60%;
+        --accent: 104 30% 15%;
+        --accent-foreground: 142 5% 90%;
+        --destructive: 0 61% 30%;
+        --destructive-foreground: 142 5% 90%;
+        --border: 142 30% 18%;
+        --input: 142 30% 18%;
+        --ring: 142 76.1% 36.1%;
+        --success: 142 76% 36%;
+        --success-foreground: 210 40% 98%;
+        --chart-line: 354 100% 65%;
+        --chart-fill: 354 70% 30%;
+        --navy: 240 64% 27%;
+
+        /* Badge tokens */
+        --badge-danger-bg: 0 61% 18%;
+        --badge-danger-fg: 0 80% 72%;
+        --badge-warning-bg: 38 60% 18%;
+        --badge-warning-fg: 38 90% 68%;
+        --badge-neutral-bg: 220 14% 18%;
+        --badge-neutral-fg: 220 9% 65%;
+    }
 }

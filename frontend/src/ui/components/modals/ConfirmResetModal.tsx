@@ -16,41 +16,41 @@ export const ConfirmResetModal = ({ isOpen, onClose, onConfirm }: ConfirmResetMo
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onClick={onClose}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            onMouseDown={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
         >
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-
-            <div
-                className="relative w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex items-start justify-between p-6 pb-4">
+            <div className="relative w-full max-w-md bg-card text-card-foreground rounded-3xl shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95">
+                <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-border">
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-900/40">
-                            <AlertTriangle size={20} className="text-rose-600 dark:text-rose-400" />
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-destructive/10 shrink-0">
+                            <AlertTriangle size={20} className="text-chart-line" />
                         </div>
                         <div>
-                            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+                            <h2 className="text-lg font-medium leading-none tracking-tight">
                                 Borrar todos los datos
                             </h2>
-                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-1">
                                 Esta acción es irreversible
                             </p>
                         </div>
                     </div>
+
                     <button
                         onClick={onClose}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all cursor-pointer"
+                        aria-label="Cerrar"
+                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                     >
                         <X size={16} />
                     </button>
                 </div>
 
-                <div className="px-6 pb-6">
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
+                <div className="px-6 py-5">
+                    <p className="text-sm text-muted-foreground mb-3">
                         Se eliminarán permanentemente:
                     </p>
+
                     <ul className="space-y-1.5 mb-5">
                         {[
                             "Todos los escenarios y sus cashflows",
@@ -58,31 +58,32 @@ export const ConfirmResetModal = ({ isOpen, onClose, onConfirm }: ConfirmResetMo
                             "La configuración de moneda",
                             "Todo el historial guardado",
                         ].map((item) => (
-                            <li key={item} className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-                                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
+                            <li key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <span className="w-1.5 h-1.5 rounded-full bg-chart-line/70 shrink-0" />
                                 {item}
                             </li>
                         ))}
                     </ul>
-                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-5">
-                        La aplicación volverá al estado inicial, como si fuera la primera vez que la abres.
-                    </p>
 
-                    <div className="flex gap-3">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 px-4 py-2.5 text-sm font-semibold text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-xl transition-all cursor-pointer"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            onClick={handleConfirm}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-all cursor-pointer"
-                        >
-                            <Trash2 size={15} />
-                            Sí, borrar todo
-                        </button>
+                    <div className="rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-xs text-chart-line">
+                        La aplicación volverá al estado inicial, como si fuera la primera vez que la abres.
                     </div>
+                </div>
+
+                <div className="flex gap-3 px-6 py-4 border-t border-border bg-muted/30">
+                    <button
+                        onClick={onClose}
+                        className="flex-1 px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        onClick={handleConfirm}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
+                    >
+                        <Trash2 size={15} />
+                        Sí, borrar todo
+                    </button>
                 </div>
             </div>
         </div>

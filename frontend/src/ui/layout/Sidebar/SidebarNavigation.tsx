@@ -26,12 +26,16 @@ const NAV_ITEMS = [
     }
 ];
 
-export const SidebarNavigation = () => {
+interface SidebarNavigationProps {
+    onClose: () => void;
+}
+
+export const SidebarNavigation = ({ onClose }: SidebarNavigationProps) => {
     const { id } = useParams();
 
     return (
         <>
-            <p className="px-3 mb-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            <p className="px-2 mb-3 text-xs font-semibold text-muted-foreground uppercase">
                 Menú Principal
             </p>
 
@@ -41,6 +45,7 @@ export const SidebarNavigation = () => {
                     to={`/escenario/${id}/${path}`}
                     icon={<Icon size={20} />}
                     label={label}
+                    onClick={onClose}
                 />
             ))}
         </>

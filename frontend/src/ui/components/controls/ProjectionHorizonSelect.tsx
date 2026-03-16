@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { TIME_OPTIONS } from "../projection/projectionTypes";
@@ -8,26 +9,46 @@ interface ProjectionHorizonSelectProps {
 }
 
 export const ProjectionHorizonSelect = ({ selectedMonths, onMonthsChange }: ProjectionHorizonSelectProps) => {
+    const [open, setOpen] = useState(false);
+
     return (
-        <div className="relative group">
-            <select
-                value={selectedMonths}
-                onChange={(e) => onMonthsChange(Number(e.target.value))}
-                className="appearance-none bg-white border border-slate-200 hover:border-blue-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none cursor-pointer transition-all hover:shadow-md"
+        <div className="relative">
+            <button
+                onClick={() => setOpen(!open)}
+                onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+                className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mr-2 cursor-pointer appearance-none transition-all ease-in-out duration-300"
             >
-                {TIME_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                    </option>
-                ))}
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-600 transition-colors">
+                <span className="capitalize">
+                    {TIME_OPTIONS.find((o) => o.value === selectedMonths)?.label ?? `${selectedMonths} meses`}
+                </span>
                 <ChevronDown
-                    size={16}
-                    strokeWidth={2.5}
-                    className="transition-transform group-focus-within:rotate-180"
+                    size={14}
+                    className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
                 />
-            </div>
+            </button>
+
+            {open && (
+                <>
+                    <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setOpen(false)}
+                    />
+                    <div className="absolute left-0 mt-2 shadow-lg z-50 flex flex-col cursor-pointer appearance-none border border-input bg-background  hover:text-accent-foreground rounded-3xl text-sm font-medium overflow-hidden">
+                        {TIME_OPTIONS.map((opt) => (
+                            <button
+                                key={opt.value}
+                                onClick={() => {
+                                    onMonthsChange(opt.value);
+                                    setOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent cursor-pointer`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 };

@@ -7,76 +7,89 @@ interface ConfirmDeleteScenarioModalProps {
     onCancel: () => void;
 }
 
-export const ConfirmDeleteScenarioModal = ({ scenarioName, onConfirm, onCancel }: ConfirmDeleteScenarioModalProps) => {
+export const ConfirmDeleteScenarioModal = ({
+    scenarioName,
+    onConfirm,
+    onCancel,
+}: ConfirmDeleteScenarioModalProps) => {
     const cancelRef = useRef<HTMLButtonElement>(null);
 
-    // Focus the cancel button on mount (safe default)
     useEffect(() => {
         cancelRef.current?.focus();
     }, []);
 
-    // Close on Escape
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") onCancel();
         };
+
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [onCancel]);
 
     return (
-        /* Backdrop */
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
             onMouseDown={(e) => {
                 if (e.target === e.currentTarget) onCancel();
             }}
         >
-            {/* Panel */}
-            <div className="relative w-full max-w-md mx-4 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-
-                {/* Close button */}
-                <button
-                    onClick={onCancel}
-                    className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
-                    aria-label="Cerrar"
-                >
-                    <X size={16} />
-                </button>
-
-                {/* Content */}
-                <div className="p-6">
-                    {/* Icon */}
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-rose-50 mb-4">
-                        <AlertTriangle size={22} className="text-rose-500" />
+            <div className="relative w-full max-w-md bg-card text-card-foreground rounded-3xl shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95">
+                <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-border">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-destructive/10 shrink-0">
+                            <AlertTriangle size={20} className="text-chart-line" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-medium leading-none tracking-tight">
+                                Eliminar escenario
+                            </h2>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Esta acción es irreversible
+                            </p>
+                        </div>
                     </div>
 
-                    <h2 className="text-lg font-bold text-slate-900 mb-1">
-                        Eliminar escenario
-                    </h2>
-                    <p className="text-sm text-slate-500 mb-1">
-                        ¿Seguro que quieres eliminar{" "}
-                        <span className="font-semibold text-slate-700">"{scenarioName}"</span>?
-                    </p>
-                    <p className="text-sm text-slate-400">
-                        Se eliminarán también todos sus ítems de cashflow. Esta acción no se puede deshacer.
-                    </p>
+                    <button
+                        onClick={onCancel}
+                        aria-label="Cerrar"
+                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
+                    >
+                        <X size={16} />
+                    </button>
                 </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-end gap-2 px-6 py-4 bg-slate-50 border-t border-slate-100">
+                <div className="px-6 py-5">
+                    <p className="text-sm text-muted-foreground mb-3">
+                        ¿Seguro que quieres eliminar{" "}
+                        <span className="font-semibold text-foreground">
+                            "{scenarioName}"
+                        </span>
+                        ?
+                    </p>
+
+                    <p className="text-sm text-muted-foreground mb-5">
+                        Se eliminarán también todos sus ítems de cashflow. Esta acción no se puede deshacer.
+                    </p>
+
+                    <div className="rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-xs text-chart-line">
+                        No podrás recuperar este escenario una vez eliminado.
+                    </div>
+                </div>
+
+                <div className="flex gap-3 px-6 py-4 border-t border-border bg-muted/30">
                     <button
                         ref={cancelRef}
                         onClick={onCancel}
-                        className="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                        className="flex-1 px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-500 rounded-xl hover:bg-rose-600 transition-colors cursor-pointer"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
                     >
-                        <Trash2 size={14} />
+                        <Trash2 size={15} />
                         Eliminar
                     </button>
                 </div>

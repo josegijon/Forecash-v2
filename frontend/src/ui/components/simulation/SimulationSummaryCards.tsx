@@ -1,7 +1,5 @@
-import { Layers, GitCompareArrows, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
-
+import { SummaryCard } from "../kpi/SummaryCard";
 import { fmt } from "./types";
-import { StatCard } from "./StatCard";
 import { useCurrencySymbol } from "@/store";
 
 interface SimulationSummaryCardsProps {
@@ -16,50 +14,34 @@ export const SimulationSummaryCards = ({ actualBalance, comparedBalance, scenari
     const isPositive = diff >= 0;
     const currencySymbol = useCurrencySymbol();
 
-
     const diffPercent = actualBalance !== 0
         ? ((diff / actualBalance) * 100).toFixed(1)
         : null;
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard
-                icon={<Layers size={16} className="text-blue-600" />}
-                iconBg="bg-blue-100"
+        <div className="grid grid-cols-1 sm:grid-cols-3 justify-items-center gap-4 lg:max-w-[80%] mx-auto">
+            <SummaryCard
                 label="Escenario Actual"
                 value={`${fmt(actualBalance)} ${currencySymbol}`}
                 description={`Saldo proyectado a ${selectedMonths} meses`}
-                className="bg-card-light border-slate-200"
             />
 
-            <StatCard
-                icon={<GitCompareArrows size={16} className="text-indigo-600" />}
-                iconBg="bg-indigo-100"
+            <SummaryCard
                 label={scenarioName}
                 value={`${fmt(comparedBalance)} ${currencySymbol}`}
                 description={`Saldo proyectado a ${selectedMonths} meses`}
-                className="bg-card-light border-slate-200"
             />
 
-            <StatCard
-                icon={
-                    isPositive
-                        ? <TrendingUp size={16} className="text-emerald-600" />
-                        : <TrendingDown size={16} className="text-red-600" />
-                }
-                iconBg={isPositive ? "bg-emerald-100" : "bg-red-100"}
+            <SummaryCard
                 label="Diferencia"
                 value={`${isPositive ? "+" : ""}${fmt(diff)} ${currencySymbol}`}
                 description={`El ${scenarioName.toLowerCase()} ${isPositive ? "supera" : "queda por debajo de"} tu escenario actual`}
-                className={isPositive ? "bg-emerald-50/60 border-emerald-200" : "bg-red-50/60 border-red-200"}
-            >
-                {diffPercent !== null && (
-                    <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full mt-1 mb-1 ${isPositive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
-                        {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                        {diffPercent}%
-                    </span>
-                )}
-            </StatCard>
+                trend={diffPercent !== null ? {
+                    value: `${diffPercent}%`,
+                    positive: isPositive,
+                    bgColor: isPositive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                } : undefined}
+            />
         </div>
     );
 };

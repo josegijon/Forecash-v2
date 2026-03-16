@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Layers, Plus } from "lucide-react";
+import { Layers, PlusCircle } from "lucide-react";
 import type { Scenario } from "@/store";
 import { ConfirmDeleteScenarioModal } from "@/ui/components/modals/ConfirmDeleteScenarioModal";
 import { ScenarioCard } from "./ScenarioCard";
@@ -10,8 +10,6 @@ interface ScenarioManagerCardProps {
     onRename: (id: string, name: string) => void;
     onDelete: (id: string) => void;
 }
-
-// ── Componente principal ──────────────────────────────────────────────────────
 
 export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: ScenarioManagerCardProps) => {
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -68,17 +66,28 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Sc
 
     return (
         <>
-            <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
-                <div className="flex items-center gap-2 mb-5">
-                    <Layers size={20} className="text-primary" />
-                    <h3 className="font-bold text-slate-900">Escenarios</h3>
+            <div className="flex flex-col gap-6 p-6 rounded-3xl border-0 bg-card text-card-foreground shadow-sm">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-primary/10">
+                            <Layers size={15} className="text-primary" />
+                        </div>
+                        <h3 className="text-lg font-medium leading-none tracking-tight">
+                            Escenarios
+                        </h3>
+                    </div>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+                        {scenarios.length}
+                    </span>
                 </div>
 
-                <p className="text-sm text-slate-500 mb-5">
+                <p className="text-sm text-muted-foreground -mt-2">
                     Crea diferentes escenarios financieros para comparar estrategias. Cada escenario tiene sus propios ítems de efectivo independientes.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                {/* Grid de escenarios */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {scenarios.map((scenario) => (
                         <ScenarioCard
                             key={scenario.id}
@@ -98,19 +107,20 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Sc
                     ))}
                 </div>
 
+                {/* Input nuevo escenario */}
                 <div className="flex items-center gap-2">
                     <input
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                         placeholder="Nombre del nuevo escenario…"
-                        className="flex-1 text-sm px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                        className="flex-1 text-sm px-3 py-2 h-10 bg-background rounded-2xl border border-border placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
                     />
                     <button
                         onClick={handleAdd}
-                        className="flex items-center gap-1 text-xs font-bold text-primary hover:bg-primary/5 px-3 py-2 rounded-xl border border-primary/20 transition-all cursor-pointer"
+                        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer transition-colors"
                     >
-                        <Plus size={16} />
+                        <PlusCircle size={16} />
                         Nuevo
                     </button>
                 </div>

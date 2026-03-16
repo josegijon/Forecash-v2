@@ -1,5 +1,5 @@
-import { useMemo, type ReactNode } from "react";
-import { Target, Shield, TrendingUp, TrendingDown } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Target, Shield, TrendingDown } from "lucide-react";
 import {
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Area, AreaChart, ReferenceLine,
@@ -17,6 +17,11 @@ interface BalanceAreaChartProps {
     selectedMonths: number;
 }
 
+// ─── Colores ──────────────────────────────────────────────────────────────────
+
+const COLOR_POSITIVE = "#15803D"; // verde — coincide con --primary de la app
+const COLOR_NEGATIVE = "#f43f5e"; // rojo — coincide con --chart-line de la app
+
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
 const tickFormatter = (v: number) =>
@@ -25,6 +30,55 @@ const tickFormatter = (v: number) =>
         : `${v}`;
 
 const euroFormatter = (v: number) => `${v.toLocaleString("es-ES")}`;
+
+// ─── Hook: calcula el offset del cero para el gradiente split ─────────────────
+//
+// Recharts dibuja el gradiente de arriba (0%) hacia abajo (100%).
+// Si el rango va de `max` a `min`, el cero está en:
+//   offset = (max - 0) / (max - min)  → expresado en tanto por uno
+//
+// Con ese offset ponemos verde arriba del cero y rojo debajo.
+
+function useZeroOffset(balances: number[]) {
+    return useMemo(() => {
+        if (balances.length === 0) return null;
+        const max = Math.max(...balances);
+        const min = Math.min(...balances);
+        if (min >= 0) return null;   // todo positivo → no hay zona roja
+        if (max <= 0) return 0;      // todo negativo → todo rojo (offset = 0%)
+        const range = max - min;
+        return max / range;          // fracción [0,1] donde cae el cero
+    }, [balances]);
+}
+
+// ─── Hook: intervalo dinámico del eje X según número de meses y ancho ─────────
+//
+// En desktop se muestra más detalle, en móvil se espacian más las etiquetas para evitar solapamientos.
+
+const useXAxisInterval = (selectedMonths: number): number => {
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handler = () => setWidth(window.innerWidth);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+    }, []);
+
+    const isMobile = width < 640;
+
+    if (!isMobile) {
+        // Desktop: comportamiento original
+        if (selectedMonths <= 12) return 0;
+        if (selectedMonths <= 24) return 2;
+        return 5;
+    }
+
+    // Mobile: mostrar menos etiquetas
+    if (selectedMonths <= 6) return 0;
+    if (selectedMonths <= 12) return 1;
+    if (selectedMonths <= 24) return 3;
+    return 11; // ~5 años → una etiqueta cada 12 meses
+}
 
 // ─── CrossingDot ──────────────────────────────────────────────────────────────
 
@@ -42,9 +96,9 @@ const CrossingDot = (props: CrossingDotProps) => {
     if (payload._crossCapital === "gained") {
         return (
             <g>
-                <circle cx={cx} cy={cy} r={18} fill="#10b981" fillOpacity={0.12} />
-                <circle cx={cx} cy={cy} r={11} fill="#10b981" fillOpacity={0.22} />
-                <circle cx={cx} cy={cy} r={6} fill="#10b981" stroke="#fff" strokeWidth={2.5} />
+                <circle cx={cx} cy={cy} r={18} fill={COLOR_POSITIVE} fillOpacity={0.12} />
+                <circle cx={cx} cy={cy} r={11} fill={COLOR_POSITIVE} fillOpacity={0.22} />
+                <circle cx={cx} cy={cy} r={6} fill={COLOR_POSITIVE} stroke="#fff" strokeWidth={2.5} />
                 <path
                     d={`M${cx - 3} ${cy} l2 2.5 l4.5 -4.5`}
                     stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none"
@@ -56,9 +110,9 @@ const CrossingDot = (props: CrossingDotProps) => {
     if (payload._crossCapital === "lost") {
         return (
             <g>
-                <circle cx={cx} cy={cy} r={14} fill="#ef4444" fillOpacity={0.15} />
-                <circle cx={cx} cy={cy} r={8} fill="#ef4444" fillOpacity={0.22} />
-                <circle cx={cx} cy={cy} r={5} fill="#ef4444" stroke="#fff" strokeWidth={2.5} />
+                <circle cx={cx} cy={cy} r={14} fill={COLOR_NEGATIVE} fillOpacity={0.15} />
+                <circle cx={cx} cy={cy} r={8} fill={COLOR_NEGATIVE} fillOpacity={0.22} />
+                <circle cx={cx} cy={cy} r={5} fill={COLOR_NEGATIVE} stroke="#fff" strokeWidth={2.5} />
                 <path
                     d={`M${cx - 3} ${cy - 3} l6 6 M${cx + 3} ${cy - 3} l-6 6`}
                     stroke="#fff" strokeWidth={1.8} strokeLinecap="round" fill="none"
@@ -90,9 +144,9 @@ const CrossingDot = (props: CrossingDotProps) => {
     if (payload._crossRisk === "lost") {
         return (
             <g>
-                <circle cx={cx} cy={cy} r={14} fill="#ef4444" fillOpacity={0.12} />
-                <circle cx={cx} cy={cy} r={8} fill="#ef4444" fillOpacity={0.20} />
-                <circle cx={cx} cy={cy} r={5} fill="#ef4444" stroke="#fff" strokeWidth={2} />
+                <circle cx={cx} cy={cy} r={14} fill={COLOR_NEGATIVE} fillOpacity={0.12} />
+                <circle cx={cx} cy={cy} r={8} fill={COLOR_NEGATIVE} fillOpacity={0.20} />
+                <circle cx={cx} cy={cy} r={5} fill={COLOR_NEGATIVE} stroke="#fff" strokeWidth={2} />
                 <path d={`M${cx - 2.5} ${cy - 4} L${cx + 2.5} ${cy - 4} L${cx} ${cy + 3} Z`} fill="#fff" />
             </g>
         );
@@ -101,9 +155,9 @@ const CrossingDot = (props: CrossingDotProps) => {
     if (payload._crossRisk === "gained") {
         return (
             <g>
-                <circle cx={cx} cy={cy} r={14} fill="#22c55e" fillOpacity={0.12} />
-                <circle cx={cx} cy={cy} r={8} fill="#22c55e" fillOpacity={0.20} />
-                <circle cx={cx} cy={cy} r={5} fill="#22c55e" stroke="#fff" strokeWidth={2} />
+                <circle cx={cx} cy={cy} r={14} fill={COLOR_POSITIVE} fillOpacity={0.12} />
+                <circle cx={cx} cy={cy} r={8} fill={COLOR_POSITIVE} fillOpacity={0.20} />
+                <circle cx={cx} cy={cy} r={5} fill={COLOR_POSITIVE} stroke="#fff" strokeWidth={2} />
                 <path d={`M${cx - 2.5} ${cy + 4} L${cx + 2.5} ${cy + 4} L${cx} ${cy - 3} Z`} fill="#fff" />
             </g>
         );
@@ -139,23 +193,24 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
     const d = payload[0].payload;
     const { balance, isNegativeBalance: isNeg, _crossCapital: crossCapital, _crossCushion: crossCushion } = d;
+    const dotColor = isNeg ? COLOR_NEGATIVE : COLOR_POSITIVE;
 
     return (
         <div style={{
-            borderRadius: "14px", border: "1px solid #e2e8f0",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.10)", background: "#fff",
+            borderRadius: "14px", border: "1px solid hsl(var(--border))",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.10)", background: "hsl(var(--card))",
             padding: "14px 16px", fontSize: "13px", minWidth: "180px",
         }}>
-            <p style={{ fontWeight: 700, color: "#1e293b", marginBottom: 6 }}>{label}</p>
+            <p style={{ fontWeight: 700, color: "hsl(var(--card-foreground))", marginBottom: 6 }}>{label}</p>
 
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{
                     width: 8, height: 8, borderRadius: "50%",
-                    background: isNeg ? "#ef4444" : "#6366f1",
+                    background: dotColor,
                     display: "inline-block", flexShrink: 0,
                 }} />
-                <span style={{ color: "#64748b" }}>Balance:</span>
-                <span style={{ fontWeight: 700, color: isNeg ? "#ef4444" : "#1e293b", marginLeft: "auto" }}>
+                <span style={{ color: "hsl(var(--muted-foreground))" }}>Balance:</span>
+                <span style={{ fontWeight: 700, color: isNeg ? COLOR_NEGATIVE : "hsl(var(--card-foreground))", marginLeft: "auto" }}>
                     {euroFormatter(balance)}{currencySymbol}
                 </span>
             </div>
@@ -198,7 +253,7 @@ interface LegendItemProps {
 }
 
 const LegendItem = ({ color, label, dashed }: LegendItemProps) => (
-    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <svg width="22" height="10">
             <line x1="0" y1="5" x2="22" y2="5" stroke={color} strokeWidth="2" strokeDasharray={dashed ? "5 3" : undefined} />
         </svg>
@@ -262,13 +317,22 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                 _crossCushion: cushionCrossSet.get(i),
                 _crossRisk: riskCrossSet.get(i),
             })),
-        // Los Maps se recrean cuando sus cruces cambian — incluirlos como deps
-        // sería inestable; usamos los arrays originales como fuente de verdad
         [data, capitalCrosses, cushionCrosses, riskCrosses]
     );
 
-    const hasNegative = data.some((d) => d.isNegativeBalance);
-    const lineColor = hasNegative ? "#ef4444" : "#6366f1";
+    // ── Gradiente split por cero ──────────────────────────────────────────────
+    //
+    // zeroOffset = null  → todo positivo (solo verde)
+    // zeroOffset = 0     → todo negativo (solo rojo)
+    // zeroOffset = 0..1  → split: verde arriba, rojo abajo
+
+    const zeroOffset = useZeroOffset(balances);
+    const hasNegative = zeroOffset !== null;
+
+    // La línea y el activeDot usan el color del estado mayoritario
+    const lineColor = hasNegative && (zeroOffset === 0 || zeroOffset! < 0.5)
+        ? COLOR_NEGATIVE
+        : COLOR_POSITIVE;
 
     const activeRefs: { value: number; color: string; label: string }[] = [];
     if (cushionBalance > 0)
@@ -276,46 +340,95 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
     if (capitalGoal > 0)
         activeRefs.push({ value: capitalGoal, color: "#10b981", label: `Objetivo: ${euroFormatter(capitalGoal)}${currencySymbol}` });
 
-    // Pre-computed antes del return para evitar IIFE en JSX
     const capitalEntry = lastCapitalCross ? enrichedData[lastCapitalCross.index] : null;
     const cushionEntry = lastCushionCross ? enrichedData[lastCushionCross.index] : null;
     const riskEntry = showRiskBadge && lastRiskCross ? enrichedData[lastRiskCross.index] : null;
     const hasMilestones = !!(capitalEntry || cushionEntry || riskEntry);
 
+    // Porcentajes para el gradiente SVG (Recharts los acepta como string "X%")
+    const zeroOffsetPct = zeroOffset !== null ? `${(zeroOffset * 100).toFixed(1)}%` : "0%";
+
+    // El intervalo del eje X también se adapta al número de meses y al ancho de pantalla
+    const xAxisInterval = useXAxisInterval(selectedMonths);
+
     return (
-        <div className="bg-card-light rounded-2xl border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-2">
-                    <TrendingUp size={20} className="text-primary" />
-                    <h3 className="font-bold text-slate-900">Balance acumulado</h3>
+        <>
+            <div className="flex items-center justify-between gap-3 mb-5">
+                <div className="flex items-center gap-2 mb-6">
+                    <h3 className="text-lg font-medium leading-none tracking-tight">
+                        Balance acumulado
+                    </h3>
                 </div>
                 <div className="flex gap-4 flex-wrap">
-                    <LegendItem color="#6366f1" label="Balance" />
+                    <LegendItem color={COLOR_POSITIVE} label="Balance positivo" />
+                    {hasNegative && <LegendItem color={COLOR_NEGATIVE} label="Balance negativo" />}
                     {cushionBalance > 0 && <LegendItem color="#f59e0b" label="Colchón" dashed />}
                     {capitalGoal > 0 && <LegendItem color="#10b981" label="Objetivo de capital" dashed />}
-                    <LegendItem color="#ef4444" label="Zona de riesgo" dashed />
+                    <LegendItem color={COLOR_NEGATIVE} label="Zona de riesgo" dashed />
                 </div>
             </div>
 
             <ResponsiveContainer width="100%" height={340}>
                 <AreaChart data={enrichedData} margin={{ top: 16, right: 10, left: 0, bottom: 0 }}>
                     <defs>
-                        <linearGradient id="gradBalance" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={lineColor} stopOpacity={hasNegative ? 0.15 : 0.22} />
-                            <stop offset="100%" stopColor={lineColor} stopOpacity={0} />
+                        {/* Gradiente de línea: split exacto en el cero */}
+                        <linearGradient id="gradBalanceLine" x1="0" y1="0" x2="0" y2="1">
+                            {zeroOffset === null ? (
+                                // Todo positivo — solo verde
+                                <>
+                                    <stop offset="0%" stopColor={COLOR_POSITIVE} />
+                                    <stop offset="100%" stopColor={COLOR_POSITIVE} />
+                                </>
+                            ) : zeroOffset === 0 ? (
+                                // Todo negativo — solo rojo
+                                <>
+                                    <stop offset="0%" stopColor={COLOR_NEGATIVE} />
+                                    <stop offset="100%" stopColor={COLOR_NEGATIVE} />
+                                </>
+                            ) : (
+                                // Split: verde hasta el cero, rojo desde el cero
+                                <>
+                                    <stop offset="0%" stopColor={COLOR_POSITIVE} />
+                                    <stop offset={zeroOffsetPct} stopColor={COLOR_POSITIVE} />
+                                    <stop offset={zeroOffsetPct} stopColor={COLOR_NEGATIVE} />
+                                    <stop offset="100%" stopColor={COLOR_NEGATIVE} />
+                                </>
+                            )}
+                        </linearGradient>
+
+                        {/* Gradiente de área: mismo split pero con opacidad */}
+                        <linearGradient id="gradBalanceFill" x1="0" y1="0" x2="0" y2="1">
+                            {zeroOffset === null ? (
+                                <>
+                                    <stop offset="0%" stopColor={COLOR_POSITIVE} stopOpacity={0.22} />
+                                    <stop offset="100%" stopColor={COLOR_POSITIVE} stopOpacity={0} />
+                                </>
+                            ) : zeroOffset === 0 ? (
+                                <>
+                                    <stop offset="0%" stopColor={COLOR_NEGATIVE} stopOpacity={0.18} />
+                                    <stop offset="100%" stopColor={COLOR_NEGATIVE} stopOpacity={0} />
+                                </>
+                            ) : (
+                                <>
+                                    <stop offset="0%" stopColor={COLOR_POSITIVE} stopOpacity={0.22} />
+                                    <stop offset={zeroOffsetPct} stopColor={COLOR_POSITIVE} stopOpacity={0.08} />
+                                    <stop offset={zeroOffsetPct} stopColor={COLOR_NEGATIVE} stopOpacity={0.10} />
+                                    <stop offset="100%" stopColor={COLOR_NEGATIVE} stopOpacity={0.22} />
+                                </>
+                            )}
                         </linearGradient>
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                     <XAxis
                         dataKey="month"
-                        tick={{ fontSize: 12, fill: "#94a3b8" }}
-                        axisLine={{ stroke: "#e2e8f0" }}
+                        tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+                        axisLine={false}
                         tickLine={false}
-                        interval={selectedMonths <= 12 ? 0 : selectedMonths <= 24 ? 2 : 5}
+                        interval={xAxisInterval}
                     />
                     <YAxis
-                        tick={{ fontSize: 12, fill: "#94a3b8" }}
+                        tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={tickFormatter}
@@ -325,10 +438,10 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
 
                     <ReferenceLine
                         y={0}
-                        stroke="#ef4444"
+                        stroke={COLOR_NEGATIVE}
                         strokeDasharray="4 4"
                         strokeWidth={1.5}
-                        label={{ value: "Zona de riesgo", position: "insideTopLeft", fill: "#ef4444", fontSize: 11, fontWeight: 600 }}
+                        label={{ value: "Zona de riesgo", position: "insideTopLeft", fill: COLOR_NEGATIVE, fontSize: 11, fontWeight: 600 }}
                     />
 
                     {activeRefs.map(({ value, color, label }) => (
@@ -345,10 +458,9 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                     <Area
                         type="monotone"
                         dataKey="balance"
-                        stroke={lineColor}
+                        stroke="url(#gradBalanceLine)"
                         strokeWidth={2.5}
-                        fill="url(#gradBalance)"
-                        // Solo renderiza el dot en puntos de cruce; el resto se omite
+                        fill="url(#gradBalanceFill)"
                         dot={(dotProps: DotProps & { payload?: EnrichedMonthData; index?: number }) => {
                             const p = dotProps.payload;
                             if (p?._crossCapital || p?._crossCushion || p?._crossRisk) {
@@ -356,13 +468,13 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                             }
                             return <g key={dotProps.index} />;
                         }}
-                        activeDot={{ r: 5, fill: "#6366f1", strokeWidth: 2, stroke: "#fff" }}
+                        activeDot={{ r: 5, fill: lineColor, strokeWidth: 2, stroke: "#fff" }}
                     />
                 </AreaChart>
             </ResponsiveContainer>
 
             {hasMilestones && (
-                <div className="mt-4 pt-3.5 border-t border-slate-100 flex gap-2.5 flex-wrap">
+                <div className="mt-4 pt-3.5 border-t border-border flex gap-2.5 flex-wrap">
                     {capitalEntry && lastCapitalCross?.type === "gained" && (
                         <MilestoneBadge
                             icon={<Target size={13} />}
@@ -400,6 +512,6 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                     )}
                 </div>
             )}
-        </div>
+        </>
     );
 };

@@ -7,9 +7,21 @@ export interface CategoryChartData {
     fill: string;
 }
 
+// Colores con máxima distancia perceptual entre sí:
+// - Ningún par comparte tono cercano
+// - Alternancia entre saturados y más apagados para mayor contraste visual
+// - Evita: indigo+violeta juntos, verde+teal juntos, dos azules
 export const CATEGORY_COLORS = [
-    "#6366f1", "#f59e0b", "#10b981", "#3b82f6", "#ec4899",
-    "#ef4444", "#8b5cf6", "#14b8a6", "#f97316", "#06b6d4",
+    "#f59e0b", // amber
+    "#3b82f6", // blue
+    "#ef4444", // red
+    "#10b981", // emerald
+    "#ec4899", // pink
+    "#f97316", // orange
+    "#6366f1", // indigo
+    "#84cc16", // lime
+    "#06b6d4", // cyan
+    "#8b5cf6", // violet — separado de indigo por 4 posiciones
 ] as const;
 
 /**

@@ -64,17 +64,17 @@ export const CurrencyInputField = ({
     };
 
     return (
-        <div className="bg-slate-50 p-4 rounded-xl transition-all has-focus:ring-2 has-focus:ring-primary/30 has-focus:bg-white">
+        <div className="bg-card/40 p-4 rounded-xl border border-border/60 transition-all has-focus:ring-2 has-focus:ring-primary/20 has-focus:bg-card has-focus:border-primary/40">
             <label
                 htmlFor={inputId}
-                className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block select-none"
+                className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block select-none"
             >
                 {label}
             </label>
 
             <div className="flex items-center gap-2">
                 <span
-                    className="text-slate-400 font-medium text-2xl select-none"
+                    className="text-muted-foreground font-medium text-2xl select-none"
                     aria-hidden="true"
                 >
                     {currencySymbol}
@@ -85,7 +85,7 @@ export const CurrencyInputField = ({
                     type="text"
                     inputMode="decimal"
                     aria-label={`${label} en ${currencySymbol}`}
-                    className="bg-transparent border-none p-0 focus:outline-none focus:ring-0 font-bold text-2xl w-full text-slate-900 placeholder:text-slate-300 caret-primary"
+                    className="bg-transparent border-none p-0 focus:outline-none focus:ring-0 font-bold text-2xl w-full text-foreground placeholder:text-muted-foreground/40 caret-primary"
                     placeholder="0,00"
                     value={displayValue}
                     onChange={handleChange}
