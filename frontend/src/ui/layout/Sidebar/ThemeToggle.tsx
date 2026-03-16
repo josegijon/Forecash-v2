@@ -8,7 +8,10 @@ export const ThemeToggle = () => {
     const toggleTheme = useSettingsStore((s) => s.toggleTheme);
 
     useEffect(() => {
-        document.documentElement.classList.toggle("dark", theme === "dark");
+        const isDark = theme === "dark";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.querySelector('meta[name="theme-color"]')
+            ?.setAttribute("content", isDark ? "#060e09" : "#e8f5e9");
     }, [theme]);
 
     const isDark = theme === "dark";
