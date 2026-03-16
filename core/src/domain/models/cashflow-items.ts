@@ -1,4 +1,4 @@
-import { Frequency } from "./frequency";
+import type { Frequency } from "./frequency";
 
 /**
  * Fecha en formato ISO 8601: "YYYY-MM-DD".
