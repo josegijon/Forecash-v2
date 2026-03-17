@@ -114,7 +114,7 @@ export const ScenarioManagerCard = ({ scenarios, onAdd, onRename, onDelete }: Sc
                         onChange={(e) => setNewName(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                         placeholder="Nombre del nuevo escenario…"
-                        className="flex-1 text-sm px-3 py-2 h-10 bg-background rounded-2xl border border-border placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+                        className="flex h-10 w-full rounded-3xl border border-primary/20 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                     />
                     <button
                         onClick={handleAdd}
