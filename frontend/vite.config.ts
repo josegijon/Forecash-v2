@@ -14,4 +14,16 @@ export default defineConfig({
       "@core": path.resolve(__dirname, "../core/src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router"],
+          "vendor-charts": ["recharts"],
+          "vendor-icons": ["lucide-react"],
+          "vendor-state": ["zustand"],
+        }
+      }
+    }
+  }
 })
