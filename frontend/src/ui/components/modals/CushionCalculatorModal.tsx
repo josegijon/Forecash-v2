@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { X, Calculator } from "lucide-react";
+import { X } from "lucide-react";
 
 import { useCurrencySymbol, useScenarioItems, useScenarioStore } from "@/store";
 import {
@@ -53,27 +53,29 @@ export const CushionCalculatorModal = ({ onClose, onApply }: CushionCalculatorMo
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
-            onClick={(e) => e.target === e.currentTarget && onClose()}
+            onMouseDown={(e) => e.target === e.currentTarget && onClose()}
         >
             <div className="relative w-full max-w-md bg-card text-card-foreground rounded-3xl shadow-xl border border-border overflow-hidden">
+
                 {/* Header */}
-                <div className="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-border">
-                    <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                        <Calculator className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
+                    <div className="min-w-0">
                         <h2 className="text-lg font-medium leading-none tracking-tight">Calculadora de colchón</h2>
                         <p className="text-xs text-muted-foreground mt-1">
                             {step === "questions"
                                 ? "Responde unas preguntas para obtener una recomendación personalizada"
                                 : "Así hemos calculado tu colchón recomendado"}
                         </p>
+                        <div className="flex gap-1 mt-2">
+                            <span className={`h-1 w-4 rounded-full transition-colors ${step === "questions" ? "bg-primary" : "bg-muted-foreground/30"}`} />
+                            <span className={`h-1 w-4 rounded-full transition-colors ${step === "result" ? "bg-primary" : "bg-muted-foreground/30"}`} />
+                        </div>
                     </div>
                     <button
                         onClick={onClose}
                         className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0 cursor-pointer"
                     >
-                        <X className="w-4 h-4" />
+                        <X size={16} />
                     </button>
                 </div>
 

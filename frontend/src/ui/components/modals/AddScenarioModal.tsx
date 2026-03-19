@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router";
-import { X, Layers, Save } from "lucide-react";
+import { X } from "lucide-react";
 
 import { useScenarioStore } from "@/store";
 
@@ -57,7 +57,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
 
     return createPortal(
         <div
-            className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
             onMouseDown={(e) => {
                 if (e.target === e.currentTarget) handleClose();
             }}
@@ -66,20 +66,14 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <Layers size={18} className="text-primary" />
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-medium leading-none tracking-tight">
-                                Nuevo escenario
-                            </h2>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                Ponle un nombre que te ayude a identificarlo: "Si me suben el sueldo", "Plan con mudanza"...
-                            </p>
-                        </div>
+                    <div>
+                        <h2 className="text-lg font-medium leading-none tracking-tight">
+                            Nuevo escenario
+                        </h2>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            Ponle un nombre que te ayude a identificarlo: "Si me suben el sueldo", "Plan con mudanza"...
+                        </p>
                     </div>
-
                     <button
                         onClick={handleClose}
                         aria-label="Cerrar"
@@ -104,7 +98,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                         autoFocus
                         className={`w-full px-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all ${error
                             ? "border-destructive/70 focus:ring-destructive/20"
-                            : "border-border"
+                            : "border-border/60"
                             }`}
                     />
                     {error && (
@@ -123,9 +117,8 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                     <button
                         onClick={handleSubmit}
                         disabled={!name.trim()}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                        <Save size={16} />
                         Crear escenario
                     </button>
                 </div>
