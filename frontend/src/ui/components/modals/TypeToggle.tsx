@@ -22,7 +22,7 @@ export const TypeToggle = ({ type, onChange }: TypeToggleProps) => (
                             ? isIncome
                                 ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
                                 : "bg-rose-50 text-rose-600 border-rose-200 ring-2 ring-rose-500/20"
-                            : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                            : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
                         }`}
                 >
                     {isIncome ? <PlusCircle size={16} /> : <MinusCircle size={16} />}

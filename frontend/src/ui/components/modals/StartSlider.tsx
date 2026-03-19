@@ -1,30 +1,48 @@
-import { Clock } from "lucide-react";
+import type { FocusEvent } from "react";
+import { addMonths } from "@core";
+import { MONTH_NAMES } from "../../utils/projectionConstants";
 
-interface StartSliderProps {
+interface StartInputProps {
     value: number;
     onChange: (v: number) => void;
 }
 
-export const StartSlider = ({ value, onChange }: StartSliderProps) => (
-    <div>
-        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
-            <Clock size={12} className="inline mr-1 -mt-0.5" />
-            Inicia dentro de
-        </label>
+const getMonthLabel = (offsetMonths: number): string => {
+    if (offsetMonths === 0) return "Comienza ahora";
+    const now = new Date();
+    const { year, month } = addMonths({ year: now.getFullYear(), month: now.getMonth() }, offsetMonths);
+    return `Comienza en ${MONTH_NAMES[month]} de ${year}`;
+};
 
-        <div className="flex items-center gap-3">
-            <input
-                type="range"
-                min={0}
-                max={24}
-                value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
-                className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-primary"
-            />
+export const StartInput = ({ value, onChange }: StartInputProps) => {
+    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+        const parsed = parseInt(e.target.value, 10);
+        if (isNaN(parsed) || parsed < 0) return onChange(0);
+        if (parsed > 24) return onChange(24);
+        onChange(parsed);
+    };
 
-            <span className="min-w-18 text-center text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                {value === 0 ? "Ahora" : `${value} m`}
-            </span>
+    return (
+        <div>
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
+                Inicia dentro de
+            </label>
+            <div className="relative">
+                <input
+                    type="number"
+                    min={0}
+                    max={24}
+                    defaultValue={value}
+                    key={value}
+                    onBlur={handleBlur}
+                    placeholder="0"
+                    className="w-full px-4 py-2.5 pr-16 bg-muted/40 rounded-xl border border-border/60 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                    meses
+                </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">{getMonthLabel(value)}</p>
         </div>
-    </div>
-);
+    );
+};
