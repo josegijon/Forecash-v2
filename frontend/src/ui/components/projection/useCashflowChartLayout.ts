@@ -1,26 +1,5 @@
-import { useEffect, useState } from "react";
-
-const useWindowWidth = () => {
-    const [width, setWidth] = useState(window.innerWidth);
-    useEffect(() => {
-        const handler = () => setWidth(window.innerWidth);
-        window.addEventListener("resize", handler);
-        return () => window.removeEventListener("resize", handler);
-    }, []);
-    return width;
-};
-
-const calcXAxisInterval = (selectedMonths: number, isMobile: boolean): number => {
-    if (!isMobile) {
-        if (selectedMonths <= 12) return 0;
-        if (selectedMonths <= 24) return 2;
-        return 5;
-    }
-    if (selectedMonths <= 6) return 0;
-    if (selectedMonths <= 12) return 1;
-    if (selectedMonths <= 24) return 3;
-    return 11;
-};
+import { useWindowWidth } from "./useWindowWidth";
+import { useXAxisInterval } from "./useXAxisInterval";
 
 const calcBarSize = (selectedMonths: number, isMobile: boolean): number => {
     if (!isMobile) {
@@ -42,7 +21,7 @@ export const useCashflowChartLayout = (selectedMonths: number): CashflowChartLay
     const isMobile = width < 640;
 
     return {
-        xAxisInterval: calcXAxisInterval(selectedMonths, isMobile),
+        xAxisInterval: useXAxisInterval(selectedMonths),
         barSize: calcBarSize(selectedMonths, isMobile),
         isMobile,
     };
