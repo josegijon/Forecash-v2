@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Target, Shield, TrendingDown } from "lucide-react";
 import {
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Area, AreaChart, ReferenceLine,
@@ -14,7 +13,7 @@ import { useZeroOffset } from "./useZeroOffset";
 import { useXAxisInterval } from "./useXAxisInterval";
 import { CrossingDot } from "./CrossingDot";
 import { BalanceTooltip } from "./BalanceTooltip";
-import { LegendItem, MilestoneBadge } from "./BalanceChartLegend";
+import { LegendItem } from "./BalanceChartLegend";
 
 interface BalanceAreaChartProps {
     data: MonthData[];
@@ -50,11 +49,6 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
         [balances]
     );
 
-    const lastCapitalCross = capitalCrosses.at(-1) ?? null;
-    const lastCushionCross = cushionCrosses.at(-1) ?? null;
-    const lastRiskCross = riskCrosses.at(-1) ?? null;
-    const showRiskBadge = lastRiskCross?.type === "lost";
-
     const capitalCrossSet = new Map(capitalCrosses.map((e) => [e.index, e.type]));
     const cushionCrossSet = new Map(cushionCrosses.map((e) => [e.index, e.type]));
     const riskCrossSet = new Map(riskCrosses.map((e) => [e.index, e.type]));
@@ -84,11 +78,6 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
         activeRefs.push({ value: cushionBalance, color: COLOR_CUSHION, label: `Colchón: ${euroFormatter(cushionBalance)}${currencySymbol}` });
     if (capitalGoal > 0)
         activeRefs.push({ value: capitalGoal, color: COLOR_POSITIVE, label: `Objetivo: ${euroFormatter(capitalGoal)}${currencySymbol}` });
-
-    const capitalEntry = lastCapitalCross ? enrichedData[lastCapitalCross.index] : null;
-    const cushionEntry = lastCushionCross ? enrichedData[lastCushionCross.index] : null;
-    const riskEntry = showRiskBadge && lastRiskCross ? enrichedData[lastRiskCross.index] : null;
-    const hasMilestones = !!(capitalEntry || cushionEntry || riskEntry);
 
     return (
         <>
@@ -202,26 +191,6 @@ export const BalanceAreaChart = ({ data, selectedMonths }: BalanceAreaChartProps
                     />
                 </AreaChart>
             </ResponsiveContainer>
-
-            {hasMilestones && (
-                <div className="mt-4 pt-3.5 border-t border-border flex gap-2.5 flex-wrap">
-                    {capitalEntry && lastCapitalCross?.type === "gained" && (
-                        <MilestoneBadge icon={<Target size={13} />} label={`Objetivo de capital alcanzado en ${capitalEntry.month}`} variant="success" />
-                    )}
-                    {capitalEntry && lastCapitalCross?.type === "lost" && (
-                        <MilestoneBadge icon={<Target size={13} />} label={`Objetivo de capital perdido en ${capitalEntry.month}`} variant="danger" />
-                    )}
-                    {cushionEntry && lastCushionCross?.type === "gained" && (
-                        <MilestoneBadge icon={<Shield size={13} />} label={`Colchón alcanzado en ${cushionEntry.month}`} variant="warning" />
-                    )}
-                    {cushionEntry && lastCushionCross?.type === "lost" && (
-                        <MilestoneBadge icon={<Shield size={13} />} label={`Colchón perdido en ${cushionEntry.month}`} variant="warning" />
-                    )}
-                    {riskEntry && (
-                        <MilestoneBadge icon={<TrendingDown size={13} />} label={`En negativo desde ${riskEntry.month}`} variant="danger" />
-                    )}
-                </div>
-            )}
         </>
     );
 };
