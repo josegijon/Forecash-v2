@@ -36,22 +36,27 @@ export const ProjectionSummaryCards = ({
             <SummaryCard
                 label="Balance Final"
                 value={`${fmt(finalBalance)} ${currencySymbol}`}
-                // description={`En ${selectedMonths} meses`}
                 trend={{
                     value: `${isPositive ? "+" : ""}${fmt(balanceDiff)} ${currencySymbol}`,
                     positive: isPositive,
-                    label: `En ${selectedMonths} meses`
+                    label: `En ${selectedMonths} meses`,
                 }}
             />
             <SummaryCard
                 label="Peor mes"
-                value={worstMonth ? `${fmt(minBalance)} ${currencySymbol}` : "—"}
-                description={worstMonth ? `Balance mínimo: ${worstMonth.month}` : "Sin meses negativos"}
+                value={worstMonth ? worstMonth.month : "—"}
+                description={worstMonth
+                    ? `Balance mínimo: ${fmt(minBalance)} ${currencySymbol}`
+                    : "Sin meses negativos"
+                }
             />
             <SummaryCard
                 label="Meses negativos"
-                value={`${Math.round((negativeMonths / selectedMonths) * 100)}%`}
-                description={`${negativeMonths} de ${selectedMonths} meses con cashflow negativo`}
+                value={negativeMonths === 0 ? "Ninguno" : `${negativeMonths} de ${selectedMonths}`}
+                description={negativeMonths === 0
+                    ? "Sin cashflow negativo"
+                    : "meses con cashflow negativo"
+                }
             />
         </div>
     );
