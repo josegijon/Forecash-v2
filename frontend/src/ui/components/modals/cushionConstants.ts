@@ -1,13 +1,13 @@
 import type { LaborProfile, RiskProfile } from "@core";
 
-export const LABOR_OPTIONS: Array<{ value: LaborProfile; label: string; emoji: string }> = [
-    { value: "funcionario", label: "Funcionario / Contrato fijo", emoji: "🏛️" },
-    { value: "empleado", label: "Empleado por cuenta ajena", emoji: "💼" },
-    { value: "autonomo", label: "Freelance / Autónomo", emoji: "🧑‍💻" },
+export const LABOR_OPTIONS: Array<{ value: LaborProfile; label: string }> = [
+    { value: "funcionario", label: "Funcionario / Fijo" },
+    { value: "empleado", label: "Empleado" },
+    { value: "autonomo", label: "Autónomo" },
 ];
 
-export const RISK_OPTIONS: Array<{ value: RiskProfile; label: string; emoji: string; sublabel: string }> = [
-    { value: "justo", label: "Justo lo necesario", emoji: "⚡", sublabel: "Prefiero tener ese dinero disponible" },
-    { value: "equilibrado", label: "Equilibrado", emoji: "⚖️", sublabel: "El estándar recomendado" },
-    { value: "conservador", label: "Conservador", emoji: "🛡️", sublabel: "Prefiero dormir tranquilo/a" },
+export const RISK_OPTIONS: Array<{ value: RiskProfile; label: string; sublabel: string }> = [
+    { value: "justo", label: "Justo", sublabel: "Lo mínimo necesario" },
+    { value: "equilibrado", label: "Equilibrado", sublabel: "Estándar recomendado" },
+    { value: "conservador", label: "Conservador", sublabel: "Máximo margen" },
 ];

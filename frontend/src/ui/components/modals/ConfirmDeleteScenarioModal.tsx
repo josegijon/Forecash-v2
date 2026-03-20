@@ -35,19 +35,16 @@ export const ConfirmDeleteScenarioModal = ({
             }}
         >
             <div className="relative w-full max-w-md bg-card text-card-foreground rounded-3xl shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95">
-                <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-border">
+
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
                     <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-destructive/10 shrink-0">
-                            <AlertTriangle size={20} className="text-chart-line" />
+                            <AlertTriangle size={20} className="text-destructive" />
                         </div>
-                        <div>
-                            <h2 className="text-lg font-medium leading-none tracking-tight">
-                                Eliminar escenario
-                            </h2>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                Esta acción es irreversible
-                            </p>
-                        </div>
+                        <h2 className="text-lg font-medium leading-none tracking-tight">
+                            Eliminar escenario
+                        </h2>
                     </div>
 
                     <button
@@ -59,24 +56,16 @@ export const ConfirmDeleteScenarioModal = ({
                     </button>
                 </div>
 
-                <div className="px-6 py-5">
-                    <p className="text-sm text-muted-foreground mb-3">
+                {/* Body */}
+                <div className="px-6 py-4">
+                    <p className="text-sm text-foreground">
                         ¿Seguro que quieres eliminar{" "}
-                        <span className="font-semibold text-foreground">
-                            "{scenarioName}"
-                        </span>
-                        ?
+                        <span className="font-semibold">"{scenarioName}"</span>?
+                        {" "}Se perderán todos sus ítems de cashflow y no podrás recuperarlo.
                     </p>
-
-                    <p className="text-sm text-muted-foreground mb-5">
-                        Se eliminarán también todos sus ítems de cashflow. Esta acción no se puede deshacer.
-                    </p>
-
-                    <div className="rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-xs text-chart-line">
-                        No podrás recuperar este escenario una vez eliminado.
-                    </div>
                 </div>
 
+                {/* Footer */}
                 <div className="flex gap-3 px-6 py-4 border-t border-border bg-muted/30">
                     <button
                         ref={cancelRef}
@@ -87,12 +76,13 @@ export const ConfirmDeleteScenarioModal = ({
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
                     >
-                        <Trash2 size={15} />
+                        <Trash2 size={16} />
                         Eliminar
                     </button>
                 </div>
+
             </div>
         </div>
     );

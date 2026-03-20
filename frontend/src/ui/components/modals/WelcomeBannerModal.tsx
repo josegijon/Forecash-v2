@@ -7,6 +7,12 @@ interface WelcomeBannerModalProps {
 
 const INFO_ITEMS = [
     {
+        icon: MapPin,
+        title: "Empieza por Planificación",
+        description:
+            "Añade tus ingresos y gastos recurrentes. A partir de ahí podrás proyectar el futuro y simular cambios.",
+    },
+    {
         icon: HardDrive,
         title: "Tus datos viven en este navegador",
         description:
@@ -18,12 +24,6 @@ const INFO_ITEMS = [
         description:
             "La app funciona completamente offline. Nadie tiene acceso a tu información financiera.",
     },
-    {
-        icon: MapPin,
-        title: "Empieza por Planificación",
-        description:
-            "Añade tus ingresos y gastos recurrentes. A partir de ahí podrás proyectar el futuro y simular cambios.",
-    },
 ];
 
 export const WelcomeBannerModal = ({ isOpen, onClose }: WelcomeBannerModalProps) => {
@@ -31,21 +31,18 @@ export const WelcomeBannerModal = ({ isOpen, onClose }: WelcomeBannerModalProps)
 
     return (
         <div className="fixed inset-0 z-60 flex items-center justify-center">
-            <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                onClick={onClose}
-            />
+            <div aria-hidden="true" className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
             <div className="relative bg-card text-card-foreground rounded-3xl shadow-xl border border-border w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-300 flex flex-col">
 
                 {/* Header */}
-                <div className="flex items-start justify-between px-6 pt-6 pb-0">
+                <div className="flex items-start justify-between px-6 pt-6 pb-4">
                     <div className="flex flex-col gap-1">
                         <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
                             Bienvenido
                         </span>
                         <h2 className="text-lg font-bold leading-tight tracking-tight">
-                            Antes de empezar
+                            Cómo funciona Forecash
                         </h2>
                     </div>
                     <button
@@ -57,11 +54,11 @@ export const WelcomeBannerModal = ({ isOpen, onClose }: WelcomeBannerModalProps)
                 </div>
 
                 {/* Body */}
-                <div className="px-6 py-5 space-y-4">
+                <div className="px-6 pb-5 space-y-4">
                     {INFO_ITEMS.map(({ icon: Icon, title, description }) => (
                         <div key={title} className="flex gap-4 items-start">
                             <div className="shrink-0 w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                                <Icon size={17} className="text-primary" />
+                                <Icon size={16} className="text-primary" />
                             </div>
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm font-semibold text-foreground leading-snug">

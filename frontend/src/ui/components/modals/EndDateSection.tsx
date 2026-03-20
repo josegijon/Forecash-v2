@@ -1,4 +1,6 @@
-import { Clock } from "lucide-react";
+import type { FocusEvent } from "react";
+import { addMonths } from "@core";
+import { MONTH_NAMES } from "../../utils/projectionConstants";
 
 interface EndDateSectionProps {
     hasEndDate: boolean;
@@ -8,39 +10,60 @@ interface EndDateSectionProps {
     onChange: (v: number) => void;
 }
 
-export const EndDateSection = ({ hasEndDate, endsInMonths, startsInMonths, onToggle, onChange }: EndDateSectionProps) => (
-    <div>
-        <div className="flex items-center justify-between mb-2">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <Clock size={12} className="inline mr-1 -mt-0.5" />
-                Finaliza dentro de
-            </label>
-            <button
-                type="button"
-                onClick={() => onToggle(!hasEndDate)}
-                className={`text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer ${hasEndDate
-                    ? "bg-slate-200 text-slate-600"
-                    : "bg-primary/10 text-primary"
-                    }`}
-            >
-                {hasEndDate ? "Quitar límite" : "Añadir límite"}
-            </button>
-        </div>
+const getMonthLabel = (offsetMonths: number): string => {
+    const now = new Date();
+    const { year, month } = addMonths({ year: now.getFullYear(), month: now.getMonth() }, offsetMonths);
+    return `Finaliza en ${MONTH_NAMES[month]} de ${year}`;
+};
 
-        {hasEndDate && (
-            <div className="flex items-center gap-3 mt-3">
-                <input
-                    type="range"
-                    min={startsInMonths + 1}
-                    max={120}
-                    value={endsInMonths}
-                    onChange={(e) => onChange(Number(e.target.value))}
-                    className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-primary"
-                />
-                <span className="min-w-18 text-center text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                    {endsInMonths} m
-                </span>
+export const EndDateSection = ({ hasEndDate, endsInMonths, startsInMonths, onToggle, onChange }: EndDateSectionProps) => {
+    const min = startsInMonths + 1;
+
+    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+        const parsed = parseInt(e.target.value, 10);
+        if (isNaN(parsed) || parsed < min) return onChange(min);
+        if (parsed > 120) return onChange(120);
+        onChange(parsed);
+    };
+
+    return (
+        <div>
+            <div className="flex items-center justify-between mb-2">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Finaliza dentro de
+                </label>
+                <button
+                    type="button"
+                    onClick={() => onToggle(!hasEndDate)}
+                    className={`text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer ${hasEndDate
+                            ? "bg-muted text-muted-foreground hover:text-foreground"
+                            : "bg-primary/10 text-primary hover:bg-primary/20"
+                        }`}
+                >
+                    {hasEndDate ? "Quitar límite" : "Añadir límite"}
+                </button>
             </div>
-        )}
-    </div>
-);
+
+            {hasEndDate && (
+                <div>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            min={min}
+                            max={120}
+                            defaultValue={endsInMonths}
+                            key={endsInMonths}
+                            onBlur={handleBlur}
+                            placeholder={String(min)}
+                            className="w-full px-4 py-2.5 pr-16 bg-muted/40 rounded-xl border border-border/60 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                            meses
+                        </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1.5">{getMonthLabel(endsInMonths)}</p>
+                </div>
+            )}
+        </div>
+    );
+};

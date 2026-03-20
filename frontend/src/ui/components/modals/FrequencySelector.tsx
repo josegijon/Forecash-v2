@@ -1,4 +1,3 @@
-import { CalendarClock } from "lucide-react";
 import type { Frequency } from "@core";
 
 const frequencyLabels: Record<Frequency, string> = {
@@ -17,8 +16,7 @@ interface FrequencySelectorProps {
 
 export const FrequencySelector = ({ value, onChange }: FrequencySelectorProps) => (
     <div>
-        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
-            <CalendarClock size={12} className="inline mr-1 -mt-0.5" />
+        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
             Frecuencia
         </label>
 
@@ -30,7 +28,7 @@ export const FrequencySelector = ({ value, onChange }: FrequencySelectorProps) =
                     onClick={() => onChange(freq)}
                     className={`py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${value === freq
                             ? "bg-primary/10 text-primary border-primary/30"
-                            : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                            : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
                         }`}
                 >
                     {label}
