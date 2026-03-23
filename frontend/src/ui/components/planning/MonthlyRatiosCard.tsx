@@ -52,16 +52,16 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
                     <RatioProgressBar
                         label="Tasa de ahorro"
                         percentage={summary.savingsRate * 100}
-                        color={getSavingsRateColor(summary.savingsRate)}
+                        color={getSavingsRateColor(summary.savingsRate * 100)}
                         icon={<PiggyBank size={16} />}
-                        bgClass="bg-emerald-100"
+                        iconBgClass="bg-badge-success-bg text-badge-success-fg"
                     />
                     <RatioProgressBar
                         label="Tasa de gasto"
                         percentage={summary.expenseRate * 100}
-                        color={getExpenseRateColor(summary.expenseRate)}
+                        color={getExpenseRateColor(summary.expenseRate * 100)}
                         icon={<TrendingDown size={16} />}
-                        bgClass="bg-rose-100"
+                        iconBgClass="bg-badge-danger-bg text-badge-danger-fg"
                     />
                 </div>
             )}
