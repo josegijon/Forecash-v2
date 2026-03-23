@@ -17,28 +17,42 @@ export interface PlanningSummaryStripModel {
     incomeTrend?: TrendValue;
     expenseTrend?: TrendValue;
     balanceTrend?: TrendValue;
+    savingsTrend?: TrendValue;
 }
 
-interface RawTrend {
-    value: string;
-}
+/**
+ * Calcula el % de variación entre dos valores.
+ * Devuelve undefined si no hay referencia válida (previous <= 0).
+ */
+const calcTrend = (current: number, previous: number): string | undefined => {
+    if (previous <= 0) return undefined;
+    if (current === previous) return undefined;
 
-/** Calcula el % de variación entre dos valores. Devuelve null si no hay referencia. */
-const calcTrend = (current: number, previous: number): RawTrend | undefined => {
-    if (previous === 0 && current === 0) return undefined;
-    if (previous === 0) return { value: "nuevo" };
-
-    const pct = ((current - previous) / Math.abs(previous)) * 100;
-    return { value: `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%` };
+    const pct = ((current - previous) / previous) * 100;
+    return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
 };
 
-/** Formatea un número como moneda: €1.050,00 */
+/**
+ * Trend para gastos: bajar es bueno, subir es malo.
+ * El % muestra la magnitud absoluta — flecha y color comunican la valoración.
+ */
+const calcExpenseTrend = (current: number, previous: number): TrendValue | undefined => {
+    if (previous <= 0) return undefined;
+    if (current === previous) return undefined;
+
+    const pct = ((current - previous) / previous) * 100;
+    const isReduction = pct < 0;
+    const value = `${Math.abs(pct).toFixed(1)}%`;
+
+    return { value, positive: isReduction };
+};
+
+/** Formatea un número como moneda */
 const formatCurrency = (amount: number, symbol: string): string => {
     const formatted = Math.abs(amount).toLocaleString("es-ES", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
-
     return `${amount < 0 ? "-" : ""}${symbol} ${formatted}`;
 };
 
@@ -92,23 +106,24 @@ export const usePlanningSummaryStripModel = (): PlanningSummaryStripModel => {
         [items, prev.year, prev.month, initialBalance, savingsGoal, referenceYear, referenceMonth]
     );
 
-    const incomeTrendRaw = calcTrend(summary.totalIncome, prevSummary.totalIncome);
-    const expenseTrendRaw = calcTrend(summary.totalExpense, prevSummary.totalExpense);
-    const balanceTrendRaw = calcTrend(summary.netBalance, prevSummary.netBalance);
+    const incomeTrendValue = calcTrend(summary.totalIncome, prevSummary.totalIncome);
+    const balanceTrendValue = calcTrend(summary.netBalance, prevSummary.netBalance);
+    const savingsTrendValue = calcTrend(summary.accumulatedSavings, prevSummary.accumulatedSavings);
 
     return {
         totalIncome: formatCurrency(summary.totalIncome, currencySymbol),
         totalExpense: formatCurrency(summary.totalExpense, currencySymbol),
         netBalance: formatCurrency(summary.netBalance, currencySymbol),
         accumulatedSavings: formatCurrency(summary.accumulatedSavings, currencySymbol),
-        incomeTrend: incomeTrendRaw
-            ? { ...incomeTrendRaw, positive: summary.totalIncome >= prevSummary.totalIncome }
+        incomeTrend: incomeTrendValue
+            ? { value: incomeTrendValue, positive: summary.totalIncome >= prevSummary.totalIncome }
             : undefined,
-        expenseTrend: expenseTrendRaw
-            ? { ...expenseTrendRaw, positive: summary.totalExpense <= prevSummary.totalExpense }
+        expenseTrend: calcExpenseTrend(summary.totalExpense, prevSummary.totalExpense),
+        balanceTrend: balanceTrendValue
+            ? { value: balanceTrendValue, positive: summary.netBalance >= prevSummary.netBalance }
             : undefined,
-        balanceTrend: balanceTrendRaw
-            ? { ...balanceTrendRaw, positive: summary.netBalance >= prevSummary.netBalance }
+        savingsTrend: savingsTrendValue
+            ? { value: savingsTrendValue, positive: summary.accumulatedSavings >= prevSummary.accumulatedSavings }
             : undefined,
     };
 };

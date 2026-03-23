@@ -32,8 +32,8 @@ export const SummaryCard = ({ label, value, icon, description, trend, isBaseline
             {trend && (
                 <div className="flex items-center gap-1 flex-wrap text-sm">
                     <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${trend.positive
-                            ? "bg-badge-success-bg text-badge-success-fg"
-                            : "bg-badge-danger-bg text-badge-danger-fg"
+                        ? "bg-badge-success-bg text-badge-success-fg"
+                        : "bg-badge-danger-bg text-badge-danger-fg"
                         }`}>
                         {trend.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                         {trend.value}
