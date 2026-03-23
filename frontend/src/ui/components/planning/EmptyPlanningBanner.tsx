@@ -14,10 +14,10 @@ export const EmptyPlanningBanner = ({ onAddItem }: EmptyPlanningBannerProps) => 
 
             <div className="flex flex-col gap-1">
                 <h3 className="text-base font-bold text-foreground">
-                    Este escenario está vacío
+                    Empieza definiendo tus ingresos y gastos
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                    Añade tus ingresos y gastos recurrentes para empezar a proyectar tu cashflow y anticipar problemas.
+                    En cuanto añadas tus primeros ítems, verás tu cashflow proyectado mes a mes.
                 </p>
             </div>
 
