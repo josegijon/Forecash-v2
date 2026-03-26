@@ -12,11 +12,14 @@ export const CategoryLegend = ({ data }: CategoryLegendProps) => {
 
     if (data.length === 0) return null;
 
+    const sorted = [...data].sort((a, b) => b.value - a.value);
+
     return (
         <div className="flex flex-col mt-4">
-            {data.map((cat, i) => {
-                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(2) : "0";
-                const isLast = i === data.length - 1;
+            {sorted.map((cat, i) => {
+                const percent = total > 0 ? ((cat.value / total) * 100).toFixed(1) : "0";
+                const isTop = i === 0;
+                const isLast = i === sorted.length - 1;
 
                 return (
                     <div
@@ -28,16 +31,16 @@ export const CategoryLegend = ({ data }: CategoryLegendProps) => {
                                 className="w-3 h-3 rounded-full shrink-0"
                                 style={{ backgroundColor: cat.fill }}
                             />
-                            <span className="text-sm text-muted-foreground">
+                            <span className={`text-sm ${isTop ? "font-medium text-foreground" : "text-muted-foreground"}`}>
                                 {cat.name}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm font-medium">
+                            <span className={`text-sm ${isTop ? "font-semibold" : "font-medium"}`}>
                                 {currencySymbol}{fmt(cat.value)}
                             </span>
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-sm text-muted-foreground w-12 text-right">
                                 {percent}%
                             </span>
                         </div>

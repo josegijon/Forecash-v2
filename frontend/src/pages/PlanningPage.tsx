@@ -62,6 +62,7 @@ export const PlanningPage = () => {
                             type="expense"
                             year={activeYear}
                             month={activeMonth}
+                            onAddItem={() => setIsAddModalOpen(true)}
                         />
                         <GoalsProgressCard title="Progreso de objetivos" />
                         <BalanceGoalsCard title="Saldo y metas" />
