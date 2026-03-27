@@ -49,13 +49,13 @@ export const PlanningPage = () => {
             )}
 
             {!isEmpty && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 overflow-hidden">
                     {/* ── Mobile: columna única en el orden de consulta
                         Desktop: dos columnas 7/5 ── */}
 
                     {/* Columna derecha en desktop — en móvil aparece primero
                         porque está antes en el DOM que CashflowItemList */}
-                    <div className="lg:col-span-5 lg:order-2 space-y-6">
+                    <div className="md:col-span-5 md:order-2 space-y-6">
                         <MonthlyRatiosCard title="Ratios Mensuales" />
                         <CategoryExpensesCard
                             title="Gastos por categoría"
@@ -65,11 +65,11 @@ export const PlanningPage = () => {
                             onAddItem={() => setIsAddModalOpen(true)}
                         />
                         <GoalsProgressCard title="Progreso de objetivos" />
-                        <BalanceGoalsCard title="Saldo y metas" />
+                        <BalanceGoalsCard />
                     </div>
 
                     {/* Columna izquierda en desktop — en móvil aparece después */}
-                    <div className="lg:col-span-7 lg:order-1">
+                    <div className="md:col-span-7 md:order-1">
                         <CashflowItemList
                             onAddItem={() => setIsAddModalOpen(true)}
                         />
