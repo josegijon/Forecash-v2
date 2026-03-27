@@ -38,7 +38,7 @@ export const BalanceGoalsCard = () => {
     }, []);
 
     return (
-        <div className="flex flex-col gap-6 rounded-3xl border-0 bg-transparent p-0 text-card-foreground shadow-none">
+        <div className="flex flex-col gap-5 rounded-3xl border-0 bg-transparent p-0 text-card-foreground shadow-none">
 
             {/* Header */}
             <div className="flex items-center justify-between">

@@ -37,9 +37,9 @@ export const CategoryBreakdownBar = ({ data, onAddItem }: CategoryBreakdownBarPr
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-3">
             {/* Total */}
-            <div className="flex items-baseline justify-between mb-3">
+            <div className="flex items-baseline justify-between">
                 <span className="text-xs font-bold text-foreground uppercase tracking-widest">
                     Total
                 </span>
@@ -49,7 +49,7 @@ export const CategoryBreakdownBar = ({ data, onAddItem }: CategoryBreakdownBarPr
             </div>
 
             {/* Segmented bar */}
-            <div className="h-2 w-full flex rounded-full overflow-hidden mb-6">
+            <div className="h-2 w-full flex rounded-full overflow-hidden">
                 {data.map((cat, i) => {
                     const pct = total > 0 ? (cat.value / total) * 100 : 0;
                     return (

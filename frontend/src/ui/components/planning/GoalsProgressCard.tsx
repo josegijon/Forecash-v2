@@ -50,7 +50,7 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
     const hasBothGoals = hasSavingsGoal && hasCapitalGoal;
 
     return (
-        <div className="flex flex-col gap-4 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+        <div className="flex flex-col gap-5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
             <div className="flex items-center">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     {title}

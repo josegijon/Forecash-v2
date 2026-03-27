@@ -14,14 +14,16 @@ export const CategoryExpensesCard = ({ title, type, year, month, onAddItem }: Ca
     const data = useCategoryChartData(type, year, month);
 
     return (
-        <div>
-            <div className="flex items-center gap-2 mb-6">
+        <div className="flex flex-col gap-5">
+            <div className="flex items-center gap-2">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     {title}
                 </h3>
             </div>
-            <CategoryBreakdownBar data={data} onAddItem={onAddItem} />
-            <CategoryLegend data={data} />
+            <div className="flex flex-col gap-3">
+                <CategoryBreakdownBar data={data} onAddItem={onAddItem} />
+                <CategoryLegend data={data} />
+            </div>
         </div>
     );
 };

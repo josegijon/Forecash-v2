@@ -26,8 +26,8 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
     const hasNoIncome = summary.totalIncome === 0;
 
     return (
-        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
-            <div className="flex items-center gap-2 mb-6">
+        <div className="flex flex-col gap-5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+            <div className="flex items-center gap-2">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     {title}
                 </h3>

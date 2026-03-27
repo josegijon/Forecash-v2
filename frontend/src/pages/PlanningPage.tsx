@@ -55,7 +55,7 @@ export const PlanningPage = () => {
 
                     {/* Columna derecha en desktop — en móvil aparece primero
                         porque está antes en el DOM que CashflowItemList */}
-                    <div className="md:col-span-5 md:order-2 space-y-6">
+                    <div className="md:col-span-5 md:order-2 flex flex-col gap-6">
                         <MonthlyRatiosCard title="Ratios Mensuales" />
                         <CategoryExpensesCard
                             title="Gastos por categoría"
@@ -69,7 +69,7 @@ export const PlanningPage = () => {
                     </div>
 
                     {/* Columna izquierda en desktop — en móvil aparece después */}
-                    <div className="md:col-span-7 md:order-1">
+                    <div className="md:col-span-7 md:order-1  gap-6">
                         <CashflowItemList
                             onAddItem={() => setIsAddModalOpen(true)}
                         />

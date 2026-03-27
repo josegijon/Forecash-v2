@@ -15,7 +15,7 @@ export const CategoryLegend = ({ data }: CategoryLegendProps) => {
     const sorted = [...data].sort((a, b) => b.value - a.value);
 
     return (
-        <div className="flex flex-col mt-4">
+        <div className="flex flex-col">
             {sorted.map((cat, i) => {
                 const percent = total > 0 ? ((cat.value / total) * 100).toFixed(1) : "0";
                 const isTop = i === 0;
