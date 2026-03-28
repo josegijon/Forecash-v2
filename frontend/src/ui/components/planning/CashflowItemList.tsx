@@ -2,9 +2,10 @@ import { LayoutList, Plus, Search, TrendingDown, TrendingUp } from "lucide-react
 
 import { CashflowItem } from "./CashflowItem";
 import { useCashflowItemListModel } from "./useCashflowItemListModel";
-import { AddCashflowModal, type CashflowEditData } from "@/ui/components/modals/AddCashflowModal";
+import { AddCashflowModal } from "@/ui/components/modals/AddCashflowModal";
 import { useCashflowStore, useScenarioStore } from "@/store";
 import { useState } from "react";
+import type { CashflowEditData } from "../modals/useCashflowForm";
 
 interface CashflowItemListProps {
     onAddItem?: () => void;
