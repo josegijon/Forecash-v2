@@ -27,7 +27,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
     } = useCashflowItemListModel();
 
     return (
-        <div className="flex flex-col gap-1.5 sm:rounded-3xl border-0 text-card-foreground bg-transparent shadow-none sm:px-6 overflow-hidden">
+        <div className="flex flex-col gap-1.5 xl:rounded-3xl border-0 text-card-foreground bg-transparent shadow-none xl:px-6 overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between pb-6">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
@@ -43,13 +43,14 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
             </div>
 
             {/* Filters + Search */}
-            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                 {/* Filter tabs */}
                 <div className="flex bg-muted/60 rounded-xl p-1 gap-0.5">
                     {filterTabs.map(({ key, label }) => (
                         <button
                             key={key}
                             onClick={() => setFilter(key)}
+                            aria-pressed={filter === key}
                             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${filter === key
                                 ? "bg-card text-foreground shadow-sm"
                                 : "text-muted-foreground hover:text-foreground"
@@ -82,6 +83,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                     <input
                         type="text"
                         placeholder="Buscar..."
+                        aria-label="Buscar partidas"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-9 pr-4 py-2 bg-muted/40 rounded-xl border border-border/60 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
@@ -107,22 +109,24 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
             ">
                 <table className="w-full caption-bottom text-sm border-separate border-spacing-y-3">
                     {/* Cabecera — solo visible en sm+ */}
-                    <thead className="hidden sm:table-header-group">
+                    <thead className="hidden xl:table-header-group">
                         <tr className="text-sm bg-card">
-                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-l-3xl">
+                            <th id="col-name" className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-l-xl">
                                 Nombre
                             </th>
-                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            <th id="col-cat" className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Categoría
                             </th>
-                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            <th id="col-freq" className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Frecuencia
                             </th>
-                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            <th id="col-amount" className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                                 Cantidad
                             </th>
-                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground rounded-r-3xl">
-                                Eliminar
+                            <th id="col-action" className="h-12 px-4 align-middle rounded-r-xl">
+                                <span className="sr-only">
+                                    Acciones
+                                </span>
                             </th>
                         </tr>
                     </thead>
@@ -143,7 +147,7 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="text-center py-8 text-slate-400">
+                                <td colSpan={5} className="text-center py-8 text-muted-foreground">
                                     <p className="text-sm font-medium">No se encontraron ítems</p>
                                     <p className="text-xs mt-1">
                                         Intenta con otro filtro o término de búsqueda
