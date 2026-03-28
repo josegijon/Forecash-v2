@@ -19,10 +19,10 @@ export const TypeToggle = ({ type, onChange }: TypeToggleProps) => (
                     type="button"
                     onClick={() => onChange(t)}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all cursor-pointer border ${isActive
-                            ? isIncome
-                                ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
-                                : "bg-rose-50 text-rose-600 border-rose-200 ring-2 ring-rose-500/20"
-                            : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
+                        ? isIncome
+                            ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
+                            : "bg-rose-50 text-rose-600 border-rose-200 ring-2 ring-rose-500/20"
+                        : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
                         }`}
                 >
                     {isIncome ? <PlusCircle size={16} /> : <MinusCircle size={16} />}

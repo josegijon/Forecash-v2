@@ -21,10 +21,17 @@ export interface CashflowFormData {
     endsInMonths?: number;
 }
 
+// Datos iniciales para modo edición — incluye id del item existente
+export interface CashflowEditData extends CashflowFormData {
+    id: string;
+}
+
 interface AddCashflowModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (data: CashflowFormData) => void;
+    onUpdate?: (data: CashflowEditData) => void;
+    initialData?: CashflowEditData;
 }
 
 interface FormErrors {
@@ -33,30 +40,49 @@ interface FormErrors {
     category?: string;
 }
 
-export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalProps) => {
-    const [type, setType] = useState<CashflowType>("income");
-    const [concept, setConcept] = useState("");
-    const [amount, setAmount] = useState("");
-    const [frequency, setFrequency] = useState<Frequency>("monthly");
-    const [startsInMonths, setStartsInMonths] = useState(0);
-    const [hasEndDate, setHasEndDate] = useState(false);
-    const [endsInMonths, setEndsInMonths] = useState(12);
+export const AddCashflowModal = ({ isOpen, onClose, onSave, onUpdate, initialData }: AddCashflowModalProps) => {
+    const isEditMode = !!initialData;
+
+    const [type, setType] = useState<CashflowType>(initialData?.type ?? "income");
+    const [concept, setConcept] = useState(initialData?.concept ?? "");
+    const [amount, setAmount] = useState(initialData?.amount?.toString() ?? "");
+    const [frequency, setFrequency] = useState<Frequency>(initialData?.frequency ?? "monthly");
+    const [startsInMonths, setStartsInMonths] = useState(initialData?.startsInMonths ?? 0);
+    const [hasEndDate, setHasEndDate] = useState(initialData?.endsInMonths !== undefined);
+    const [endsInMonths, setEndsInMonths] = useState(initialData?.endsInMonths ?? 12);
     const [errors, setErrors] = useState<FormErrors>({});
     const [touched, setTouched] = useState<Partial<Record<keyof FormErrors, boolean>>>({});
 
     const [categoryOpen, setCategoryOpen] = useState(false);
     const categoryRef = useRef<HTMLDivElement>(null);
+    const originalFrequency = useRef<Frequency | null>(null);
 
     const currencySymbol = useCurrencySymbol();
     const categories = useCategoryStore((s) => s.categories);
     const filteredCategories = categories.filter((c) => c.type === type);
 
-    const [categoryId, setCategoryId] = useState<string>(filteredCategories[0]?.id ?? "");
+    const [categoryId, setCategoryId] = useState<string>(initialData?.categoryId ?? filteredCategories[0]?.id ?? "");
     const effectiveCategoryId = filteredCategories.some((c) => c.id === categoryId)
         ? categoryId
         : (filteredCategories[0]?.id ?? "");
 
     const selectedCategoryName = filteredCategories.find((c) => c.id === effectiveCategoryId)?.name;
+
+    // Sincronizar estado cuando initialData cambia (distintos items)
+    useEffect(() => {
+        if (initialData) {
+            setType(initialData.type);
+            setConcept(initialData.concept);
+            setAmount(initialData.amount.toString());
+            setFrequency(initialData.frequency);
+            setHasEndDate(initialData.endsInMonths !== undefined);
+            setEndsInMonths(initialData.endsInMonths ?? 12);
+            setCategoryId(initialData.categoryId);
+            setErrors({});
+            setTouched({});
+            originalFrequency.current = initialData.frequency; // ← añadir esta línea
+        }
+    }, [initialData?.id]);
 
     // Cierra el dropdown al hacer clic fuera
     useEffect(() => {
@@ -72,6 +98,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
     }, [categoryOpen]);
 
     const handleTypeChange = (newType: CashflowType) => {
+        if (isEditMode) return; // tipo no editable en modo edición
         setType(newType);
         const firstOfNewType = categories.find((c) => c.type === newType)?.id ?? "";
         setCategoryId(firstOfNewType);
@@ -84,13 +111,16 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
         if (newFreq === "once") setHasEndDate(false);
     };
 
+    const handleStartsChange = (value: number) => {
+        setStartsInMonths(value);
+    };
+
     const resetForm = () => {
         setType("income");
         setConcept("");
         setAmount("");
         setCategoryId(categories.find((c) => c.type === "income")?.id ?? "");
         setFrequency("monthly");
-        setStartsInMonths(0);
         setHasEndDate(false);
         setEndsInMonths(12);
         setErrors({});
@@ -122,16 +152,11 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
         setErrors((prev) => ({ ...prev, [field]: error }));
     };
 
-    const handleStartsChange = (val: number) => {
-        setStartsInMonths(val);
-        if (hasEndDate && endsInMonths <= val) setEndsInMonths(val + 1);
-    };
-
     const handleSave = () => {
         const parsed = parseFloat(amount);
         if (!concept.trim() || !amount || isNaN(parsed) || parsed <= 0) return;
 
-        onSave({
+        const formData: CashflowFormData = {
             type,
             concept: concept.trim(),
             amount: parsed,
@@ -139,7 +164,13 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
             frequency,
             startsInMonths,
             ...(hasEndDate && { endsInMonths }),
-        });
+        };
+
+        if (isEditMode && initialData && onUpdate) {
+            onUpdate({ ...formData, id: initialData.id });
+        } else {
+            onSave(formData);
+        }
 
         handleClose();
     };
@@ -169,7 +200,9 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-2 shrink-0">
-                    <h2 className="text-lg font-medium leading-none tracking-tight">Nuevo Ítem</h2>
+                    <h2 className="text-lg font-medium leading-none tracking-tight">
+                        {isEditMode ? "Editar ítem" : "Nuevo ítem"}
+                    </h2>
                     <button
                         onClick={handleClose}
                         className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-1 rounded-xl hover:bg-muted"
@@ -181,6 +214,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                 {/* Body */}
                 <div className="px-6 py-4 space-y-5 overflow-y-auto">
 
+                    {/* En modo edición el tipo es de solo lectura */}
                     <TypeToggle
                         type={type}
                         onChange={handleTypeChange}
@@ -238,13 +272,12 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                         )}
                     </div>
 
-                    {/* Categoría — listbox custom */}
+                    {/* Categoría */}
                     <div>
                         <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
                             Categoría
                         </label>
                         <div ref={categoryRef} className="relative">
-                            {/* Trigger */}
                             <button
                                 type="button"
                                 onClick={() => setCategoryOpen((prev) => !prev)}
@@ -264,7 +297,6 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                                 />
                             </button>
 
-                            {/* Dropdown */}
                             {categoryOpen && (
                                 <ul
                                     role="listbox"
@@ -302,24 +334,32 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                         )}
                     </div>
 
-                    <FrequencySelector
-                        value={frequency}
-                        onChange={handleFrequencyChange}
-                    />
-
-                    <StartInput
-                        value={startsInMonths}
-                        onChange={handleStartsChange}
-                    />
-
-                    {frequency !== "once" && (
-                        <EndDateSection
-                            hasEndDate={hasEndDate}
-                            endsInMonths={endsInMonths}
-                            startsInMonths={startsInMonths}
-                            onToggle={setHasEndDate}
-                            onChange={setEndsInMonths}
+                    <div className="flex flex-col gap-2">
+                        <FrequencySelector
+                            value={frequency}
+                            onChange={handleFrequencyChange}
                         />
+                        {isEditMode && originalFrequency.current && frequency !== originalFrequency.current && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1.5">
+                                <span>⚠</span>
+                                Cambiar la frecuencia afectará a la proyección completa de este ítem.
+                            </p>
+                        )}
+                    </div>
+
+                    {!isEditMode && (
+                        <>
+                            <StartInput value={startsInMonths} onChange={handleStartsChange} />
+                            {frequency !== "once" && (
+                                <EndDateSection
+                                    hasEndDate={hasEndDate}
+                                    endsInMonths={endsInMonths}
+                                    startsInMonths={startsInMonths}
+                                    onToggle={setHasEndDate}
+                                    onChange={setEndsInMonths}
+                                />
+                            )}
+                        </>
                     )}
                 </div>
 
@@ -341,7 +381,7 @@ export const AddCashflowModal = ({ isOpen, onClose, onSave }: AddCashflowModalPr
                             }`}
                     >
                         <Save size={16} />
-                        Guardar
+                        {isEditMode ? "Guardar cambios" : "Guardar"}
                     </button>
                 </div>
 
