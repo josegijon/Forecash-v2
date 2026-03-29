@@ -1,4 +1,6 @@
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
+import { CheckCircle, XCircle, X } from "lucide-react";
 
 import { prepareSnapshotImport } from "@core";
 
@@ -21,6 +23,81 @@ import type { ValidatedSnapshot } from "@/schemas/snapshot.schema";
 import { exportToCsv, exportToJson, ImportError, importFromJson } from "@/services/export-import";
 import { useFileInput } from "@/ui/hooks/useFileInput";
 
+// ── Toast ─────────────────────────────────────────────────────────────────────
+
+type ToastVariant = "success" | "error";
+
+interface Toast {
+    id: number;
+    variant: ToastVariant;
+    title: string;
+    description?: string;
+}
+
+let toastCounter = 0;
+
+const useToast = () => {
+    const [toasts, setToasts] = useState<Toast[]>([]);
+
+    const push = useCallback((variant: ToastVariant, title: string, description?: string) => {
+        const id = ++toastCounter;
+        setToasts((prev) => [...prev, { id, variant, title, description }]);
+        setTimeout(() => {
+            setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 5000);
+    }, []);
+
+    const dismiss = useCallback((id: number) => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, []);
+
+    return { toasts, push, dismiss };
+};
+
+// ── ToastStack ────────────────────────────────────────────────────────────────
+
+const ToastStack = ({
+    toasts,
+    onDismiss,
+}: {
+    toasts: Toast[];
+    onDismiss: (id: number) => void;
+}) => (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 items-end pointer-events-none">
+        {toasts.map((t) => (
+            <div
+                key={t.id}
+                className={`flex items-start gap-3 px-4 py-3 rounded-2xl shadow-lg border pointer-events-auto animate-in fade-in slide-in-from-bottom-2 max-w-sm ${t.variant === "success"
+                        ? "bg-card border-border"
+                        : "bg-card border-destructive/30"
+                    }`}
+            >
+                {t.variant === "success" ? (
+                    <CheckCircle size={18} className="text-success shrink-0 mt-0.5" />
+                ) : (
+                    <XCircle size={18} className="text-destructive shrink-0 mt-0.5" />
+                )}
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{t.title}</p>
+                    {t.description && (
+                        <p className="text-xs text-muted-foreground mt-0.5">{t.description}</p>
+                    )}
+                </div>
+                <button
+                    type="button"
+                    onClick={() => onDismiss(t.id)}
+                    className="text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer"
+                    aria-label="Cerrar notificación"
+                >
+                    <X size={14} />
+                </button>
+            </div>
+        ))}
+    </div>
+);
+
+// ── DataPage ──────────────────────────────────────────────────────────────────
+
 export const DataPage = () => {
     const { addCategory, removeCategory, renameCategory, resetCategories } = useCategoryStore();
     const expenseCategories = useExpenseCategories();
@@ -28,8 +105,10 @@ export const DataPage = () => {
 
     const { currency, setCurrency } = useSettingsStore();
     const navigate = useNavigate();
+    const { toasts, push, dismiss } = useToast();
 
-    const { scenarios, addScenario, renameScenario, removeScenario, setActiveScenario } = useScenarioStore();
+    const { scenarios, addScenario, renameScenario, removeScenario, setActiveScenario } =
+        useScenarioStore();
     const { items } = useCashflowStore();
 
     const handleDeleteScenario = (id: string) => {
@@ -41,35 +120,53 @@ export const DataPage = () => {
     };
 
     const handleExportJson = () => {
-        const scenarioIds = new Set(scenarios.map((s) => s.id));
-        const filteredItems = Object.fromEntries(
-            Object.entries(items).filter(([key]) => scenarioIds.has(key))
-        );
-        const snapshot = {
-            version: 1 as const,
-            exportedAt: new Date().toISOString(),
-            scenarios,
-            items: filteredItems,
-            categories: useCategoryStore.getState().categories,
-            currency,
-        } satisfies ValidatedSnapshot;
-        exportToJson(snapshot);
+        try {
+            const scenarioIds = new Set(scenarios.map((s) => s.id));
+            const filteredItems = Object.fromEntries(
+                Object.entries(items).filter(([key]) => scenarioIds.has(key))
+            );
+            const snapshot = {
+                version: 1 as const,
+                exportedAt: new Date().toISOString(),
+                scenarios,
+                items: filteredItems,
+                categories: useCategoryStore.getState().categories,
+                currency,
+            } satisfies ValidatedSnapshot;
+            exportToJson(snapshot);
+            push("success", "Exportación completada", "El archivo JSON se ha descargado.");
+        } catch {
+            push("error", "Error al exportar", "No se pudo generar el archivo JSON.");
+        }
     };
 
     const handleExportCsv = () => {
-        exportToCsv(scenarios, items);
+        try {
+            exportToCsv(scenarios, items);
+            push("success", "Exportación completada", "El archivo CSV se ha descargado.");
+        } catch {
+            push("error", "Error al exportar", "No se pudo generar el archivo CSV.");
+        }
     };
 
     const handleImportFile = async (file: File) => {
         try {
             const snapshot = await importFromJson(file);
             applySnapshot(snapshot);
+            push(
+                "success",
+                "Importación completada",
+                "Los escenarios se han añadido sin borrar los existentes.",
+            );
         } catch (err) {
             if (err instanceof ImportError) {
-                const detail = err.details ? `\n\nDetalle: ${err.details}` : "";
-                alert(`${err.message}${detail}`);
+                push(
+                    "error",
+                    err.message,
+                    err.details ?? "Comprueba que el archivo es un JSON exportado desde Forecash.",
+                );
             } else {
-                alert("Error inesperado al importar.");
+                push("error", "Error inesperado al importar", "El archivo puede estar corrupto.");
             }
         }
     };
@@ -117,62 +214,66 @@ export const DataPage = () => {
     };
 
     return (
-        <div className="flex-1 overflow-y-auto scrollbar-hide">
-            <div className="max-w-5xl mx-auto space-y-8">
+        <>
+            <div className="flex-1 overflow-y-auto scrollbar-hide">
+                <div className="max-w-5xl mx-auto space-y-8">
 
-                {/* ── Sección: Categorías ── */}
-                <section className="space-y-4">
-                    <SectionLabel label="Categorías" />
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <CategoryManagerCard
-                            type="expense"
-                            categories={expenseCategories}
-                            onAdd={(name) => addCategory(name, "expense")}
-                            onRename={renameCategory}
-                            onDelete={removeCategory}
+                    {/* ── Sección: Categorías ── */}
+                    <section className="space-y-4">
+                        <SectionLabel label="Categorías" />
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <CategoryManagerCard
+                                type="expense"
+                                categories={expenseCategories}
+                                onAdd={(name) => addCategory(name, "expense")}
+                                onRename={renameCategory}
+                                onDelete={removeCategory}
+                            />
+                            <CategoryManagerCard
+                                type="income"
+                                categories={incomeCategories}
+                                onAdd={(name) => addCategory(name, "income")}
+                                onRename={renameCategory}
+                                onDelete={removeCategory}
+                            />
+                        </div>
+                    </section>
+
+                    {/* ── Sección: Preferencias ── */}
+                    <section className="space-y-4">
+                        <SectionLabel label="Preferencias" />
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <CurrencySelector
+                                value={currency}
+                                onChange={(code) => setCurrency(code as Currency)}
+                            />
+                            <ImportExportCard
+                                onExportJson={handleExportJson}
+                                onExportCsv={handleExportCsv}
+                                onImport={handleImport}
+                            />
+                        </div>
+                    </section>
+
+                    {/* ── Sección: Escenarios ── */}
+                    <section className="space-y-4">
+                        <SectionLabel label="Escenarios" />
+                        <ScenarioManagerCard
+                            scenarios={scenarios}
+                            onAdd={addScenario}
+                            onRename={renameScenario}
+                            onDelete={handleDeleteScenario}
                         />
-                        <CategoryManagerCard
-                            type="income"
-                            categories={incomeCategories}
-                            onAdd={(name) => addCategory(name, "income")}
-                            onRename={renameCategory}
-                            onDelete={removeCategory}
-                        />
-                    </div>
-                </section>
+                    </section>
 
-                {/* ── Sección: Preferencias ── */}
-                <section className="space-y-4">
-                    <SectionLabel label="Preferencias" />
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <CurrencySelector
-                            value={currency}
-                            onChange={(code) => setCurrency(code as Currency)}
-                        />
-                        <ImportExportCard
-                            onExportJson={handleExportJson}
-                            onExportCsv={handleExportCsv}
-                            onImport={handleImport}
-                        />
-                    </div>
-                </section>
+                    {/* ── Zona peligrosa ── */}
+                    <DangerZoneCard onClearAllData={handleClearAllData} />
 
-                {/* ── Sección: Escenarios ── */}
-                <section className="space-y-4">
-                    <SectionLabel label="Escenarios" />
-                    <ScenarioManagerCard
-                        scenarios={scenarios}
-                        onAdd={addScenario}
-                        onRename={renameScenario}
-                        onDelete={handleDeleteScenario}
-                    />
-                </section>
-
-                {/* ── Zona peligrosa ── */}
-                <DangerZoneCard onClearAllData={handleClearAllData} />
-
+                </div>
             </div>
-        </div>
+
+            <ToastStack toasts={toasts} onDismiss={dismiss} />
+        </>
     );
 };
 

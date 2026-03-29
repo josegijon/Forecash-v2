@@ -1,4 +1,4 @@
-import { Download, Upload, FileJson, FileSpreadsheet } from "lucide-react";
+import { ArrowLeftRight, FileJson, FileSpreadsheet, Upload, ChevronRight } from "lucide-react";
 import { ActionButton } from "./ActionButton";
 
 interface Props {
@@ -12,7 +12,7 @@ export const ImportExportCard = ({ onExportJson, onExportCsv, onImport }: Props)
         {/* Header */}
         <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-primary/10">
-                <Download size={15} className="text-primary" />
+                <ArrowLeftRight size={15} className="text-primary" />
             </div>
             <h3 className="text-lg font-medium leading-none tracking-tight">
                 Importar / Exportar
@@ -24,6 +24,7 @@ export const ImportExportCard = ({ onExportJson, onExportCsv, onImport }: Props)
         </p>
 
         <div className="space-y-2.5">
+            {/* Exportar JSON */}
             <ActionButton
                 onClick={onExportJson}
                 iconBg="bg-primary/10"
@@ -31,9 +32,15 @@ export const ImportExportCard = ({ onExportJson, onExportCsv, onImport }: Props)
                 icon={<FileJson size={18} className="text-primary" />}
                 label="Exportar como JSON"
                 sublabel="Todos los escenarios y configuración"
-                actionIcon={<Download size={16} className="text-muted-foreground group-hover:text-primary transition-colors" />}
+                actionIcon={
+                    <ChevronRight
+                        size={16}
+                        className="text-muted-foreground group-hover:text-primary transition-colors shrink-0"
+                    />
+                }
             />
 
+            {/* Exportar CSV */}
             <ActionButton
                 onClick={onExportCsv}
                 iconBg="bg-success/10"
@@ -41,18 +48,33 @@ export const ImportExportCard = ({ onExportJson, onExportCsv, onImport }: Props)
                 icon={<FileSpreadsheet size={18} className="text-success" />}
                 label="Exportar como CSV"
                 sublabel="Compatible con hojas de cálculo"
-                actionIcon={<Download size={16} className="text-muted-foreground group-hover:text-success transition-colors" />}
+                actionIcon={
+                    <ChevronRight
+                        size={16}
+                        className="text-muted-foreground group-hover:text-success transition-colors shrink-0"
+                    />
+                }
             />
 
+            {/* Separador visual antes de importar */}
+            <div className="flex items-center gap-2 pt-1">
+                <div className="flex-1 h-px bg-border" />
+            </div>
+
+            {/* Importar */}
             <ActionButton
                 onClick={onImport}
                 iconBg="bg-muted"
                 iconBorder="border-border"
                 icon={<Upload size={18} className="text-muted-foreground" />}
                 label="Importar datos"
-                sublabel="Arrastra o selecciona un archivo JSON"
-                actionIcon={<Upload size={16} className="text-muted-foreground group-hover:text-primary transition-colors" />}
-                variant="dashed"
+                sublabel="Selecciona un archivo .json guardado previamente"
+                actionIcon={
+                    <ChevronRight
+                        size={16}
+                        className="text-muted-foreground group-hover:text-primary transition-colors shrink-0"
+                    />
+                }
             />
         </div>
     </div>
