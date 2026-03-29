@@ -68,8 +68,8 @@ const ToastStack = ({
             <div
                 key={t.id}
                 className={`flex items-start gap-3 px-4 py-3 rounded-2xl shadow-lg border pointer-events-auto animate-in fade-in slide-in-from-bottom-2 max-w-sm ${t.variant === "success"
-                        ? "bg-card border-border"
-                        : "bg-card border-destructive/30"
+                    ? "bg-card border-border"
+                    : "bg-card border-destructive/30"
                     }`}
             >
                 {t.variant === "success" ? (
@@ -213,6 +213,8 @@ export const DataPage = () => {
         window.location.reload();
     };
 
+    const hasData = scenarios.length > 0 || Object.values(items).some((arr) => arr.length > 0);
+
     return (
         <>
             <div className="flex-1 overflow-y-auto scrollbar-hide">
@@ -267,7 +269,7 @@ export const DataPage = () => {
                     </section>
 
                     {/* ── Zona peligrosa ── */}
-                    <DangerZoneCard onClearAllData={handleClearAllData} />
+                    <DangerZoneCard onClearAllData={handleClearAllData} hasData={hasData} />
 
                 </div>
             </div>
