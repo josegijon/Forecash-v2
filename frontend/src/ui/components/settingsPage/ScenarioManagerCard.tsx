@@ -125,7 +125,7 @@ export const ScenarioManagerCard = ({
 
             {/* Input nuevo escenario */}
             <div className="flex flex-col gap-1.5">
-                <label htmlFor="new-scenario-name" className="sr-only">
+                <label htmlFor="new-scenario-name">
                     Nombre del nuevo escenario
                 </label>
                 <div className="flex items-center gap-2">
@@ -149,8 +149,8 @@ export const ScenarioManagerCard = ({
                         onClick={handleAdd}
                         disabled={!newName.trim()}
                         className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium bg-primary text-primary-foreground h-10 px-4 py-2 transition-colors ${newName.trim()
-                                ? "hover:bg-primary/90 cursor-pointer"
-                                : "opacity-40 cursor-not-allowed"
+                            ? "hover:bg-primary/90 cursor-pointer"
+                            : "opacity-40 cursor-not-allowed"
                             }`}
                     >
                         <PlusCircle size={16} />
