@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createPlannedCashflowItem } from "@core";
 
 import { useCashflowStore, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
-import { AddCashflowModal, type CashflowFormData } from "@/ui/components/modals/AddCashflowModal";
+import { AddCashflowModal } from "@/ui/components/modals/AddCashflowModal";
 import { BalanceGoalsCard } from "@/ui/components/planning/BalanceGoalsCard";
 import { CashflowItemList } from "@/ui/components/planning/CashflowItemList";
 import { CategoryExpensesCard } from "@/ui/components/planning/CategoryExpensesCard";
@@ -12,6 +12,7 @@ import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummarySt
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator";
 import { GoalsProgressCard } from "@/ui/components/planning/GoalsProgressCard";
 import { EmptyPlanningBanner } from "@/ui/components/planning/EmptyPlanningBanner";
+import type { CashflowFormData } from "@/ui/components/modals/useCashflowForm";
 
 export const PlanningPage = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
