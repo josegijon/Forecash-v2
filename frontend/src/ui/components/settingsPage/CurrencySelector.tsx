@@ -3,10 +3,10 @@ import { ChevronDown, Check } from "lucide-react";
 import { currencySymbols } from "@/store";
 import type { Currency } from "@/store";
 
-const CURRENCIES: { code: Currency; symbol: string; name: string }[] = [
-    { code: "EUR", symbol: "€", name: "Euro" },
-    { code: "USD", symbol: "$", name: "Dólar estadounidense" },
-    { code: "GBP", symbol: "£", name: "Libra esterlina" },
+const CURRENCIES: { code: Currency; symbol: string; name: string; region: string }[] = [
+    { code: "EUR", symbol: "€", name: "Euro", region: "Zona Euro" },
+    { code: "USD", symbol: "$", name: "Dólar", region: "Estados Unidos" },
+    { code: "GBP", symbol: "£", name: "Libra", region: "Reino Unido" },
 ];
 
 interface Props {
@@ -78,44 +78,53 @@ export const CurrencySelector = ({ value, onChange }: Props) => {
     };
 
     return (
-        <div className="flex flex-col gap-5 p-6 rounded-3xl bg-card text-card-foreground shadow-sm border border-border/40">
-
+        <div className="flex flex-col p-5 rounded-2xl bg-card text-card-foreground shadow-sm border border-border/40 gap-4">
             {/* Header */}
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                Moneda
-            </p>
+            <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                    Moneda
+                </span>
+                <span className="text-xs text-muted-foreground font-medium">
+                    {current.region}
+                </span>
+            </div>
 
+            {/* Current currency display */}
+            <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 border border-primary/15 shrink-0">
+                    <span className="text-2xl font-bold text-primary leading-none tabular-nums">
+                        {currencySymbols[current.code]}
+                    </span>
+                </div>
+                <div>
+                    <p className="text-xl font-bold text-foreground leading-tight tracking-tight">
+                        {current.code}
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-tight mt-0.5">
+                        {current.name}
+                    </p>
+                </div>
+            </div>
+
+            {/* Selector */}
             <div ref={containerRef} className="relative">
-                {/* Trigger */}
                 <button
                     type="button"
                     onClick={() => setOpen((o) => !o)}
                     aria-haspopup="listbox"
                     aria-expanded={open}
                     aria-controls="currency-listbox"
-                    className="w-full flex items-center justify-between gap-4 px-4 py-3.5 rounded-2xl border border-border bg-background hover:border-primary/40 hover:bg-muted/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 cursor-pointer"
+                    className="w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border border-border bg-background hover:border-primary/30 hover:bg-muted/40 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 cursor-pointer"
                 >
-                    <div className="flex items-center gap-4">
-                        <span className="text-2xl font-bold text-primary leading-none w-7 text-center tabular-nums">
-                            {currencySymbols[current.code]}
-                        </span>
-                        <span className="h-6 w-px bg-border" aria-hidden="true" />
-                        <div className="text-left">
-                            <p className="text-sm font-semibold text-foreground leading-tight">
-                                {current.code}
-                            </p>
-                            <p className="text-xs text-muted-foreground leading-tight mt-0.5">
-                                {current.name}
-                            </p>
-                        </div>
-                    </div>
+                    <span className="text-sm font-medium text-foreground">
+                        Cambiar moneda
+                    </span>
                     <ChevronDown
-                        size={16}
+                        size={15}
                         className={`text-muted-foreground transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
                     />
                 </button>
 
-                {/* Dropdown */}
                 {open && (
                     <ul
                         ref={listRef}
@@ -128,7 +137,7 @@ export const CurrencySelector = ({ value, onChange }: Props) => {
                                 ? `currency-option-${CURRENCIES[focusedIndex]?.code}`
                                 : undefined
                         }
-                        className="absolute top-full left-0 mt-2 w-full z-50 bg-card border border-border rounded-2xl shadow-lg overflow-hidden focus:outline-none"
+                        className="absolute top-full left-0 mt-1.5 w-full z-50 bg-card border border-border rounded-xl shadow-lg overflow-hidden focus:outline-none"
                     >
                         {CURRENCIES.map((c, index) => {
                             const isSelected = c.code === value;
@@ -141,23 +150,21 @@ export const CurrencySelector = ({ value, onChange }: Props) => {
                                     aria-selected={isSelected}
                                     onClick={() => { onChange(c.code); setOpen(false); }}
                                     onMouseEnter={() => setFocusedIndex(index)}
-                                    className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors duration-150 ${isFocused ? "bg-muted/60" : ""
-                                        } ${isSelected && !isFocused ? "bg-primary/5" : ""}`}
+                                    className={`flex items-center gap-3 px-3.5 py-2.5 cursor-pointer transition-colors duration-100 ${isFocused ? "bg-muted/60" : ""} ${isSelected && !isFocused ? "bg-primary/5" : ""}`}
                                 >
-                                    <span className={`text-xl font-bold leading-none w-7 text-center tabular-nums ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                                    <span className={`text-base font-bold w-5 text-center tabular-nums shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
                                         {c.symbol}
                                     </span>
-                                    <span className="h-5 w-px bg-border shrink-0" aria-hidden="true" />
-                                    <div className="flex-1 text-left">
-                                        <p className={`text-sm font-semibold leading-tight ${isSelected ? "text-primary" : "text-foreground"}`}>
+                                    <div className="flex-1 min-w-0">
+                                        <span className={`text-sm font-semibold ${isSelected ? "text-primary" : "text-foreground"}`}>
                                             {c.code}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground leading-tight mt-0.5">
+                                        </span>
+                                        <span className="text-xs text-muted-foreground ml-2">
                                             {c.name}
-                                        </p>
+                                        </span>
                                     </div>
                                     {isSelected && (
-                                        <Check size={14} className="text-primary shrink-0" />
+                                        <Check size={13} className="text-primary shrink-0" />
                                     )}
                                 </li>
                             );
