@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createPlannedCashflowItem } from "@core";
 
 import { useCashflowStore, usePlanningStore, useScenarioItems, useScenarioStore } from "@/store";
-import { AddCashflowModal, type CashflowFormData } from "@/ui/components/modals/AddCashflowModal";
+import { AddCashflowModal } from "@/ui/components/modals/AddCashflowModal";
 import { BalanceGoalsCard } from "@/ui/components/planning/BalanceGoalsCard";
 import { CashflowItemList } from "@/ui/components/planning/CashflowItemList";
 import { CategoryExpensesCard } from "@/ui/components/planning/CategoryExpensesCard";
@@ -12,6 +12,7 @@ import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummarySt
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator";
 import { GoalsProgressCard } from "@/ui/components/planning/GoalsProgressCard";
 import { EmptyPlanningBanner } from "@/ui/components/planning/EmptyPlanningBanner";
+import type { CashflowFormData } from "@/ui/components/modals/useCashflowForm";
 
 export const PlanningPage = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -49,26 +50,27 @@ export const PlanningPage = () => {
             )}
 
             {!isEmpty && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 overflow-hidden">
                     {/* ── Mobile: columna única en el orden de consulta
                         Desktop: dos columnas 7/5 ── */}
 
                     {/* Columna derecha en desktop — en móvil aparece primero
                         porque está antes en el DOM que CashflowItemList */}
-                    <div className="lg:col-span-5 lg:order-2 space-y-6">
+                    <div className="md:col-span-5 md:order-2 flex flex-col gap-6">
                         <MonthlyRatiosCard title="Ratios Mensuales" />
                         <CategoryExpensesCard
                             title="Gastos por categoría"
                             type="expense"
                             year={activeYear}
                             month={activeMonth}
+                            onAddItem={() => setIsAddModalOpen(true)}
                         />
                         <GoalsProgressCard title="Progreso de objetivos" />
-                        <BalanceGoalsCard title="Saldo y metas" />
+                        <BalanceGoalsCard />
                     </div>
 
                     {/* Columna izquierda en desktop — en móvil aparece después */}
-                    <div className="lg:col-span-7 lg:order-1">
+                    <div className="md:col-span-7 md:order-1  gap-6">
                         <CashflowItemList
                             onAddItem={() => setIsAddModalOpen(true)}
                         />

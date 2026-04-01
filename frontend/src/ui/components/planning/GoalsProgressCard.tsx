@@ -47,10 +47,11 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
 
     const hasSavingsGoal = savingsGoal > 0;
     const hasCapitalGoal = capitalGoal > 0;
+    const hasBothGoals = hasSavingsGoal && hasCapitalGoal;
 
     return (
-        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
-            <div className="flex items-center gap-2 mb-6">
+        <div className="flex flex-col gap-5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+            <div className="flex items-center">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     {title}
                 </h3>
@@ -58,13 +59,17 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
 
             {!hasSavingsGoal && !hasCapitalGoal ? (
                 <div className="flex flex-col items-center gap-2 py-4 text-center">
-                    <Target size={22} className="text-muted-foreground/40" />
+                    <Target size={22} className="text-muted-foreground/60" aria-hidden="true" />
                     <p className="text-sm text-muted-foreground">
-                        Define un objetivo de ahorro o de capital para ver tu progreso.
+                        Define un objetivo de ahorro o de capital en la sección <span className="font-medium text-foreground">Saldo y metas</span> para ver tu progreso aquí.
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 items-baseline gap-4">
+                <div
+                    className={hasBothGoals
+                        ? "grid grid-cols-2 items-baseline gap-6"
+                        : "grid grid-cols-1 items-baseline gap-6"}
+                >
                     {hasSavingsGoal && (
                         <GoalProgressRing
                             progress={savingsProgress}
@@ -76,16 +81,14 @@ export const GoalsProgressCard = ({ title }: GoalsProgressCardProps) => {
                         />
                     )}
                     {hasCapitalGoal && (
-                        <div className={hasSavingsGoal ? "pt-4" : ""}>
-                            <GoalProgressRing
-                                progress={capitalProgress}
-                                savedAmount={summary.accumulatedSavings}
-                                goalAmount={capitalGoal}
-                                label="Objetivo de capital"
-                                color="violet"
-                                isDeficit={summary.accumulatedSavings < 0}
-                            />
-                        </div>
+                        <GoalProgressRing
+                            progress={capitalProgress}
+                            savedAmount={summary.accumulatedSavings}
+                            goalAmount={capitalGoal}
+                            label="Objetivo de capital"
+                            color="violet"
+                            isDeficit={summary.accumulatedSavings < 0}
+                        />
                     )}
                 </div>
             )}

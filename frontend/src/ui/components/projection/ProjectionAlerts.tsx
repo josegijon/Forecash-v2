@@ -42,10 +42,10 @@ export const ProjectionAlerts = ({ alerts }: ProjectionAlertsProps) => {
                         key={alert.message}
                         className={`flex items-center gap-3 rounded-2xl border p-4 ${container}`}
                     >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${icon}`}>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${icon}`}>
                             <IconComponent size={16} className={iconColor} />
                         </div>
-                        <p className={`text-sm font-medium leading-snug ${text}`}>
+                        <p className={`text-sm font-medium leading-snug pt-1 ${text}`}>
                             {alert.message}
                         </p>
                     </div>

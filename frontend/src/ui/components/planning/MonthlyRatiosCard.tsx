@@ -26,8 +26,8 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
     const hasNoIncome = summary.totalIncome === 0;
 
     return (
-        <div className="rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
-            <div className="flex items-center gap-2 mb-6">
+        <div className="flex flex-col gap-5 rounded-3xl border-0 text-card-foreground bg-transparent shadow-none p-0">
+            <div className="flex items-center gap-2">
                 <h3 className="text-lg font-medium leading-none tracking-tight">
                     {title}
                 </h3>
@@ -52,16 +52,16 @@ export const MonthlyRatiosCard = ({ title }: MonthlyRatiosCardProps) => {
                     <RatioProgressBar
                         label="Tasa de ahorro"
                         percentage={summary.savingsRate * 100}
-                        color={getSavingsRateColor(summary.savingsRate)}
+                        color={getSavingsRateColor(summary.savingsRate * 100)}
                         icon={<PiggyBank size={16} />}
-                        bgClass="bg-emerald-100"
+                        iconBgClass="bg-badge-success-bg text-badge-success-fg"
                     />
                     <RatioProgressBar
                         label="Tasa de gasto"
                         percentage={summary.expenseRate * 100}
-                        color={getExpenseRateColor(summary.expenseRate)}
+                        color={getExpenseRateColor(summary.expenseRate * 100)}
                         icon={<TrendingDown size={16} />}
-                        bgClass="bg-rose-100"
+                        iconBgClass="bg-badge-danger-bg text-badge-danger-fg"
                     />
                 </div>
             )}

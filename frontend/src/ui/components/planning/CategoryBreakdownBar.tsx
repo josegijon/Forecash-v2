@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCurrencySymbol } from "@/store";
 import { fmt } from "@/ui/utils/format";
 import type { CategoryChartData } from "@/ui/utils/buildCategoryChartData";
 
-interface CategoryDonutChartProps {
+interface CategoryBreakdownBarProps {
     data: CategoryChartData[];
+    onAddItem: () => void;
 }
 
-export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
+export const CategoryBreakdownBar = ({ data, onAddItem }: CategoryBreakdownBarProps) => {
     const total = data.reduce((sum, cat) => sum + cat.value, 0);
     const currencySymbol = useCurrencySymbol();
     const [animated, setAnimated] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setAnimated(false);
@@ -21,17 +21,26 @@ export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
 
     if (data.length === 0) {
         return (
-            <div className="text-sm text-muted-foreground text-center py-6">
-                No hay datos para este mes
+            <div className="flex flex-col items-center gap-2 py-6 text-center">
+                <span className="text-sm text-muted-foreground">
+                    Sin gastos registrados este mes
+                </span>
+                <button
+                    type="button"
+                    onClick={onAddItem}
+                    className="inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background transition-colors cursor-pointer"
+                >
+                    Añadir gastos
+                </button>
             </div>
         );
     }
 
     return (
-        <div ref={ref} className="w-full">
+        <div className="w-full flex flex-col gap-3">
             {/* Total */}
-            <div className="flex items-baseline justify-between mb-3">
-                <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">
+            <div className="flex items-baseline justify-between">
+                <span className="text-xs font-bold text-foreground uppercase tracking-widest">
                     Total
                 </span>
                 <span className="text-sm font-medium text-foreground">
@@ -40,7 +49,7 @@ export const CategoryDonutChart = ({ data }: CategoryDonutChartProps) => {
             </div>
 
             {/* Segmented bar */}
-            <div className="h-2 w-full flex rounded-full overflow-hidden mb-6">
+            <div className="h-2 w-full flex rounded-full overflow-hidden">
                 {data.map((cat, i) => {
                     const pct = total > 0 ? (cat.value / total) * 100 : 0;
                     return (

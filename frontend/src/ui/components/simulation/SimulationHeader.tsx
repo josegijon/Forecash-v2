@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Copy, ChevronDown } from "lucide-react";
 
-import { useScenarioStore } from "@/store";
+import { useScenarioStore, useActiveScenario } from "@/store";
 import { ProjectionHorizonSelect } from "../controls/ProjectionHorizonSelect";
 
 interface SimulationHeaderProps {
@@ -12,57 +12,90 @@ interface SimulationHeaderProps {
     onCopyScenario: () => void;
 }
 
-export const SimulationHeader = ({ selectedScenario, selectedMonths, onScenarioChange, onMonthsChange, onCopyScenario }: SimulationHeaderProps) => {
+export const SimulationHeader = ({
+    selectedScenario,
+    selectedMonths,
+    onScenarioChange,
+    onMonthsChange,
+    onCopyScenario,
+}: SimulationHeaderProps) => {
     const [open, setOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
 
     const scenarios = useScenarioStore((s) => s.scenarios);
-    const selectedScenarioName =
-        scenarios.find((s) => s.id === selectedScenario)?.name ?? "Escenario";
+    const activeScenario = useActiveScenario();
+
+    const activeScenarioName = activeScenario?.name ?? "Escenario base";
+    const selectedScenarioName = scenarios.find((s) => s.id === selectedScenario)?.name ?? "Escenario";
+
+    // Cierra el dropdown al hacer clic fuera
+    useEffect(() => {
+        if (!open) return;
+        const handleClickOutside = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [open]);
 
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <button
-                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer"
                 onClick={onCopyScenario}
+                className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-bold transition-colors cursor-pointer"
             >
                 <Copy size={16} strokeWidth={2.5} />
-                Crear copia del escenario
+                Simular cambio
             </button>
 
             <div className="flex flex-wrap items-center gap-3">
-                <div className="relative">
-                    <button
-                        onClick={() => setOpen(!open)}
-                        onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
-                        className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mr-2 cursor-pointer appearance-none transition-all ease-in-out duration-300"
-                    >
-                        <span className="capitalize">
-                            {selectedScenarioName}
+
+                {/* Selector de escenario de comparación */}
+                <div ref={ref} className="relative">
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">
+                            {activeScenarioName} vs
                         </span>
-                        <ChevronDown size={14} className="transition-transform group-focus-within:rotate-180" />
-                    </button>
+                        <button
+                            onClick={() => setOpen((prev) => !prev)}
+                            onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+                            className="inline-flex items-center gap-2 py-2 px-3 rounded-xl border border-border/60 bg-card text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                            aria-haspopup="listbox"
+                            aria-expanded={open}
+                        >
+                            <span>{selectedScenarioName}</span>
+                            <ChevronDown
+                                size={14}
+                                className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                            />
+                        </button>
+                    </div>
 
                     {open && (
-                        <>
-                            <div
-                                className="fixed inset-0 z-40"
-                                onClick={() => setOpen(false)}
-                            />
-                            <div className="absolute left-0 mt-2  shadow-lg z-50 flex flex-col cursor-pointer appearance-none border border-input bg-background  hover:text-accent-foreground rounded-3xl text-sm font-medium overflow-hidden">
-                                {scenarios.map((s) => (
-                                    <button
+                        <ul
+                            role="listbox"
+                            className="absolute right-0 mt-1.5 z-50 min-w-full border border-border bg-card rounded-xl shadow-lg overflow-hidden py-1"
+                        >
+                            {scenarios.map((s) => {
+                                const isSelected = s.id === selectedScenario;
+                                return (
+                                    <li
                                         key={s.id}
-                                        onClick={() => {
-                                            onScenarioChange(s.id);
-                                            setOpen(false);
-                                        }}
-                                        className={`w-full text-left px-4 py-2 text-sm hover:bg-accent cursor-pointer`}
+                                        role="option"
+                                        aria-selected={isSelected}
+                                        onClick={() => { onScenarioChange(s.id); setOpen(false); }}
+                                        className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${isSelected
+                                            ? "text-primary font-semibold bg-primary/5"
+                                            : "text-foreground font-medium hover:bg-muted"
+                                            }`}
                                     >
-                                        vs {s.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </>
+                                        {s.name}
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     )}
                 </div>
 

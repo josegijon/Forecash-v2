@@ -4,7 +4,7 @@ interface GoalProgressRingProps {
     progress: number;
     savedAmount: number;
     goalAmount: number;
-    label?: string;
+    label: string;
     sublabel?: string;
     color?: "primary" | "violet" | "red";
     isDeficit?: boolean;
@@ -27,7 +27,7 @@ export const GoalProgressRing = ({
     progress,
     savedAmount,
     goalAmount,
-    label = "Progreso Meta",
+    label,
     sublabel,
     color = "primary",
     isDeficit = false,
@@ -36,10 +36,12 @@ export const GoalProgressRing = ({
     const currencySymbol = useCurrencySymbol();
 
     return (
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-2">
             <div className="relative w-32.5 h-32.5">
                 <svg
                     viewBox="0 0 64 64"
+                    role="img"
+                    aria-label={`${label}: ${progress}% completado`}
                     className="absolute top-0 left-0 w-32.5 h-32.5"
                 >
                     <circle
@@ -69,7 +71,7 @@ export const GoalProgressRing = ({
                         strokeLinecap="round"
                     />
                 </svg>
-                <div className={`absolute inset-0 flex items-center justify-center text-2xl font-medium ${isDeficit ? "text-red-500" : "text-foreground"}`}>
+                <div className={`absolute inset-0 flex items-center justify-center font-semibold ${isDeficit ? "text-red-500" : "text-foreground"}`}>
                     {progress}%
                 </div>
             </div>

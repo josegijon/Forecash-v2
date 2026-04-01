@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { TIME_OPTIONS } from "../../utils/projectionConstants";
-
 
 interface ProjectionHorizonSelectProps {
     selectedMonths: number;
@@ -10,44 +9,53 @@ interface ProjectionHorizonSelectProps {
 
 export const ProjectionHorizonSelect = ({ selectedMonths, onMonthsChange }: ProjectionHorizonSelectProps) => {
     const [open, setOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!open) return;
+        const handleClickOutside = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [open]);
 
     return (
-        <div className="relative">
+        <div ref={ref} className="relative">
             <button
-                onClick={() => setOpen(!open)}
+                onClick={() => setOpen((prev) => !prev)}
                 onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
-                className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mr-2 cursor-pointer appearance-none transition-all ease-in-out duration-300"
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border/60 bg-card text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
             >
-                <span className="capitalize">
+                <span>
                     {TIME_OPTIONS.find((o) => o.value === selectedMonths)?.label ?? `${selectedMonths} meses`}
                 </span>
                 <ChevronDown
                     size={14}
-                    className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                    className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
                 />
             </button>
 
             {open && (
-                <>
-                    <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setOpen(false)}
-                    />
-                    <div className="absolute left-0 mt-2 shadow-lg z-50 flex flex-col cursor-pointer appearance-none border border-input bg-background  hover:text-accent-foreground rounded-3xl text-sm font-medium overflow-hidden">
-                        {TIME_OPTIONS.map((opt) => (
+                <div className="absolute left-0 mt-1.5 z-50 min-w-full border border-border bg-card rounded-xl shadow-lg overflow-hidden py-1">
+                    {TIME_OPTIONS.map((opt) => {
+                        const isSelected = opt.value === selectedMonths;
+                        return (
                             <button
                                 key={opt.value}
-                                onClick={() => {
-                                    onMonthsChange(opt.value);
-                                    setOpen(false);
-                                }}
-                                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent cursor-pointer`}
+                                onClick={() => { onMonthsChange(opt.value); setOpen(false); }}
+                                className={`w-full text-left px-4 py-2.5 text-sm transition-colors cursor-pointer ${isSelected
+                                    ? "text-primary font-semibold bg-primary/10"
+                                    : "text-foreground font-medium hover:bg-muted"
+                                    }`}
                             >
                                 {opt.label}
                             </button>
-                        ))}
-                    </div>
-                </>
+                        );
+                    })}
+                </div>
             )}
         </div>
     );

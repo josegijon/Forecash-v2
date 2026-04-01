@@ -4,30 +4,41 @@ import { ConfirmResetModal } from "@/ui/components/modals/ConfirmResetModal";
 
 interface Props {
     onClearAllData: () => void;
+    hasData: boolean;
 }
 
-export const DangerZoneCard = ({ onClearAllData }: Props) => {
+export const DangerZoneCard = ({ onClearAllData, hasData }: Props) => {
     const [modalOpen, setModalOpen] = useState(false);
 
     return (
-        <>
-            <div className="rounded-2xl border border-destructive/20 bg-badge-danger-bg/40 p-6">
-                <div className="flex items-center gap-2.5 mb-3">
-                    <AlertTriangle size={20} className="text-chart-line" />
-                    <h3 className="font-bold text-badge-danger-fg">Zona Peligrosa</h3>
+        <section aria-label="Zona peligrosa">
+            <div className="rounded-2xl border border-destructive/20 bg-badge-danger-bg/30 overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-3.5 border-b border-destructive/15">
+                    <div className="flex items-center gap-2">
+                        <AlertTriangle size={14} className="text-badge-danger-fg" />
+                        <span className="text-xs font-bold text-badge-danger-fg uppercase tracking-widest">
+                            Zona peligrosa
+                        </span>
+                    </div>
                 </div>
 
-                <p className="text-sm text-badge-danger-fg/70 mb-5">
-                    Estas acciones son irreversibles. Úsalas con precaución.
-                </p>
+                <div className="flex items-center justify-between gap-4 px-5 py-4">
+                    <p className="text-sm text-badge-danger-fg/70 leading-relaxed">
+                        Elimina todos los escenarios, ítems, categorías y preferencias.{" "}
+                        <span className="font-semibold text-badge-danger-fg/90">Esta acción no se puede deshacer.</span>
+                    </p>
 
-                <div className="flex flex-wrap gap-3">
                     <button
                         onClick={() => setModalOpen(true)}
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-chart-line bg-card hover:bg-destructive/5 px-4 py-2.5 rounded-xl border border-destructive/20 hover:border-destructive/40 transition-all cursor-pointer"
+                        disabled={!hasData}
+                        aria-haspopup="dialog"
+                        className={`inline-flex items-center gap-2 text-sm font-semibold text-badge-danger-fg bg-badge-danger-bg px-4 py-2 rounded-xl border border-destructive/25 whitespace-nowrap shrink-0 transition-all ${hasData
+                            ? "hover:bg-destructive/15 hover:border-destructive/40 cursor-pointer"
+                            : "opacity-40 cursor-not-allowed"
+                            }`}
                     >
-                        <Trash2 size={16} />
-                        Borrar todos los datos
+                        <Trash2 size={14} />
+                        Borrar todo
                     </button>
                 </div>
             </div>
@@ -37,6 +48,6 @@ export const DangerZoneCard = ({ onClearAllData }: Props) => {
                 onClose={() => setModalOpen(false)}
                 onConfirm={onClearAllData}
             />
-        </>
+        </section>
     );
 };

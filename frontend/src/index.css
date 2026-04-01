@@ -78,6 +78,8 @@
     --color-badge-warning-fg: hsl(var(--badge-warning-fg));
     --color-badge-neutral-bg: hsl(var(--badge-neutral-bg));
     --color-badge-neutral-fg: hsl(var(--badge-neutral-fg));
+    --color-badge-success-bg: hsl(var(--badge-success-bg));
+    --color-badge-success-fg: hsl(var(--badge-success-fg));
 }
 
 @layer base {
@@ -114,6 +116,8 @@
         --badge-warning-fg: 32 81% 29%;
         --badge-neutral-bg: 220 14% 88%;
         --badge-neutral-fg: 220 9% 35%;
+        --badge-success-bg: 142 60% 88%;
+        --badge-success-fg: 142 76% 25%;
     }
 
     .dark {
@@ -149,5 +153,11 @@
         --badge-warning-fg: 38 90% 68%;
         --badge-neutral-bg: 220 14% 18%;
         --badge-neutral-fg: 220 9% 65%;
+        --badge-success-bg: 142 50% 18%;
+        --badge-success-fg: 142 70% 62%;
     }
+}
+
+.recharts-wrapper * {
+    outline: none;
 }
