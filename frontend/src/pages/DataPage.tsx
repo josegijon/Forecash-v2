@@ -73,9 +73,9 @@ const ToastStack = ({
                     }`}
             >
                 {t.variant === "success" ? (
-                    <CheckCircle size={18} className="text-success shrink-0 mt-0.5" />
+                    <CheckCircle size={16} className="text-success shrink-0 mt-0.5" />
                 ) : (
-                    <XCircle size={18} className="text-destructive shrink-0 mt-0.5" />
+                    <XCircle size={16} className="text-destructive shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground">{t.title}</p>
@@ -160,11 +160,7 @@ export const DataPage = () => {
             );
         } catch (err) {
             if (err instanceof ImportError) {
-                push(
-                    "error",
-                    err.message,
-                    err.details ?? "Comprueba que el archivo es un JSON exportado desde Forecash.",
-                );
+                push("error", err.message, err.details ?? "Comprueba que el archivo es un JSON exportado desde Forecash.");
             } else {
                 push("error", "Error inesperado al importar", "El archivo puede estar corrupto.");
             }
@@ -218,12 +214,14 @@ export const DataPage = () => {
     return (
         <>
             <div className="flex-1 overflow-y-auto scrollbar-hide">
-                <div className="max-w-5xl mx-auto space-y-8">
+                <div className="max-w-5xl mx-auto space-y-10 pb-10">
 
-                    {/* ── Sección: Categorías ── */}
-                    <section className="space-y-4">
-                        <SectionLabel label="Categorías" />
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* ── Categorías ── */}
+                    <PageSection
+                        label="Categorías"
+                        description="Organiza tus ingresos y gastos"
+                    >
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <CategoryManagerCard
                                 type="expense"
                                 categories={expenseCategories}
@@ -239,12 +237,14 @@ export const DataPage = () => {
                                 onDelete={removeCategory}
                             />
                         </div>
-                    </section>
+                    </PageSection>
 
-                    {/* ── Sección: Preferencias ── */}
-                    <section className="space-y-4">
-                        <SectionLabel label="Preferencias" />
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* ── Preferencias ── */}
+                    <PageSection
+                        label="Preferencias"
+                        description="Configuración general de la aplicación"
+                    >
+                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-4">
                             <CurrencySelector
                                 value={currency}
                                 onChange={(code) => setCurrency(code as Currency)}
@@ -255,18 +255,20 @@ export const DataPage = () => {
                                 onImport={handleImport}
                             />
                         </div>
-                    </section>
+                    </PageSection>
 
-                    {/* ── Sección: Escenarios ── */}
-                    <section className="space-y-4">
-                        <SectionLabel label="Escenarios" />
+                    {/* ── Escenarios ── */}
+                    <PageSection
+                        label="Escenarios"
+                        description="Gestiona tus escenarios financieros"
+                    >
                         <ScenarioManagerCard
                             scenarios={scenarios}
                             onAdd={addScenario}
                             onRename={renameScenario}
                             onDelete={handleDeleteScenario}
                         />
-                    </section>
+                    </PageSection>
 
                     {/* ── Zona peligrosa ── */}
                     <DangerZoneCard onClearAllData={handleClearAllData} hasData={hasData} />
@@ -279,12 +281,26 @@ export const DataPage = () => {
     );
 };
 
-// ── Helper: etiqueta de sección ───────────────────────────────────────────────
-const SectionLabel = ({ label }: { label: string }) => (
-    <div className="flex items-center gap-3">
-        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            {label}
-        </span>
-        <div className="flex-1 h-px bg-border" />
-    </div>
+// ── PageSection ───────────────────────────────────────────────────────────────
+const PageSection = ({
+    label,
+    description,
+    children,
+}: {
+    label: string;
+    description?: string;
+    children: React.ReactNode;
+}) => (
+    <section className="space-y-4">
+        <div className="flex items-baseline gap-3">
+            <div>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">{label}</h2>
+                {description && (
+                    <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+                )}
+            </div>
+            <div className="flex-1 h-px bg-border mt-1" />
+        </div>
+        {children}
+    </section>
 );
