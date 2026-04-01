@@ -1,5 +1,4 @@
 import { ArrowLeftRight, FileJson, FileSpreadsheet, Upload, ChevronRight } from "lucide-react";
-import { ActionButton } from "./ActionButton";
 
 interface Props {
     onExportJson: () => void;
@@ -7,74 +6,90 @@ interface Props {
     onImport: () => void;
 }
 
+interface ActionRowProps {
+    onClick: () => void;
+    icon: React.ReactNode;
+    iconBg: string;
+    iconColor: string;
+    label: string;
+    sublabel: string;
+}
+
+const ActionRow = ({ onClick, icon, iconBg, iconColor, label, sublabel }: ActionRowProps) => (
+    <button
+        type="button"
+        onClick={onClick}
+        className="w-full group flex items-center gap-3.5 px-3.5 py-3 rounded-xl border border-border/60 bg-background hover:bg-muted/40 hover:border-border transition-all duration-150 cursor-pointer"
+    >
+        <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
+            <span className={iconColor}>{icon}</span>
+        </span>
+        <div className="flex-1 text-left min-w-0">
+            <p className="text-sm font-semibold text-foreground leading-tight">{label}</p>
+            <p className="text-xs text-muted-foreground leading-tight mt-0.5 truncate">{sublabel}</p>
+        </div>
+        <ChevronRight
+            size={14}
+            className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0"
+        />
+    </button>
+);
+
 export const ImportExportCard = ({ onExportJson, onExportCsv, onImport }: Props) => (
-    <div className="flex flex-col gap-6 p-6 rounded-3xl border-0 bg-card text-card-foreground shadow-sm">
+    <div className="flex flex-col p-5 rounded-2xl bg-card text-card-foreground shadow-sm border border-border/40 gap-4">
         {/* Header */}
-        <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-primary/10">
-                <ArrowLeftRight size={15} className="text-primary" />
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10">
+                    <ArrowLeftRight size={13} className="text-primary" />
+                </div>
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                    Datos
+                </span>
             </div>
-            <h3 className="text-lg font-medium leading-none tracking-tight">
-                Importar / Exportar
-            </h3>
+            <span className="text-xs text-muted-foreground">
+                Exportar · Importar
+            </span>
         </div>
 
-        <p className="text-sm text-muted-foreground -mt-2">
-            Exporta tus datos para respaldo o importa una configuración previa.
-        </p>
-
-        <div className="space-y-2.5">
-            {/* Exportar JSON */}
-            <ActionButton
+        {/* Exportar */}
+        <div className="space-y-1.5">
+            <p className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wider px-0.5 mb-2">
+                Exportar
+            </p>
+            <ActionRow
                 onClick={onExportJson}
+                icon={<FileJson size={15} />}
                 iconBg="bg-primary/10"
-                iconBorder="border-primary/20"
-                icon={<FileJson size={18} className="text-primary" />}
-                label="Exportar como JSON"
-                sublabel="Todos los escenarios y configuración"
-                actionIcon={
-                    <ChevronRight
-                        size={16}
-                        className="text-muted-foreground group-hover:text-primary transition-colors shrink-0"
-                    />
-                }
+                iconColor="text-primary"
+                label="JSON — Copia de seguridad"
+                sublabel="Escenarios, ítems y configuración completa"
             />
-
-            {/* Exportar CSV */}
-            <ActionButton
+            <ActionRow
                 onClick={onExportCsv}
+                icon={<FileSpreadsheet size={15} />}
                 iconBg="bg-success/10"
-                iconBorder="border-success/20"
-                icon={<FileSpreadsheet size={18} className="text-success" />}
-                label="Exportar como CSV"
-                sublabel="Compatible con hojas de cálculo"
-                actionIcon={
-                    <ChevronRight
-                        size={16}
-                        className="text-muted-foreground group-hover:text-success transition-colors shrink-0"
-                    />
-                }
+                iconColor="text-success"
+                label="CSV — Hoja de cálculo"
+                sublabel="Compatible con Excel, Sheets y Numbers"
             />
+        </div>
 
-            {/* Separador visual antes de importar */}
-            <div className="flex items-center gap-2 pt-1">
-                <div className="flex-1 h-px bg-border" />
-            </div>
+        {/* Divider */}
+        <div className="h-px bg-border/60" />
 
-            {/* Importar */}
-            <ActionButton
+        {/* Importar */}
+        <div className="space-y-1.5">
+            <p className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wider px-0.5 mb-2">
+                Importar
+            </p>
+            <ActionRow
                 onClick={onImport}
+                icon={<Upload size={15} />}
                 iconBg="bg-muted"
-                iconBorder="border-border"
-                icon={<Upload size={18} className="text-muted-foreground" />}
-                label="Importar datos"
-                sublabel="Selecciona un archivo .json guardado previamente"
-                actionIcon={
-                    <ChevronRight
-                        size={16}
-                        className="text-muted-foreground group-hover:text-primary transition-colors shrink-0"
-                    />
-                }
+                iconColor="text-muted-foreground"
+                label="Importar desde JSON"
+                sublabel="Se añadirá sin reemplazar los datos actuales"
             />
         </div>
     </div>
