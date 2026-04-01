@@ -23,7 +23,6 @@ export const ScenarioManagerCard = ({
     const [newName, setNewName] = useState("");
     const [inputError, setInputError] = useState<string | null>(null);
 
-    // ── Añadir ────────────────────────────────────────────────────────────────
     const handleAdd = () => {
         const trimmed = newName.trim();
         if (!trimmed) {
@@ -42,7 +41,6 @@ export const ScenarioManagerCard = ({
         setInputError(null);
     };
 
-    // ── Editar ────────────────────────────────────────────────────────────────
     const startEditing = (s: Scenario) => {
         setPendingDeleteId(null);
         setEditingId(s.id);
@@ -59,7 +57,6 @@ export const ScenarioManagerCard = ({
 
     const cancelEdit = () => setEditingId(null);
 
-    // ── Borrar (inline confirm — igual que CategoryManagerCard) ───────────────
     const handleDeleteRequest = (id: string) => {
         setEditingId(null);
         setPendingDeleteId(id);
@@ -74,94 +71,90 @@ export const ScenarioManagerCard = ({
     const handleDeleteCancel = () => setPendingDeleteId(null);
 
     return (
-        <div className="flex flex-col gap-6 p-6 rounded-3xl border-0 bg-card text-card-foreground shadow-sm">
+        <div className="rounded-2xl border border-border/40 bg-card text-card-foreground shadow-sm overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-primary/10">
-                        <Layers size={15} className="text-primary" />
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-primary/10">
+                        <Layers size={13} className="text-primary" />
                     </div>
-                    <h3 className="text-lg font-medium leading-none tracking-tight">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                         Escenarios
-                    </h3>
+                    </span>
                 </div>
                 <span
                     aria-label={`${scenarios.length} escenarios`}
-                    className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary"
+                    className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary tabular-nums"
                 >
                     {scenarios.length}
                 </span>
             </div>
 
-            <p className="text-sm text-muted-foreground -mt-2">
-                Crea diferentes escenarios financieros para comparar estrategias. Cada
-                escenario tiene sus propios ítems de efectivo independientes.
-            </p>
-
             {/* Grid de escenarios */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {scenarios.map((scenario) => (
-                    <ScenarioCard
-                        key={scenario.id}
-                        scenario={scenario}
-                        isEditing={editingId === scenario.id}
-                        editingName={editingName}
-                        menuOpen={menuId === scenario.id}
-                        canDelete={scenarios.length > 1}
-                        isPendingDelete={pendingDeleteId === scenario.id}
-                        onEditingNameChange={setEditingName}
-                        onConfirmEdit={confirmEdit}
-                        onCancelEdit={cancelEdit}
-                        onMenuToggle={() =>
-                            setMenuId(menuId === scenario.id ? null : scenario.id)
-                        }
-                        onStartEdit={() => startEditing(scenario)}
-                        onDeleteRequest={() => handleDeleteRequest(scenario.id)}
-                        onConfirmDelete={handleDeleteConfirm}
-                        onCancelDelete={handleDeleteCancel}
-                    />
-                ))}
+            <div className="p-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    {scenarios.map((scenario) => (
+                        <ScenarioCard
+                            key={scenario.id}
+                            scenario={scenario}
+                            isEditing={editingId === scenario.id}
+                            editingName={editingName}
+                            menuOpen={menuId === scenario.id}
+                            canDelete={scenarios.length > 1}
+                            isPendingDelete={pendingDeleteId === scenario.id}
+                            onEditingNameChange={setEditingName}
+                            onConfirmEdit={confirmEdit}
+                            onCancelEdit={cancelEdit}
+                            onMenuToggle={() =>
+                                setMenuId(menuId === scenario.id ? null : scenario.id)
+                            }
+                            onStartEdit={() => startEditing(scenario)}
+                            onDeleteRequest={() => handleDeleteRequest(scenario.id)}
+                            onConfirmDelete={handleDeleteConfirm}
+                            onCancelDelete={handleDeleteCancel}
+                        />
+                    ))}
+                </div>
             </div>
 
             {/* Input nuevo escenario */}
-            <div className="flex flex-col gap-1.5">
-                <label htmlFor="new-scenario-name">
-                    Nombre del nuevo escenario
-                </label>
-                <div className="flex items-center gap-2">
-                    <input
-                        id="new-scenario-name"
-                        value={newName}
-                        onChange={(e) => {
-                            setNewName(e.target.value);
-                            setInputError(null);
-                        }}
-                        onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                        placeholder="Nombre del nuevo escenario…"
-                        className={`flex h-10 w-full rounded-3xl border bg-background px-3 py-2 text-sm
-                            ring-offset-background placeholder:text-muted-foreground
-                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1
-                            disabled:cursor-not-allowed disabled:opacity-50 text-foreground
-                            transition-colors
-                            ${inputError ? "border-destructive/60" : "border-primary/20"}`}
-                    />
-                    <button
-                        onClick={handleAdd}
-                        disabled={!newName.trim()}
-                        className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium bg-primary text-primary-foreground h-10 px-4 py-2 transition-colors ${newName.trim()
-                            ? "hover:bg-primary/90 cursor-pointer"
-                            : "opacity-40 cursor-not-allowed"
-                            }`}
-                    >
-                        <PlusCircle size={16} />
-                        Nuevo
-                    </button>
+            <div className="px-4 pb-4">
+                <div className="flex flex-col gap-1.5">
+                    <label htmlFor="new-scenario-name">
+                        Nombre del nuevo escenario
+                    </label>
+                    <div className="flex items-center gap-2">
+                        <input
+                            id="new-scenario-name"
+                            value={newName}
+                            onChange={(e) => {
+                                setNewName(e.target.value);
+                                setInputError(null);
+                            }}
+                            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                            placeholder="Nombre del nuevo escenario…"
+                            className={`flex h-9 w-full rounded-xl border bg-background px-3 py-2 text-sm
+                                ring-offset-background placeholder:text-muted-foreground
+                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1
+                                disabled:cursor-not-allowed disabled:opacity-50 text-foreground
+                                transition-colors
+                                ${inputError ? "border-destructive/60" : "border-border"}`}
+                        />
+                        <button
+                            onClick={handleAdd}
+                            disabled={!newName.trim()}
+                            className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl text-sm font-semibold bg-primary text-primary-foreground h-9 px-3.5 transition-colors shrink-0 ${newName.trim() ? "hover:bg-primary/90 cursor-pointer" : "opacity-40 cursor-not-allowed"}`}
+                        >
+                            <PlusCircle size={14} />
+                            Nuevo
+                        </button>
+                    </div>
+                    {inputError && (
+                        <p className="text-xs text-destructive font-medium pl-1">
+                            {inputError}
+                        </p>
+                    )}
                 </div>
-                {inputError && (
-                    <p className="text-xs text-destructive font-medium pl-3">
-                        {inputError}
-                    </p>
-                )}
             </div>
         </div>
     );
