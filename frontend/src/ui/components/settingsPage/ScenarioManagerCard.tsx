@@ -120,12 +120,10 @@ export const ScenarioManagerCard = ({
             {/* Input nuevo escenario */}
             <div className="px-4 pb-4">
                 <div className="flex flex-col gap-1.5">
-                    <label htmlFor="new-scenario-name">
-                        Nombre del nuevo escenario
-                    </label>
                     <div className="flex items-center gap-2">
                         <input
                             id="new-scenario-name"
+                            aria-label="Nombre del nuevo escenario"
                             value={newName}
                             onChange={(e) => {
                                 setNewName(e.target.value);

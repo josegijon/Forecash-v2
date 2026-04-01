@@ -214,11 +214,9 @@ export const CategoryManagerCard = ({
             {/* Input nueva categoría */}
             <div className="px-5 py-4 border-t border-border/40 bg-background/50">
                 <div className="flex items-center gap-2">
-                    <label htmlFor={`new-cat-${type}`} className="sr-only">
-                        Nueva categoría de {isExpense ? "gasto" : "ingreso"}
-                    </label>
                     <input
                         id={`new-cat-${type}`}
+                        aria-label={`Nombre de la nueva categoría de ${isExpense ? "gasto" : "ingreso"}`}
                         value={newName}
                         onChange={(e) => { setNewName(e.target.value); setInputError(null); }}
                         onKeyDown={(e) => e.key === "Enter" && handleAdd()}
