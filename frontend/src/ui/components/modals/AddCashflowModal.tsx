@@ -6,15 +6,15 @@ import { TypeToggle } from "./TypeToggle";
 import { FrequencySelector } from "./FrequencySelector";
 import { StartInput } from "./StartSlider";
 import { CategorySelect } from "./CategorySelect";
-import { useCashflowForm } from "./useCashflowForm";
+import { useCashflowForm } from "../../hooks/useCashflowForm";
 
 
 interface AddCashflowModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (data: import("./useCashflowForm").CashflowFormData) => void;
-    onUpdate?: (data: import("./useCashflowForm").CashflowEditData) => void;
-    initialData?: import("./useCashflowForm").CashflowEditData;
+    onSave: (data: import("../../hooks/useCashflowForm").CashflowFormData) => void;
+    onUpdate?: (data: import("../../hooks/useCashflowForm").CashflowEditData) => void;
+    initialData?: import("../../hooks/useCashflowForm").CashflowEditData;
 }
 
 export const AddCashflowModal = ({

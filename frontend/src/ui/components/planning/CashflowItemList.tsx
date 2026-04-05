@@ -5,7 +5,7 @@ import { useCashflowItemListModel } from "./useCashflowItemListModel";
 import { AddCashflowModal } from "@/ui/components/modals/AddCashflowModal";
 import { useCashflowStore, useScenarioStore } from "@/store";
 import { useState } from "react";
-import type { CashflowEditData } from "../modals/useCashflowForm";
+import type { CashflowEditData } from "../../hooks/useCashflowForm";
 
 interface CashflowItemListProps {
     onAddItem?: () => void;
