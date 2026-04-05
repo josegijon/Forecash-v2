@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
+import { Button } from "@/ui/primitives/Button";
 
 interface ConfirmResetModalProps {
     isOpen: boolean;
@@ -49,13 +50,14 @@ export const ConfirmResetModal = ({ isOpen, onClose, onConfirm }: ConfirmResetMo
                         </h2>
                     </div>
 
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={onClose}
                         aria-label="Cerrar"
-                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                     >
                         <X size={16} />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Body */}

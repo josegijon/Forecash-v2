@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { X } from "lucide-react";
 
 import { useScenarioStore } from "@/store";
+import { Button } from "@/ui/primitives/Button";
 
 interface AddScenarioModalProps {
     isOpen: boolean;
@@ -74,13 +75,14 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                             Ponle un nombre que te ayude a identificarlo: "Si me suben el sueldo", "Plan con mudanza"...
                         </p>
                     </div>
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={handleClose}
                         aria-label="Cerrar"
-                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                     >
                         <X size={16} />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Body */}

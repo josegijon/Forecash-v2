@@ -13,6 +13,7 @@ import {
 
 import { QuestionsStep } from "./QuestionsStep";
 import { ResultStep } from "./ResultStep";
+import { Button } from "@/ui/primitives/Button";
 
 interface CushionCalculatorModalProps {
     onClose: () => void;
@@ -71,12 +72,15 @@ export const CushionCalculatorModal = ({ onClose, onApply }: CushionCalculatorMo
                             <span className={`h-1 w-4 rounded-full transition-colors ${step === "result" ? "bg-primary" : "bg-muted-foreground/30"}`} />
                         </div>
                     </div>
-                    <button
+
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0 cursor-pointer"
+                        aria-label="Cerrar"
                     >
                         <X size={16} />
-                    </button>
+                    </Button>
                 </div>
 
                 {step === "questions" ? (

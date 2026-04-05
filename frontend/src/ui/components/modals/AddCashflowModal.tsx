@@ -7,6 +7,7 @@ import { FrequencySelector } from "./FrequencySelector";
 import { StartInput } from "./StartSlider";
 import { CategorySelect } from "./CategorySelect";
 import { useCashflowForm } from "../../hooks/useCashflowForm";
+import { Button } from "@/ui/primitives/Button";
 
 
 interface AddCashflowModalProps {
@@ -68,12 +69,14 @@ export const AddCashflowModal = ({
                     <h2 className="text-lg font-medium leading-none tracking-tight">
                         {isEditMode ? "Editar ítem" : "Nuevo ítem"}
                     </h2>
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={handleClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-1 rounded-xl hover:bg-muted"
+                        aria-label="Cerrar"
                     >
-                        <X size={20} />
-                    </button>
+                        <X size={16} />
+                    </Button>
                 </div>
 
                 {/* Body */}

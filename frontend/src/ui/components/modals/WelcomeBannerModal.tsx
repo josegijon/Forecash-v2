@@ -1,3 +1,4 @@
+import { Button } from "@/ui/primitives/Button";
 import { Shield, HardDrive, MapPin, X } from "lucide-react";
 
 interface WelcomeBannerModalProps {
@@ -45,12 +46,14 @@ export const WelcomeBannerModal = ({ isOpen, onClose }: WelcomeBannerModalProps)
                             Cómo funciona Forecash
                         </h2>
                     </div>
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-1 rounded-xl hover:bg-muted mt-0.5"
+                        aria-label="Cerrar"
                     >
-                        <X size={20} />
-                    </button>
+                        <X size={16} />
+                    </Button>
                 </div>
 
                 {/* Body */}
