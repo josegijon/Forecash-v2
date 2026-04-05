@@ -206,7 +206,7 @@ export const DataPage = () => {
         scenarioStore.removeAllScenarios();
         resetCategories();
         localStorage.clear();
-        window.location.reload();
+        navigate("/");
     };
 
     const hasData = scenarios.length > 0 || Object.values(items).some((arr) => arr.length > 0);
