@@ -12,7 +12,7 @@ import { PlanningSummaryStrip } from "@/ui/components/planning/PlanningSummarySt
 import { MonthNavigator } from "@/ui/components/planning/MonthNavigator";
 import { GoalsProgressCard } from "@/ui/components/planning/GoalsProgressCard";
 import { EmptyPlanningBanner } from "@/ui/components/planning/EmptyPlanningBanner";
-import type { CashflowFormData } from "@/ui/components/modals/useCashflowForm";
+import type { CashflowFormData } from "@/ui/hooks/useCashflowForm";
 
 export const PlanningPage = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);

@@ -1,5 +1,5 @@
+import { useXAxisInterval } from "@/ui/hooks/useXAxisInterval";
 import { useWindowWidth } from "./useWindowWidth";
-import { useXAxisInterval } from "./useXAxisInterval";
 
 const calcBarSize = (selectedMonths: number, isMobile: boolean): number => {
     if (!isMobile) {

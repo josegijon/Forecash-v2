@@ -10,10 +10,10 @@ import { useActiveScenario, useCurrencySymbol } from "@/store";
 
 import { COLOR_POSITIVE, COLOR_NEGATIVE, COLOR_CUSHION } from "./balanceChartColors";
 import { useZeroOffset } from "./useZeroOffset";
-import { useXAxisInterval } from "./useXAxisInterval";
 import { CrossingDot } from "./CrossingDot";
 import { BalanceTooltip } from "./BalanceTooltip";
 import { LegendItem } from "./BalanceChartLegend";
+import { useXAxisInterval } from "@/ui/hooks/useXAxisInterval";
 
 interface BalanceAreaChartProps {
     data: MonthData[];

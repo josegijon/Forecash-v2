@@ -1,8 +1,8 @@
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 
 import { type DataPoint } from "./types";
-import { useXAxisInterval } from "../projection/useXAxisInterval";
 import { SimulationTooltip, type SimulationTooltipProps } from "./SimulationTooltip";
+import { useXAxisInterval } from "@/ui/hooks/useXAxisInterval";
 
 interface SimulationChartProps {
     data: DataPoint[];
