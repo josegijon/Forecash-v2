@@ -1,4 +1,4 @@
-import { useWindowWidth } from "./useWindowWidth";
+import { useWindowWidth } from "../components/projection/useWindowWidth";
 
 const calcXAxisInterval = (selectedMonths: number, isMobile: boolean): number => {
     if (!isMobile) {
