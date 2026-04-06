@@ -2,7 +2,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import type { MonthData } from "../../utils/projectionTypes";
 import { fmt } from "@/ui/utils/format";
 import { getAlertLevel, ALERT_BORDER } from "./rowAlert";
-import { InlineBadge } from "./StatusBadge";
+import { Badge } from "@/ui/primitives/Badge";
 
 interface MobileCardProps {
     row: MonthData;
@@ -24,7 +24,11 @@ export const MobileCard = ({ row, currencySymbol, colSpan }: MobileCardProps) =>
                     <div className="flex items-center justify-between">
                         <span className="flex items-center text-sm font-semibold">
                             {row.month}
-                            {alertLevel && <InlineBadge level={alertLevel} />}
+                            {alertLevel && (
+                                <Badge variant={alertLevel} className="ml-2">
+                                    {alertLevel === "danger" ? "Negativo" : alertLevel === "warning" ? "Pico" : "Déficit"}
+                                </Badge>
+                            )}
                         </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">

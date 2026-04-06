@@ -2,7 +2,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import type { MonthData } from "../../utils/projectionTypes";
 import { fmt } from "@/ui/utils/format";
 import { getAlertLevel, ALERT_BORDER } from "./rowAlert";
-import { InlineBadge } from "./StatusBadge";
+import { Badge } from "@/ui/primitives/Badge";
 
 const CELL_BASE = "px-4 py-3 align-middle text-sm";
 
@@ -23,7 +23,11 @@ export const DesktopRow = ({ row, currencySymbol }: DesktopRowProps) => {
             <td className={`${CELL_BASE} text-left font-medium ${borderClass}`}>
                 <span className="flex items-center">
                     {row.month}
-                    {alertLevel && <InlineBadge level={alertLevel} />}
+                    {alertLevel && (
+                        <Badge variant={alertLevel} className="ml-2">
+                            {alertLevel === "danger" ? "Negativo" : alertLevel === "warning" ? "Pico" : "Déficit"}
+                        </Badge>
+                    )}
                 </span>
             </td>
             <td className={`${CELL_BASE} text-right text-success`}>

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useActiveScenario, useCurrencySymbol, useScenarioStore } from "@/store";
 import { CurrencyInputField } from "./CurrencyInputField";
 import { CushionCalculatorModal } from "../modals/CushionCalculatorModal";
+import { Badge } from "@/ui/primitives/Badge";
 
 const SAVED_TIMEOUT_MS = 1500;
 
@@ -95,9 +96,7 @@ export const BalanceGoalsCard = () => {
                     <h4 className="text-sm font-semibold text-foreground">
                         Protección y crecimiento
                     </h4>
-                    <span className="rounded-full bg-badge-neutral-bg px-2 py-0.5 text-[10px] font-medium text-badge-neutral-fg">
-                        Opcional
-                    </span>
+                    <Badge>Opcional</Badge>
                 </div>
 
                 <div className="flex flex-col gap-2">
