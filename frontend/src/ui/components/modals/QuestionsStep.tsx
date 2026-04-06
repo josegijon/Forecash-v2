@@ -65,17 +65,14 @@ export const QuestionsStep = ({
                 </p>
                 <div className="grid grid-cols-3 gap-2">
                     {LABOR_OPTIONS.map((opt) => (
-                        <button
-                            key={opt.value}
+                        <Button
                             type="button"
+                            intent="chip"
+                            active={laborProfile === opt.value}
                             onClick={() => onLaborChange(opt.value)}
-                            className={`py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${laborProfile === opt.value
-                                ? "bg-primary/10 text-primary border-primary/30"
-                                : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
-                                }`}
                         >
                             {opt.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
