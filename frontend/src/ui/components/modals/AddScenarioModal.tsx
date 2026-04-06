@@ -116,13 +116,12 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                     >
                         Cancelar
                     </Button>
-                    <button
+                    <Button
                         onClick={handleSubmit}
                         disabled={!name.trim()}
-                        className="px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Crear escenario
-                    </button>
+                    </Button>
                 </div>
 
             </div>

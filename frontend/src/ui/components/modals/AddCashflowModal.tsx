@@ -181,15 +181,13 @@ export const AddCashflowModal = ({
                     >
                         Cancelar
                     </Button>
-                    <button
+                    <Button
                         onClick={handleSave}
                         disabled={!isFormReady}
-                        className={`flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-sm transition-all cursor-pointer ${isFormReady ? "hover:bg-primary/90" : "opacity-40"
-                            }`}
                     >
                         <Save size={16} />
                         {isEditMode ? "Guardar cambios" : "Guardar"}
-                    </button>
+                    </Button>
                 </div>
 
             </div>

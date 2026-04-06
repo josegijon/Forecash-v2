@@ -1,3 +1,4 @@
+import { Button } from "@/ui/primitives/Button";
 import { PlusCircle, Sparkles } from "lucide-react";
 
 interface EmptyPlanningBannerProps {
@@ -21,14 +22,10 @@ export const EmptyPlanningBanner = ({ onAddItem }: EmptyPlanningBannerProps) => 
                 </p>
             </div>
 
-            <button
-                onClick={onAddItem}
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl shadow-sm transition-all cursor-pointer"
-            >
+            <Button onClick={onAddItem}>
                 <PlusCircle size={16} />
                 Añadir primer ítem
-            </button>
-
+            </Button>
         </div>
     );
 };

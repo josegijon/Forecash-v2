@@ -77,12 +77,9 @@ export const WelcomeBannerModal = ({ isOpen, onClose }: WelcomeBannerModalProps)
 
                 {/* Footer */}
                 <div className="px-6 py-4 border-t border-border bg-muted/30">
-                    <button
-                        onClick={onClose}
-                        className="w-full py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl shadow-sm transition-all cursor-pointer"
-                    >
+                    <Button onClick={onClose} className="w-full">
                         Entendido, empezar
-                    </button>
+                    </Button>
                 </div>
 
             </div>
