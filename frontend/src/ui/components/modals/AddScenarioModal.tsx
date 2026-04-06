@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 import { useScenarioStore } from "@/store";
 import { Button } from "@/ui/primitives/Button";
+import { Input } from "@/ui/primitives/Input";
 
 interface AddScenarioModalProps {
     isOpen: boolean;
@@ -90,7 +91,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                     <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
                         Nombre del escenario
                     </label>
-                    <input
+                    <Input
                         type="text"
                         placeholder="Ej: Si me suben el sueldo, Plan con mudanza..."
                         value={name}
@@ -98,10 +99,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                         onBlur={handleBlur}
                         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                         autoFocus
-                        className={`w-full px-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all ${error
-                            ? "border-destructive/70 focus:ring-destructive/20"
-                            : "border-border/60"
-                            }`}
+                        error={!!error}
                     />
                     {error && (
                         <p className="text-xs text-destructive mt-1.5 font-medium">{error}</p>

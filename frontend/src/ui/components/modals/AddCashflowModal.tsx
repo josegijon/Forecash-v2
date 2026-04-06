@@ -8,6 +8,7 @@ import { StartInput } from "./StartSlider";
 import { CategorySelect } from "./CategorySelect";
 import { useCashflowForm } from "../../hooks/useCashflowForm";
 import { Button } from "@/ui/primitives/Button";
+import { Input } from "@/ui/primitives/Input";
 
 
 interface AddCashflowModalProps {
@@ -91,16 +92,14 @@ export const AddCashflowModal = ({
                         </label>
                         <div className="relative">
                             <Tag size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <input
+                            <Input
                                 type="text"
                                 placeholder="Ej: Salario, Alquiler..."
                                 value={concept}
                                 onChange={(e) => { setConcept(e.target.value); clearError("concept"); }}
                                 onBlur={() => handleBlur("concept")}
-                                className={`w-full pl-10 pr-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all ${errors.concept
-                                    ? "border-destructive/70 focus:ring-destructive/20"
-                                    : "border-border"
-                                    }`}
+                                error={!!errors.concept}
+                                className="pl-10"
                             />
                         </div>
                         {errors.concept && (
@@ -117,7 +116,7 @@ export const AddCashflowModal = ({
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                                 {currencySymbol}
                             </span>
-                            <input
+                            <Input
                                 type="number"
                                 min="0.01"
                                 step="0.01"
@@ -125,10 +124,8 @@ export const AddCashflowModal = ({
                                 value={amount}
                                 onChange={(e) => { setAmount(e.target.value); clearError("amount"); }}
                                 onBlur={() => handleBlur("amount")}
-                                className={`w-full pl-10 pr-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all [&::-webkit-inner-spin-button]:appearance-none ${errors.amount
-                                    ? "border-destructive/70 focus:ring-destructive/20"
-                                    : "border-border"
-                                    }`}
+                                error={!!errors.amount}
+                                className="pl-10"
                             />
                         </div>
                         {errors.amount && (

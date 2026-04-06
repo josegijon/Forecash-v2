@@ -3,6 +3,7 @@ import { PlusCircle, Pencil, Trash2, Check, X, Tag } from "lucide-react";
 import type { Category } from "@/store";
 import { useCashflowStore } from "@/store";
 import { Button } from "@/ui/primitives/Button";
+import { Input } from "@/ui/primitives/Input";
 
 interface CategoryManagerCardProps {
     type: "expense" | "income";
@@ -151,15 +152,15 @@ export const CategoryManagerCard = ({
                                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
                                             <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
                                             {editingId === cat.id ? (
-                                                <input
-                                                    autoFocus
-                                                    value={editingName}
-                                                    onChange={(e) => setEditingName(e.target.value)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === "Enter") confirmEdit();
-                                                        if (e.key === "Escape") cancelEdit();
-                                                    }}
-                                                    className="flex-1 text-sm font-medium bg-background px-2 py-1 rounded-lg border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
+                                                <Input
+                                                    variant="settings"
+                                                    id={`new-cat-${type}`}
+                                                    aria-label={`Nombre de la nueva categoría de ${isExpense ? "gasto" : "ingreso"}`}
+                                                    value={newName}
+                                                    onChange={(e) => { setNewName(e.target.value); setInputError(null); }}
+                                                    onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                                                    placeholder="Nueva categoría…"
+                                                    error={!!inputError}
                                                 />
                                             ) : (
                                                 <span className="text-sm font-medium text-foreground truncate">
