@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Layers, PlusCircle } from "lucide-react";
 import type { Scenario } from "@/store";
 import { ScenarioCard } from "./ScenarioCard";
+import { Button } from "@/ui/primitives/Button";
 
 interface ScenarioManagerCardProps {
     scenarios: Scenario[];
@@ -138,14 +139,15 @@ export const ScenarioManagerCard = ({
                                 transition-colors
                                 ${inputError ? "border-destructive/60" : "border-border"}`}
                         />
-                        <button
-                            onClick={handleAdd}
+                        <Button
+                            size="sm"
+                            onClick={() => handleAdd()}
                             disabled={!newName.trim()}
-                            className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl text-sm font-semibold bg-primary text-primary-foreground h-9 px-3.5 transition-colors shrink-0 ${newName.trim() ? "hover:bg-primary/90 cursor-pointer" : "opacity-40 cursor-not-allowed"}`}
+                            aria-label="Añadir escenario"
                         >
                             <PlusCircle size={14} />
-                            Nuevo
-                        </button>
+                            Añadir
+                        </Button>
                     </div>
                     {inputError && (
                         <p className="text-xs text-destructive font-medium pl-1">

@@ -1,4 +1,4 @@
-import { LayoutList, Plus, Search, TrendingDown, TrendingUp } from "lucide-react";
+import { LayoutList, PlusCircle, Search, TrendingDown, TrendingUp } from "lucide-react";
 
 import { CashflowItem } from "./CashflowItem";
 import { useCashflowItemListModel } from "./useCashflowItemListModel";
@@ -6,6 +6,7 @@ import { AddCashflowModal } from "@/ui/components/modals/AddCashflowModal";
 import { useCashflowStore, useScenarioStore } from "@/store";
 import { useState } from "react";
 import type { CashflowEditData } from "../../hooks/useCashflowForm";
+import { Button } from "@/ui/primitives/Button";
 
 interface CashflowItemListProps {
     onAddItem?: () => void;
@@ -66,13 +67,10 @@ export const CashflowItemList = ({ onAddItem }: CashflowItemListProps) => {
                     <h3 className="text-lg font-medium leading-none tracking-tight">
                         Flujo de Efectivo
                     </h3>
-                    <button
-                        onClick={onAddItem}
-                        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer"
-                    >
-                        <Plus size={16} />
+                    <Button size="sm" onClick={onAddItem}>
+                        <PlusCircle size={16} />
                         Añadir
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Filters + Search */}

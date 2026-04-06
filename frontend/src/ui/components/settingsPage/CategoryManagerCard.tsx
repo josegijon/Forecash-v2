@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PlusCircle, Pencil, Trash2, Check, X, Tag } from "lucide-react";
 import type { Category } from "@/store";
 import { useCashflowStore } from "@/store";
+import { Button } from "@/ui/primitives/Button";
 
 interface CategoryManagerCardProps {
     type: "expense" | "income";
@@ -228,15 +229,15 @@ export const CategoryManagerCard = ({
                             transition-colors
                             ${inputError ? "border-destructive/60" : "border-border"}`}
                     />
-                    <button
+                    <Button
+                        size="sm"
                         onClick={() => handleAdd()}
                         disabled={!newName.trim()}
                         aria-label="Añadir categoría"
-                        className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl text-sm font-semibold bg-primary text-primary-foreground h-9 px-3.5 transition-colors shrink-0 ${newName.trim() ? "hover:bg-primary/90 cursor-pointer" : "opacity-40 cursor-not-allowed"}`}
                     >
                         <PlusCircle size={14} />
                         Añadir
-                    </button>
+                    </Button>
                 </div>
                 {inputError && (
                     <p className="text-xs text-destructive font-medium pl-1 mt-1.5">{inputError}</p>
