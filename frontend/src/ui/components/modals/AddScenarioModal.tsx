@@ -110,12 +110,12 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
 
                 {/* Footer */}
                 <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30">
-                    <button
+                    <Button
+                        intent="secondary"
                         onClick={handleClose}
-                        className="px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
                     >
                         Cancelar
-                    </button>
+                    </Button>
                     <button
                         onClick={handleSubmit}
                         disabled={!name.trim()}

@@ -69,13 +69,14 @@ export const ConfirmDeleteItemModal = ({
 
                 {/* Footer */}
                 <div className="flex gap-3 px-6 py-4 border-t border-border bg-muted/30">
-                    <button
-                        ref={cancelRef}
+                    <Button
+                        intent="secondary"
                         onClick={onCancel}
-                        className="flex-1 px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
+                        className="flex-1"
                     >
                         Cancelar
-                    </button>
+                    </Button>
+
                     <button
                         onClick={onConfirm}
                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"

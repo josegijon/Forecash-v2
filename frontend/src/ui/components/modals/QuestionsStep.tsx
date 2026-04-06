@@ -1,6 +1,7 @@
 import { ChevronRight, Zap, Scale, Shield, type LucideIcon } from "lucide-react";
 import type { LaborProfile, RiskProfile } from "@core";
 import { LABOR_OPTIONS, RISK_OPTIONS } from "./cushionConstants";
+import { Button } from "@/ui/primitives/Button";
 
 interface QuestionsStepProps {
     laborProfile: LaborProfile;
@@ -138,13 +139,13 @@ export const QuestionsStep = ({
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex gap-2">
-            <button
-                type="button"
+            <Button
+                intent="secondary"
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-xl border border-border/60 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                className="flex-1"
             >
                 Cancelar
-            </button>
+            </Button>
             <button
                 type="button"
                 onClick={onNext}
