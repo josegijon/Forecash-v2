@@ -77,13 +77,14 @@ export const ConfirmDeleteItemModal = ({
                         Cancelar
                     </Button>
 
-                    <button
+                    <Button
+                        intent="destructive"
                         onClick={onConfirm}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
+                        className="flex-1"
                     >
                         <Trash2 size={16} />
                         Eliminar
-                    </button>
+                    </Button>
                 </div>
 
             </div>

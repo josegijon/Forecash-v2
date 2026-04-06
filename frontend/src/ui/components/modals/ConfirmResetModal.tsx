@@ -90,13 +90,14 @@ export const ConfirmResetModal = ({ isOpen, onClose, onConfirm }: ConfirmResetMo
                     >
                         Cancelar
                     </Button>
-                    <button
+                    <Button
+                        intent="destructive"
+                        className="flex-1"
                         onClick={handleConfirm}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
                     >
                         <Trash2 size={16} />
                         Sí, borrar todo
-                    </button>
+                    </Button>
                 </div>
 
             </div>
