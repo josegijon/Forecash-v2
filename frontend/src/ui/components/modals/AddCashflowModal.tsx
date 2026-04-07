@@ -7,6 +7,8 @@ import { FrequencySelector } from "./FrequencySelector";
 import { StartInput } from "./StartSlider";
 import { CategorySelect } from "./CategorySelect";
 import { useCashflowForm } from "../../hooks/useCashflowForm";
+import { Button } from "@/ui/primitives/Button";
+import { Input } from "@/ui/primitives/Input";
 
 
 interface AddCashflowModalProps {
@@ -68,12 +70,14 @@ export const AddCashflowModal = ({
                     <h2 className="text-lg font-medium leading-none tracking-tight">
                         {isEditMode ? "Editar ítem" : "Nuevo ítem"}
                     </h2>
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={handleClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-1 rounded-xl hover:bg-muted"
+                        aria-label="Cerrar"
                     >
-                        <X size={20} />
-                    </button>
+                        <X size={16} />
+                    </Button>
                 </div>
 
                 {/* Body */}
@@ -88,16 +92,14 @@ export const AddCashflowModal = ({
                         </label>
                         <div className="relative">
                             <Tag size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <input
+                            <Input
                                 type="text"
                                 placeholder="Ej: Salario, Alquiler..."
                                 value={concept}
                                 onChange={(e) => { setConcept(e.target.value); clearError("concept"); }}
                                 onBlur={() => handleBlur("concept")}
-                                className={`w-full pl-10 pr-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all ${errors.concept
-                                    ? "border-destructive/70 focus:ring-destructive/20"
-                                    : "border-border"
-                                    }`}
+                                error={!!errors.concept}
+                                className="pl-10"
                             />
                         </div>
                         {errors.concept && (
@@ -114,7 +116,7 @@ export const AddCashflowModal = ({
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                                 {currencySymbol}
                             </span>
-                            <input
+                            <Input
                                 type="number"
                                 min="0.01"
                                 step="0.01"
@@ -122,10 +124,8 @@ export const AddCashflowModal = ({
                                 value={amount}
                                 onChange={(e) => { setAmount(e.target.value); clearError("amount"); }}
                                 onBlur={() => handleBlur("amount")}
-                                className={`w-full pl-10 pr-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all [&::-webkit-inner-spin-button]:appearance-none ${errors.amount
-                                    ? "border-destructive/70 focus:ring-destructive/20"
-                                    : "border-border"
-                                    }`}
+                                error={!!errors.amount}
+                                className="pl-10"
                             />
                         </div>
                         {errors.amount && (
@@ -172,21 +172,19 @@ export const AddCashflowModal = ({
 
                 {/* Footer */}
                 <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30 shrink-0">
-                    <button
+                    <Button
+                        intent="secondary"
                         onClick={handleClose}
-                        className="px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all cursor-pointer"
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleSave}
                         disabled={!isFormReady}
-                        className={`flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-sm transition-all cursor-pointer ${isFormReady ? "hover:bg-primary/90" : "opacity-40"
-                            }`}
                     >
                         <Save size={16} />
                         {isEditMode ? "Guardar cambios" : "Guardar"}
-                    </button>
+                    </Button>
                 </div>
 
             </div>

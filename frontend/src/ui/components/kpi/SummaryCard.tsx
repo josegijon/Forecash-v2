@@ -1,3 +1,4 @@
+import { Badge } from "@/ui/primitives/Badge";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 export interface SummaryCardTrend {
@@ -21,23 +22,20 @@ export const SummaryCard = ({ label, value, icon, description, trend, isBaseline
         <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
                 <p className="text-sm text-muted-foreground">{label}</p>
-                {isBaseline && (
-                    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold bg-badge-neutral-bg text-badge-neutral-fg">
+                {isBaseline &&
+                    <Badge>
                         Base
-                    </span>
-                )}
+                    </Badge>
+                }
             </div>
             <p className="text-2xl font-bold">{value}</p>
 
             {trend && (
                 <div className="flex items-center gap-1 flex-wrap text-sm">
-                    <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${trend.positive
-                        ? "bg-badge-success-bg text-badge-success-fg"
-                        : "bg-badge-danger-bg text-badge-danger-fg"
-                        }`}>
+                    <Badge variant={trend.positive ? "success" : "danger"}>
                         {trend.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                         {trend.value}
-                    </div>
+                    </Badge>
                     {trend.label && (
                         <span className="text-xs text-muted-foreground">{trend.label}</span>
                     )}

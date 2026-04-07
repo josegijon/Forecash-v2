@@ -1,6 +1,7 @@
 import { ChevronRight, Zap, Scale, Shield, type LucideIcon } from "lucide-react";
 import type { LaborProfile, RiskProfile } from "@core";
 import { LABOR_OPTIONS, RISK_OPTIONS } from "./cushionConstants";
+import { Button } from "@/ui/primitives/Button";
 
 interface QuestionsStepProps {
     laborProfile: LaborProfile;
@@ -64,17 +65,14 @@ export const QuestionsStep = ({
                 </p>
                 <div className="grid grid-cols-3 gap-2">
                     {LABOR_OPTIONS.map((opt) => (
-                        <button
-                            key={opt.value}
+                        <Button
                             type="button"
+                            intent="chip"
+                            active={laborProfile === opt.value}
                             onClick={() => onLaborChange(opt.value)}
-                            className={`py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${laborProfile === opt.value
-                                ? "bg-primary/10 text-primary border-primary/30"
-                                : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
-                                }`}
                         >
                             {opt.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
@@ -138,13 +136,13 @@ export const QuestionsStep = ({
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex gap-2">
-            <button
-                type="button"
+            <Button
+                intent="secondary"
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-xl border border-border/60 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                className="flex-1"
             >
                 Cancelar
-            </button>
+            </Button>
             <button
                 type="button"
                 onClick={onNext}

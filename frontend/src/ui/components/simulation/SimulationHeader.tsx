@@ -3,6 +3,7 @@ import { Copy, ChevronDown } from "lucide-react";
 
 import { useScenarioStore, useActiveScenario } from "@/store";
 import { ProjectionHorizonSelect } from "../controls/ProjectionHorizonSelect";
+import { Button } from "@/ui/primitives/Button";
 
 interface SimulationHeaderProps {
     selectedScenario: string;
@@ -42,13 +43,10 @@ export const SimulationHeader = ({
 
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button
-                onClick={onCopyScenario}
-                className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-bold transition-colors cursor-pointer"
-            >
+            <Button size="sm" onClick={onCopyScenario}>
                 <Copy size={16} strokeWidth={2.5} />
                 Simular cambio
-            </button>
+            </Button>
 
             <div className="flex flex-wrap items-center gap-3">
 

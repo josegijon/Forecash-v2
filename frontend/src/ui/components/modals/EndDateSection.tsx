@@ -1,6 +1,7 @@
 import type { FocusEvent } from "react";
 import { addMonths } from "@core";
 import { MONTH_NAMES } from "../../utils/projectionConstants";
+import { Input } from "@/ui/primitives/Input";
 
 interface EndDateSectionProps {
     hasEndDate: boolean;
@@ -36,8 +37,8 @@ export const EndDateSection = ({ hasEndDate, endsInMonths, startsInMonths, onTog
                     type="button"
                     onClick={() => onToggle(!hasEndDate)}
                     className={`text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer ${hasEndDate
-                            ? "bg-muted text-muted-foreground hover:text-foreground"
-                            : "bg-primary/10 text-primary hover:bg-primary/20"
+                        ? "bg-muted text-muted-foreground hover:text-foreground"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
                         }`}
                 >
                     {hasEndDate ? "Quitar límite" : "Añadir límite"}
@@ -47,7 +48,7 @@ export const EndDateSection = ({ hasEndDate, endsInMonths, startsInMonths, onTog
             {hasEndDate && (
                 <div>
                     <div className="relative">
-                        <input
+                        <Input
                             type="number"
                             min={min}
                             max={120}
@@ -55,7 +56,7 @@ export const EndDateSection = ({ hasEndDate, endsInMonths, startsInMonths, onTog
                             key={endsInMonths}
                             onBlur={handleBlur}
                             placeholder={String(min)}
-                            className="w-full px-4 py-2.5 pr-16 bg-muted/40 rounded-xl border border-border/60 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all [&::-webkit-inner-spin-button]:appearance-none"
+                            className="pr-16"
                         />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                             meses

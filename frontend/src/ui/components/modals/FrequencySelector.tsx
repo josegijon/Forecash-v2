@@ -1,3 +1,4 @@
+import { Button } from "@/ui/primitives/Button";
 import type { Frequency } from "@core";
 
 const frequencyLabels: Record<Frequency, string> = {
@@ -22,17 +23,14 @@ export const FrequencySelector = ({ value, onChange }: FrequencySelectorProps) =
 
         <div className="grid grid-cols-3 gap-2">
             {(Object.entries(frequencyLabels) as [Frequency, string][]).map(([freq, label]) => (
-                <button
-                    key={freq}
+                <Button
                     type="button"
+                    intent="chip"
+                    active={value === freq}
                     onClick={() => onChange(freq)}
-                    className={`py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${value === freq
-                            ? "bg-primary/10 text-primary border-primary/30"
-                            : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
-                        }`}
                 >
                     {label}
-                </button>
+                </Button>
             ))}
         </div>
     </div>

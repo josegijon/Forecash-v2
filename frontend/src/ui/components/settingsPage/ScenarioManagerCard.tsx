@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Layers, PlusCircle } from "lucide-react";
 import type { Scenario } from "@/store";
 import { ScenarioCard } from "./ScenarioCard";
+import { Button } from "@/ui/primitives/Button";
+import { Input } from "@/ui/primitives/Input";
 
 interface ScenarioManagerCardProps {
     scenarios: Scenario[];
@@ -121,31 +123,25 @@ export const ScenarioManagerCard = ({
             <div className="px-4 pb-4">
                 <div className="flex flex-col gap-1.5">
                     <div className="flex items-center gap-2">
-                        <input
+                        <Input
+                            variant="settings"
                             id="new-scenario-name"
                             aria-label="Nombre del nuevo escenario"
                             value={newName}
-                            onChange={(e) => {
-                                setNewName(e.target.value);
-                                setInputError(null);
-                            }}
+                            onChange={(e) => { setNewName(e.target.value); setInputError(null); }}
                             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                             placeholder="Nombre del nuevo escenario…"
-                            className={`flex h-9 w-full rounded-xl border bg-background px-3 py-2 text-sm
-                                ring-offset-background placeholder:text-muted-foreground
-                                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1
-                                disabled:cursor-not-allowed disabled:opacity-50 text-foreground
-                                transition-colors
-                                ${inputError ? "border-destructive/60" : "border-border"}`}
+                            error={!!inputError}
                         />
-                        <button
-                            onClick={handleAdd}
+                        <Button
+                            size="sm"
+                            onClick={() => handleAdd()}
                             disabled={!newName.trim()}
-                            className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl text-sm font-semibold bg-primary text-primary-foreground h-9 px-3.5 transition-colors shrink-0 ${newName.trim() ? "hover:bg-primary/90 cursor-pointer" : "opacity-40 cursor-not-allowed"}`}
+                            aria-label="Añadir escenario"
                         >
                             <PlusCircle size={14} />
-                            Nuevo
-                        </button>
+                            Añadir
+                        </Button>
                     </div>
                     {inputError && (
                         <p className="text-xs text-destructive font-medium pl-1">

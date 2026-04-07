@@ -1,3 +1,5 @@
+import { Badge } from "@/ui/primitives/Badge";
+
 interface RatioProgressBarProps {
     label: string;
     percentage: number;
@@ -23,9 +25,15 @@ export const RatioProgressBar = ({ label, percentage, color, icon, iconBgClass }
                 </span>
                 <div className="flex items-center gap-1.5 ml-auto">
                     {isOverflow && (
-                        <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-badge-danger-bg text-badge-danger-fg">
+                        // <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-badge-danger-bg text-badge-danger-fg">
+                        //     exceso
+                        // </span>
+                        <Badge
+                            variant="danger"
+                            className="uppercase tracking-widest"
+                        >
                             exceso
-                        </span>
+                        </Badge>
                     )}
                     <span className="text-sm font-medium" style={{ color }}>
                         {formattedPercentage}%

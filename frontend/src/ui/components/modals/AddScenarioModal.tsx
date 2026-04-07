@@ -4,6 +4,8 @@ import { useNavigate } from "react-router";
 import { X } from "lucide-react";
 
 import { useScenarioStore } from "@/store";
+import { Button } from "@/ui/primitives/Button";
+import { Input } from "@/ui/primitives/Input";
 
 interface AddScenarioModalProps {
     isOpen: boolean;
@@ -74,13 +76,14 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                             Ponle un nombre que te ayude a identificarlo: "Si me suben el sueldo", "Plan con mudanza"...
                         </p>
                     </div>
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={handleClose}
                         aria-label="Cerrar"
-                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                     >
                         <X size={16} />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Body */}
@@ -88,7 +91,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                     <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">
                         Nombre del escenario
                     </label>
-                    <input
+                    <Input
                         type="text"
                         placeholder="Ej: Si me suben el sueldo, Plan con mudanza..."
                         value={name}
@@ -96,10 +99,7 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
                         onBlur={handleBlur}
                         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                         autoFocus
-                        className={`w-full px-4 py-2.5 bg-muted/40 rounded-xl border text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all ${error
-                            ? "border-destructive/70 focus:ring-destructive/20"
-                            : "border-border/60"
-                            }`}
+                        error={!!error}
                     />
                     {error && (
                         <p className="text-xs text-destructive mt-1.5 font-medium">{error}</p>
@@ -108,19 +108,18 @@ export const AddScenarioModal = ({ isOpen, onClose }: AddScenarioModalProps) => 
 
                 {/* Footer */}
                 <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/30">
-                    <button
+                    <Button
+                        intent="secondary"
                         onClick={handleClose}
-                        className="px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleSubmit}
                         disabled={!name.trim()}
-                        className="px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Crear escenario
-                    </button>
+                    </Button>
                 </div>
 
             </div>

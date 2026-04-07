@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
+import { Button } from "@/ui/primitives/Button";
 
 interface ConfirmDeleteScenarioModalProps {
     scenarioName: string;
@@ -47,13 +48,14 @@ export const ConfirmDeleteScenarioModal = ({
                         </h2>
                     </div>
 
-                    <button
+                    <Button
+                        intent="ghost"
+                        size="icon"
                         onClick={onCancel}
                         aria-label="Cerrar"
-                        className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                     >
                         <X size={16} />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Body */}
@@ -67,20 +69,21 @@ export const ConfirmDeleteScenarioModal = ({
 
                 {/* Footer */}
                 <div className="flex gap-3 px-6 py-4 border-t border-border bg-muted/30">
-                    <button
-                        ref={cancelRef}
+                    <Button
+                        intent="secondary"
                         onClick={onCancel}
-                        className="flex-1 px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors cursor-pointer"
+                        className="flex-1"
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        intent="destructive"
                         onClick={onConfirm}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-xl transition-colors cursor-pointer"
+                        className="flex-1"
                     >
                         <Trash2 size={16} />
                         Eliminar
-                    </button>
+                    </Button>
                 </div>
 
             </div>
