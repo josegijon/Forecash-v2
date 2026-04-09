@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react"
 import { createBrowserRouter, Navigate, Outlet, useParams } from "react-router"
 import { MainLayout } from "@/ui/layout/MainLayout"
 import { useScenarioStore } from "@/store"
+import { ErrorScreen } from "@/ui/components/errors/ErrorScreen"
 
 // Lazy imports: cada página se convierte en un chunk independiente.
 // Vite solo lo descarga cuando el usuario navega a esa ruta.
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
     {
         path: "/escenario/:id",
         element: <ScenarioLayout />,
+        errorElement: <ErrorScreen />,
         children: [
             { index: true, element: <Navigate to="planificacion" replace /> },
             { path: "planificacion", element: <PlanningPage /> },
