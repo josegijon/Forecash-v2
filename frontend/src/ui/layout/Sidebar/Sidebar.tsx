@@ -1,7 +1,31 @@
 import { NavLink, useParams } from "react-router";
-import { SidebarNavigation } from "./SidebarNavigation";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/images/logo-1.png";
+import { Database, FlaskConical, LayoutDashboard, LineChart } from "lucide-react";
+import { SidebarNavLink } from "./SidebarNavLink";
+
+const NAV_ITEMS = [
+    {
+        path: 'planificacion',
+        icon: LayoutDashboard,
+        label: 'Planificación'
+    },
+    {
+        path: 'simulaciones',
+        icon: FlaskConical,
+        label: 'Simulaciones'
+    },
+    {
+        path: 'proyeccion',
+        icon: LineChart,
+        label: 'Proyección'
+    },
+    {
+        path: 'datos',
+        icon: Database,
+        label: 'Datos / Ajustes'
+    }
+];
 
 interface SidebarProps {
     onClose: () => void;
@@ -32,7 +56,19 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
 
             {/* Navigation */}
             <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-                <SidebarNavigation onClose={onClose} />
+                <p className="px-2 mb-3 text-xs font-semibold text-muted-foreground uppercase">
+                    Menú Principal
+                </p>
+
+                {NAV_ITEMS.map(({ path, icon: Icon, label }) => (
+                    <SidebarNavLink
+                        key={path}
+                        to={`/escenario/${id}/${path}`}
+                        icon={<Icon size={20} />}
+                        label={label}
+                        onClick={onClose}
+                    />
+                ))}
             </nav>
 
             <ThemeToggle />
