@@ -3,9 +3,9 @@ import { createBrowserRouter, Navigate, Outlet, useParams } from "react-router"
 import { MainLayout } from "@/ui/layout/MainLayout"
 import { useScenarioStore } from "@/store"
 import { ErrorScreen } from "@/ui/components/errors/ErrorScreen"
+import { RootRedirect } from "./RootRedirect"
+import { LandingPage } from "@/pages/LandingPage"
 
-// Lazy imports: cada página se convierte en un chunk independiente.
-// Vite solo lo descarga cuando el usuario navega a esa ruta.
 const PlanningPage = lazy(() =>
     import("@/pages/PlanningPage").then((m) => ({ default: m.PlanningPage }))
 );
@@ -48,7 +48,7 @@ const ScenarioLayout = () => {
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <Navigate to="/escenario/scenario-1/planificacion" replace />
+        element: <RootRedirect />
     },
     {
         path: "/escenario/:id",
@@ -63,7 +63,11 @@ export const router = createBrowserRouter([
         ]
     },
     {
+        path: "/landing",
+        element: <LandingPage />
+    },
+    {
         path: "*",
-        element: <Navigate to="/escenario/scenario-1/planificacion" replace />
+        element: <Navigate to="/" replace />
     }
 ]);

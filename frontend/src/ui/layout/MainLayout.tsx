@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Header } from "./Header/Header";
 import { Sidebar } from "./Sidebar/Sidebar";
 import { useLocation } from "react-router";
-import { WelcomeBannerModal } from "@/ui/components/modals/WelcomeBannerModal";
-import { useWelcomeBanner } from "@/ui/hooks/useWelcomeBanner";
 
 const PAGE_TITLES: Record<string, string> = {
     planificacion: "Planificación Financiera",
@@ -18,7 +16,6 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { isOpen: welcomeOpen, close: closeWelcome } = useWelcomeBanner();
 
     const location = useLocation();
     const lastSegment = location.pathname.split("/").filter(Boolean).pop() ?? "";
@@ -29,8 +26,6 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             className="flex h-screen bg-background font-poppins text-foreground"
             onKeyDown={(e) => e.key === "Escape" && setSidebarOpen(false)}
         >
-            <WelcomeBannerModal isOpen={welcomeOpen} onClose={closeWelcome} />
-
             {sidebarOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 z-49 lg:hidden"
