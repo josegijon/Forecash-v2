@@ -1,5 +1,5 @@
 import { NavLink, useParams } from "react-router";
-import { Database, FlaskConical, Info, LayoutDashboard, LineChart } from "lucide-react";
+import { Database, FlaskConical, LayoutDashboard, LineChart } from "lucide-react";
 import { SidebarNavLink } from "./SidebarNavLink";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/images/logo-1.png";
@@ -24,11 +24,6 @@ const NAV_ITEMS = [
         path: 'datos',
         icon: Database,
         label: 'Datos / Ajustes'
-    },
-    {
-        path: 'datos',
-        icon: Info,
-        label: 'Landing'
     }
 ];
 
