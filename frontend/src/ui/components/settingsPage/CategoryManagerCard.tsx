@@ -154,10 +154,10 @@ export const CategoryManagerCard = ({
                                             {editingId === cat.id ? (
                                                 <Input
                                                     variant="settings"
-                                                    id={`new-cat-${type}`}
+                                                    id={`edit-cat-${cat.id}`}
                                                     aria-label={`Nombre de la nueva categoría de ${isExpense ? "gasto" : "ingreso"}`}
-                                                    value={newName}
-                                                    onChange={(e) => { setNewName(e.target.value); setInputError(null); }}
+                                                    value={editingName}
+                                                    onChange={(e) => setEditingName(e.target.value)}
                                                     onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                                                     placeholder="Nueva categoría…"
                                                     error={!!inputError}
