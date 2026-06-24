@@ -8,6 +8,9 @@ import {
 /* ── Constantes ─────────────────────────────────────────────────────────── */
 
 const MAX_IMPORT_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_ZOD_ERRORS = 5;
+const REVOKE_URL_DELAY_MS = 1000;
+const VALID_MIME_TYPES = new Set(["", "application/json", "text/json"]);
 
 /* ── Tipos de error explícitos ──────────────────────────────────────────── */
 
@@ -43,90 +46,61 @@ export const exportToJson = (snapshot: ValidatedSnapshot): void => {
 
 /* ── JSON import ────────────────────────────────────────────────────────── */
 
-export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
+const readFileAsText = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
-        if (file.size === 0) {
-            return reject(
-                new ImportError("EMPTY_FILE", "El archivo está vacío."),
-            );
-        }
-
-        if (file.size > MAX_IMPORT_SIZE_BYTES) {
-            return reject(
-                new ImportError(
-                    "FILE_TOO_LARGE",
-                    `El archivo supera el límite de ${MAX_IMPORT_SIZE_BYTES / 1024 / 1024} MB.`,
-                ),
-            );
-        }
-
-        const hasValidExtension = file.name.toLowerCase().endsWith(".json");
-        const hasValidMime =
-            file.type === "" ||
-            file.type === "application/json" ||
-            file.type === "text/json";
-
-        if (!hasValidExtension || !hasValidMime) {
-            return reject(
-                new ImportError(
-                    "INVALID_FILE_TYPE",
-                    "Solo se admiten archivos .json.",
-                ),
-            );
-        }
-
         const reader = new FileReader();
-
         reader.onload = (e) => {
             const raw = e.target?.result;
-
             if (typeof raw !== "string" || raw.trim() === "") {
-                return reject(
-                    new ImportError("EMPTY_FILE", "El archivo está vacío."),
-                );
+                return reject(new ImportError("EMPTY_FILE", "El archivo está vacío."));
             }
-
-            let parsed: unknown;
-            try {
-                parsed = JSON.parse(raw);
-            } catch {
-                return reject(
-                    new ImportError(
-                        "NOT_VALID_JSON",
-                        "El archivo no contiene JSON válido.",
-                    ),
-                );
-            }
-
-            // Validación estructural + integridad referencial con Zod
-            const result = AppSnapshotV1Schema.safeParse(parsed);
-
-            if (!result.success) {
-                const details = result.error.issues
-                    .slice(0, 5)
-                    .map((i) => `${i.path.join(".")}: ${i.message}`)
-                    .join("; ");
-
-                return reject(
-                    new ImportError(
-                        "SCHEMA_VALIDATION_FAILED",
-                        "El archivo no tiene el formato esperado de Forecash.",
-                        details,
-                    ),
-                );
-            }
-
-            resolve(result.data);
+            resolve(raw);
         };
-
-        reader.onerror = () =>
-            reject(new ImportError("READ_ERROR", "Error al leer el archivo."),);
-
-        reader.onabort = () =>
-            reject(new ImportError("ABORTED", "La lectura del archivo fue cancelada."));
-
+        reader.onerror = () => reject(new ImportError("READ_ERROR", "Error al leer el archivo."));
+        reader.onabort = () => reject(new ImportError("ABORTED", "La lectura del archivo fue cancelada."));
         reader.readAsText(file);
     });
+
+const parseJsonText = (raw: string): unknown => {
+    try {
+        return JSON.parse(raw);
+    } catch {
+        throw new ImportError("NOT_VALID_JSON", "El archivo no contiene JSON válido.");
+    }
+};
+
+const validateSnapshot = (parsed: unknown): ValidatedSnapshot => {
+    const result = AppSnapshotV1Schema.safeParse(parsed);
+    if (!result.success) {
+        const details = result.error.issues
+            .slice(0, MAX_ZOD_ERRORS)
+            .map((i) => `${i.path.join(".")}: ${i.message}`)
+            .join("; ");
+        throw new ImportError(
+            "SCHEMA_VALIDATION_FAILED",
+            "El archivo no tiene el formato esperado de Forecash.",
+            details,
+        );
+    }
+    return result.data;
+};
+
+export const importFromJson = async (file: File): Promise<ValidatedSnapshot> => {
+    if (file.size === 0)
+        throw new ImportError("EMPTY_FILE", "El archivo está vacío.");
+
+    if (file.size > MAX_IMPORT_SIZE_BYTES)
+        throw new ImportError("FILE_TOO_LARGE", `El archivo supera el límite de ${MAX_IMPORT_SIZE_BYTES / 1024 / 1024} MB.`);
+
+    const hasValidExtension = file.name.toLowerCase().endsWith(".json");
+    const hasValidMime = VALID_MIME_TYPES.has(file.type);
+    if (!hasValidExtension || !hasValidMime)
+        throw new ImportError("INVALID_FILE_TYPE", "Solo se admiten archivos .json.");
+
+    const raw = await readFileAsText(file);
+    const parsed = parseJsonText(raw);
+    return validateSnapshot(parsed);
+};
 
 /* ── CSV export ─────────────────────────────────────────────────────────── */
 
@@ -202,5 +176,5 @@ const triggerDownload = (blob: Blob, fileName: string): void => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), REVOKE_URL_DELAY_MS);
 };
