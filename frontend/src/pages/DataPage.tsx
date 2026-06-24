@@ -163,7 +163,7 @@ export const DataPage = () => {
 
     const handleExportCsv = () => {
         try {
-            exportToCsv(scenarios, items);
+            exportToCsv(scenarios, items, useCategoryStore.getState().categories);
             push("success", "Exportación completada", "El archivo CSV se ha descargado.");
         } catch {
             push("error", "Error al exportar", "No se pudo generar el archivo CSV.");

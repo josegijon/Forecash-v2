@@ -4,6 +4,7 @@ import {
     AppSnapshotV1Schema,
     type ValidatedSnapshot,
 } from "@/schemas/snapshot.schema";
+import type { Category } from "@/store";
 
 /* ── Constantes ─────────────────────────────────────────────────────────── */
 
@@ -110,10 +111,7 @@ export const importFromJson = async (file: File): Promise<ValidatedSnapshot> => 
  */
 const CSV_INJECTION_PREFIXES = new Set(["=", "+", "-", "@", "\t", "\r"]);
 
-export const exportToCsv = (
-    scenarios: Scenario[],
-    items: Record<string, CashflowItem[]>,
-): void => {
+export const exportToCsv = (scenarios: Scenario[], items: Record<string, CashflowItem[]>, categories: Category[]): void => {
     const headers = [
         "Escenario",
         "ID",
@@ -128,6 +126,8 @@ export const exportToCsv = (
 
     const rows: string[][] = [];
 
+    const categoryNameById = new Map(categories.map((c) => [c.id, c.name]));
+
     for (const scenario of scenarios) {
         const scenarioItems = items[scenario.id] ?? [];
         for (const item of scenarioItems) {
@@ -138,7 +138,7 @@ export const exportToCsv = (
                 item.name,
                 String(item.amount),
                 item.frequency,
-                item.categoryId ?? "",
+                categoryNameById.get(item.categoryId) ?? "Sin categoría",
                 item.startDate ?? "",
                 item.endDate ?? "",
             ]);
