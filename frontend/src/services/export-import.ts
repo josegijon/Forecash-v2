@@ -182,14 +182,9 @@ export const exportToCsv = (
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 
-/**
- * Envuelve el valor en comillas dobles, escapando comillas internas,
- * eliminando saltos de línea y neutralizando CSV injection.
- */
 const csvCell = (value: string): string => {
-    let sanitized = value.replace(/"/g, '""').replace(/[\r\n]+/g, " ");
+    let sanitized = value.replace(/"/g, '""');
 
-    // Neutralizar CSV injection: prefijo con comilla simple
     if (sanitized.length > 0 && CSV_INJECTION_PREFIXES.has(sanitized[0])) {
         sanitized = `'${sanitized}`;
     }
@@ -205,9 +200,7 @@ const triggerDownload = (blob: Blob, fileName: string): void => {
     a.href = url;
     a.download = fileName;
     document.body.appendChild(a);
-    a.addEventListener("click", () => {
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-    }, { once: true });
     a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
