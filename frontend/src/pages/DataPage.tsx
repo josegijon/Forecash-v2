@@ -125,14 +125,35 @@ export const DataPage = () => {
             const filteredItems = Object.fromEntries(
                 Object.entries(items).filter(([key]) => scenarioIds.has(key))
             );
+
+            const currentCategories = useCategoryStore.getState().categories;
+            const knownCategoryIds = new Set(currentCategories.map((c) => c.id));
+
+            const seenOrphans = new Set<string>();
+            const orphanedCategories: typeof currentCategories = [];
+
+            for (const scenarioItems of Object.values(filteredItems)) {
+                for (const item of scenarioItems) {
+                    if (!knownCategoryIds.has(item.categoryId) && !seenOrphans.has(item.categoryId)) {
+                        seenOrphans.add(item.categoryId);
+                        orphanedCategories.push({
+                            id: item.categoryId,
+                            name: "Sin categoría",
+                            type: item.type,
+                        });
+                    }
+                }
+            }
+
             const snapshot = {
                 version: 1 as const,
                 exportedAt: new Date().toISOString(),
                 scenarios,
                 items: filteredItems,
-                categories: useCategoryStore.getState().categories,
+                categories: [...currentCategories, ...orphanedCategories],
                 currency,
             } satisfies ValidatedSnapshot;
+
             exportToJson(snapshot);
             push("success", "Exportación completada", "El archivo JSON se ha descargado.");
         } catch {
