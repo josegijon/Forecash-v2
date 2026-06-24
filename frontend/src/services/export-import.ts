@@ -17,7 +17,8 @@ export type ImportErrorKind =
     | "EMPTY_FILE"
     | "NOT_VALID_JSON"
     | "SCHEMA_VALIDATION_FAILED"
-    | "READ_ERROR";
+    | "READ_ERROR"
+    | "ABORTED";
 
 export class ImportError extends Error {
     public readonly kind: ImportErrorKind;
@@ -119,9 +120,10 @@ export const importFromJson = (file: File): Promise<ValidatedSnapshot> =>
         };
 
         reader.onerror = () =>
-            reject(
-                new ImportError("READ_ERROR", "Error al leer el archivo."),
-            );
+            reject(new ImportError("READ_ERROR", "Error al leer el archivo."),);
+
+        reader.onabort = () =>
+            reject(new ImportError("ABORTED", "La lectura del archivo fue cancelada."));
 
         reader.readAsText(file);
     });
@@ -203,7 +205,9 @@ const triggerDownload = (blob: Blob, fileName: string): void => {
     a.href = url;
     a.download = fileName;
     document.body.appendChild(a);
+    a.addEventListener("click", () => {
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }, { once: true });
     a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
