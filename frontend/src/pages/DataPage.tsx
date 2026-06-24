@@ -20,7 +20,7 @@ import { ImportExportCard } from "@/ui/components/settingsPage/ImportExportCard"
 import { ScenarioManagerCard } from "@/ui/components/settingsPage/ScenarioManagerCard";
 import { DangerZoneCard } from "@/ui/components/settingsPage/DangerZoneCard";
 import type { ValidatedSnapshot } from "@/schemas/snapshot.schema";
-import { exportToCsv, exportToJson, ImportError, importFromJson } from "@/services/export-import";
+import { exportToCsv, exportToJson, ImportError, importFromJson } from "@/services";
 import { useFileInput } from "@/ui/hooks/useFileInput";
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
