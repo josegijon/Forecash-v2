@@ -3,9 +3,9 @@ import { toISODateString } from "@core";
 
 export const ItemTypeSchema = z.enum(["income", "expense"]);
 
-export const IdSchema = z.string().min(1);
+export const IdSchema = z.string().min(1).max(200);
 
-export const NameSchema = z.string().min(1);
+export const NameSchema = z.string().min(1).max(200);
 
 export const FrequencySchema = z.enum([
     "once",

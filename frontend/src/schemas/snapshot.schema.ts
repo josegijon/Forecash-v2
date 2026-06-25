@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { CurrencySchema, FrequencySchema, ISODateStringSchema } from "./primitives";
+import { CurrencySchema, FrequencySchema, IdSchema, ISODateStringSchema, ItemTypeSchema, NameSchema } from "./primitives";
 
 /* ── Constantes de límites ──────────────────────────────────────────────── */
 
-const MAX_STRING_LENGTH = 500;
 const MAX_SCENARIOS = 50;
 const MAX_ITEMS_PER_SCENARIO = 1_000;
 const MAX_CATEGORIES = 200;
+const MAX_FINANCIAL_AMOUNT = 999_999_999;
 
 /* ── Primitivos de dominio ──────────────────────────────────────────────── */
 
@@ -20,28 +20,28 @@ export const ExportedAtSchema = z
 /* ── Entidades ──────────────────────────────────────────────────────────── */
 
 export const CategorySchema = z.object({
-    id: z.string().min(1).max(MAX_STRING_LENGTH),
-    name: z.string().min(1).max(MAX_STRING_LENGTH),
-    type: z.enum(["income", "expense"]),
+    id: IdSchema,
+    name: NameSchema,
+    type: ItemTypeSchema,
 });
 
 export const ScenarioSchema = z.object({
-    id: z.string().min(1).max(MAX_STRING_LENGTH),
-    name: z.string().min(1).max(MAX_STRING_LENGTH),
-    initialBalance: z.number().finite(),
-    savingsGoal: z.number().min(0).finite(),
-    cushionBalance: z.number().min(0).finite(),
-    capitalGoal: z.number().min(0).finite().optional(),
+    id: IdSchema,
+    name: NameSchema,
+    initialBalance: z.number().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER),
+    savingsGoal: z.number().min(0).max(MAX_FINANCIAL_AMOUNT),
+    cushionBalance: z.number().min(0).max(MAX_FINANCIAL_AMOUNT),
+    capitalGoal: z.number().min(0).max(MAX_FINANCIAL_AMOUNT).optional(),
 });
 
 export const CashflowItemSchema = z
     .object({
-        id: z.string().min(1).max(MAX_STRING_LENGTH),
-        scenarioId: z.string().min(1).max(MAX_STRING_LENGTH),
-        type: z.enum(["income", "expense"]),
-        name: z.string().min(1).max(MAX_STRING_LENGTH),
-        amount: z.number().positive().finite(),
-        categoryId: z.string().min(1).max(MAX_STRING_LENGTH),
+        id: IdSchema,
+        scenarioId: IdSchema,
+        type: ItemTypeSchema,
+        name: NameSchema,
+        amount: z.number().positive().max(MAX_FINANCIAL_AMOUNT),
+        categoryId: IdSchema,
         frequency: FrequencySchema,
         startDate: ISODateStringSchema,
         endDate: ISODateStringSchema.optional(),
@@ -51,8 +51,7 @@ export const CashflowItemSchema = z
         { message: "Un ítem con frecuencia 'once' no puede tener endDate" },
     )
     .refine(
-        (item) =>
-            item.endDate === undefined || item.endDate >= item.startDate,
+        (item) => item.endDate === undefined || item.endDate >= item.startDate,
         { message: "endDate debe ser posterior o igual a startDate" },
     );
 
@@ -78,7 +77,7 @@ export const AppSnapshotV1Schema = z
         for (const key of Object.keys(snap.items)) {
             if (!scenarioIds.has(key)) {
                 ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
+                    code: "custom",
                     path: ["items", key],
                     message: `La clave de items "${key}" no corresponde a ningún escenario`,
                 });
@@ -92,7 +91,7 @@ export const AppSnapshotV1Schema = z
 
                 if (item.scenarioId !== scenarioId) {
                     ctx.addIssue({
-                        code: z.ZodIssueCode.custom,
+                        code: "custom",
                         path: ["items", scenarioId, i, "scenarioId"],
                         message: `scenarioId "${item.scenarioId}" no coincide con la clave "${scenarioId}"`,
                     });
@@ -100,7 +99,7 @@ export const AppSnapshotV1Schema = z
 
                 if (!categoryIds.has(item.categoryId)) {
                     ctx.addIssue({
-                        code: z.ZodIssueCode.custom,
+                        code: "custom",
                         path: ["items", scenarioId, i, "categoryId"],
                         message: `categoryId "${item.categoryId}" no existe en categories`,
                     });
