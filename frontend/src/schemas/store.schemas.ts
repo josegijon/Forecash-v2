@@ -8,17 +8,27 @@ const MAX_CATEGORIES = 200;
 
 /* ── CashflowStore ──────────────────────────────────────────────────────── */
 
-const PersistedCashflowItemSchema = z.object({
-    id: IdSchema,
-    scenarioId: IdSchema,
-    type: ItemTypeSchema,
-    name: NameSchema,
-    amount: z.number().positive().max(MAX_FINANCIAL_AMOUNT),
-    categoryId: IdSchema,
-    frequency: FrequencySchema,
-    startDate: ISODateStringSchema,
-    endDate: ISODateStringSchema.optional(),
-}).strict();
+const PersistedCashflowItemSchema = z
+    .object({
+        id: IdSchema,
+        scenarioId: IdSchema,
+        type: ItemTypeSchema,
+        name: NameSchema,
+        amount: z.number().positive().max(MAX_FINANCIAL_AMOUNT),
+        categoryId: IdSchema,
+        frequency: FrequencySchema,
+        startDate: ISODateStringSchema,
+        endDate: ISODateStringSchema.optional(),
+    })
+    .strict()
+    .refine(
+        (item) => !(item.frequency === "once" && item.endDate !== undefined),
+        { message: "Un ítem con frecuencia 'once' no puede tener endDate" },
+    )
+    .refine(
+        (item) => item.endDate === undefined || item.endDate >= item.startDate,
+        { message: "endDate debe ser posterior o igual a startDate" },
+    );
 
 export const CashflowPersistedSchema = z.object({
     items: z.record(z.string(), z.array(PersistedCashflowItemSchema).max(MAX_ITEMS_PER_SCENARIO)),
@@ -54,10 +64,23 @@ const PersistedScenarioSchema = z.object({
     capitalGoal: z.number().min(0).max(MAX_FINANCIAL_AMOUNT).optional(),
 }).strict();
 
-export const ScenarioPersistedSchema = z.object({
-    scenarios: z.array(PersistedScenarioSchema).min(1).max(MAX_SCENARIOS),
-    activeScenarioId: IdSchema,
-}).strict();
+export const ScenarioPersistedSchema = z
+    .object({
+        scenarios: z.array(PersistedScenarioSchema).min(1).max(MAX_SCENARIOS),
+        activeScenarioId: IdSchema,
+    })
+    .superRefine((snap, ctx) => {
+        const scenarioIds = new Set(snap.scenarios.map((s) => s.id));
+
+        if (!scenarioIds.has(snap.activeScenarioId)) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["activeScenarioId"],
+                message: `activeScenarioId "${snap.activeScenarioId}" no existe en scenarios`,
+            });
+        }
+    })
+    .strict();
 
 /* ── SettingsStore ──────────────────────────────────────────────────────── */
 
