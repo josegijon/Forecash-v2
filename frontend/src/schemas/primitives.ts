@@ -39,3 +39,9 @@ export const ISODateStringSchema = z
     .transform((v) => toISODateString(v));
 
 export const CurrencySchema = z.enum(["EUR", "USD", "GBP"]);
+
+export const FinancialAmountSchema = z.number().positive()
+    .refine(
+        (v) => Math.round(v * 100) === v * 100,
+        { message: "amount no puede tener más de 2 decimales" }
+    );

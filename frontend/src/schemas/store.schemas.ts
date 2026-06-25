@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CurrencySchema, FrequencySchema, IdSchema, ISODateStringSchema, ItemTypeSchema, NameSchema } from "./primitives";
+import { CurrencySchema, FinancialAmountSchema, FrequencySchema, IdSchema, ISODateStringSchema, ItemTypeSchema, NameSchema } from "./primitives";
 
 const MAX_SCENARIOS = 50;
 const MAX_FINANCIAL_AMOUNT = 999_999_999;
@@ -14,7 +14,7 @@ const PersistedCashflowItemSchema = z
         scenarioId: IdSchema,
         type: ItemTypeSchema,
         name: NameSchema,
-        amount: z.number().positive().max(MAX_FINANCIAL_AMOUNT),
+        amount: FinancialAmountSchema.max(MAX_FINANCIAL_AMOUNT),
         categoryId: IdSchema,
         frequency: FrequencySchema,
         startDate: ISODateStringSchema,
@@ -30,16 +30,19 @@ const PersistedCashflowItemSchema = z
         { message: "endDate debe ser posterior o igual a startDate" },
     );
 
-export const CashflowPersistedSchema = z.object({
-    items: z.record(z.string(), z.array(PersistedCashflowItemSchema).max(MAX_ITEMS_PER_SCENARIO)),
-}).strict().superRefine((val, ctx) => {
-    if (Object.keys(val.items).length > MAX_SCENARIOS) {
-        ctx.addIssue({
-            code: "custom",
-            message: `items no puede tener más de ${MAX_SCENARIOS} escenarios`,
-        });
-    }
-});
+export const CashflowPersistedSchema = z
+    .object({
+        items: z.record(z.string(), z.array(PersistedCashflowItemSchema).max(MAX_ITEMS_PER_SCENARIO)),
+    })
+    .strict()
+    .superRefine((val, ctx) => {
+        if (Object.keys(val.items).length > MAX_SCENARIOS) {
+            ctx.addIssue({
+                code: "custom",
+                message: `items no puede tener más de ${MAX_SCENARIOS} escenarios`,
+            });
+        }
+    });
 
 /* ── CategoryStore ──────────────────────────────────────────────────────── */
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CurrencySchema, FrequencySchema, IdSchema, ISODateStringSchema, ItemTypeSchema, NameSchema } from "./primitives";
+import { CurrencySchema, FinancialAmountSchema, FrequencySchema, IdSchema, ISODateStringSchema, ItemTypeSchema, NameSchema } from "./primitives";
 
 /* ── Constantes de límites ──────────────────────────────────────────────── */
 
@@ -40,7 +40,7 @@ export const CashflowItemSchema = z
         scenarioId: IdSchema,
         type: ItemTypeSchema,
         name: NameSchema,
-        amount: z.number().positive().max(MAX_FINANCIAL_AMOUNT),
+        amount: FinancialAmountSchema.max(MAX_FINANCIAL_AMOUNT),
         categoryId: IdSchema,
         frequency: FrequencySchema,
         startDate: ISODateStringSchema,
