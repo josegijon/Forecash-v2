@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { FrequencySchema, CurrencySchema, ISODateStringSchema } from "./snapshot.schema";
+import { CurrencySchema, FrequencySchema, ISODateStringSchema } from "./primitives";
 
 /* ── CashflowStore ──────────────────────────────────────────────────────── */
 
